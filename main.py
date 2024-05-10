@@ -24,26 +24,9 @@ def main():
 
     options = parser.parse_args()
 
-    config = Config()
+    config = Config(options.config)
 
-    if options.config:
-        config_file = os.path.abspath(options.config)
-        if os.path.isfile(config_file):
-            config_dir = os.path.dirname(config_file)
-            sys.path.insert(0, config_dir)  # add the config directory to the module search path
-
-            module_name = os.path.splitext(os.path.basename(config_file))[0]
-            config_module = importlib.import_module(module_name)
-        
-            # Update the current variables in the config class with the ones from the specified configuration file
-            vars(config).update({k: v for k, v in vars(config_module).items() if not k.startswith("_")} )
-        
-            print(f"Using configuration file: {options.config}, assuming it's a python file")
-        else:
-            print(f"Error: Configuration file {options.config} does not exist")
-    else:
-        print("Using default configuration file: config.py")
-
+   
     print(config.data_dir)
 
     if options.run:
