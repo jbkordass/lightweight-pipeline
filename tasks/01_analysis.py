@@ -4,7 +4,7 @@ class Analysis(pe.PipelineElement):
     def __init__(self):
         super().__init__("Data analysis")
 
-    def process(self, data):
-        # Add your preprocessing logic here
+    def process(self, data, config):
+        # Add your analysis logic here
         
-        pass
+        return data

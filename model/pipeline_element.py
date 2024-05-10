@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import model.config
 
 class PipelineElement(ABC):
 
@@ -6,5 +7,5 @@ class PipelineElement(ABC):
         self.description = description
 
     @abstractmethod
-    def process(self, data):
+    def process(self, data, config):
         pass
