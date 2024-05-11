@@ -37,7 +37,7 @@ class Config:
 
 
     # default data directory
-    data_dir = os.path.abspath("~/data")
+    data_dir = os.path.join(os.path.expanduser('~'), 'data')
 
 
     # default variables preprocessing ...
