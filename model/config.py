@@ -31,7 +31,7 @@ class Config:
             
                 print(f"Using configuration file: {config_file_path}, assuming it's a python file")
             else:
-                print(f"Error: Configuration file {config_file_path} does not exist")
+                print(f"Error: Configuration file {config_file_path} does not exist; using default configuration.")
         else:
             print("Using default configuration file.")
 
