@@ -11,22 +11,22 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--version", action="version", version="0.1"
+        "-v", "--version", action="version", version="0.1"
     )
 
     parser.add_argument(
-        "--run", action="store_true", help="Run the entire pipeline"
+        "--run", action="store_true", help="Run the pipeline"
     )
 
     parser.add_argument('tasks', metavar='TT', type=str, nargs='*',
-                        help='List of tasks to run, separated by commas (only specify 00-99)')
+                        help='List of tasks to run, separated by commas (only necessary to specify 00-99)')
 
     parser.add_argument(
         "-c", "--config", help="Path to the configuration file"
     )
 
     parser.add_argument(
-        "--list", action="store_true", help="List all tasks in the task directory"
+        "-l", "--list", action="store_true", help="List all tasks in the task directory"
     )
 
     options = parser.parse_args()
@@ -38,7 +38,7 @@ def main():
 
     if options.run:
         # retrieve all tasks files
-        task_files = get_all_tasks()
+        task_files = get_all_task_files()
         if not options.tasks:
             print("Running entire pipeline")
         else:
@@ -48,7 +48,9 @@ def main():
         run_pipeline(config) 
     elif options.list:
         print("Tasks:".center(80, '-'))
-        print("\n".join(get_all_tasks()))
+        print("\n".join(get_all_task_files()))
+    else:
+        print("No action specified. Add --run or --list (or check --help for more options)")
 
 def run_pipeline(tasks_files, config):
 
@@ -82,7 +84,7 @@ def run_pipeline(tasks_files, config):
 
     print(f"Pipeline output {data}")
 
-def get_all_tasks():
+def get_all_task_files():
     # Get the path to the tasks directory
     tasks_dir = os.path.join(os.path.dirname(__file__), 'tasks')
 
