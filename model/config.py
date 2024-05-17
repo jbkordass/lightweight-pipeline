@@ -39,6 +39,15 @@ class Config:
     # default data directory
     data_dir = os.path.join(os.path.expanduser('~'), 'data')
 
+    # default variables bids conversion ...
+
+    # path to the eeg data which should be converted to BIDS
+    # structure: subject -> condition -> task -> list of edf files
+    eeg_path = {}
+
+    # subjects that should be included in the pipeline processing
+    # if empty list, include all subjects
+    subjects = []
 
     # default variables preprocessing ...
 
