@@ -18,8 +18,15 @@ def main():
         "--run", action="store_true", help="Run the entire pipeline"
     )
 
+    parser.add_argument('tasks', metavar='TT', type=str, nargs='*',
+                        help='List of tasks to run, separated by commas (only specify 00-99)')
+
     parser.add_argument(
         "-c", "--config", help="Path to the configuration file"
+    )
+
+    parser.add_argument(
+        "--list", action="store_true", help="List all tasks in the task directory"
     )
 
     options = parser.parse_args()
@@ -30,17 +37,21 @@ def main():
     print(config.data_dir)
 
     if options.run:
-        run_entire_pipeline(config) 
+        # retrieve all tasks files
+        task_files = get_all_tasks()
+        if not options.tasks:
+            print("Running entire pipeline")
+        else:
+            # filter tasks files based on the tasks specified in the command line argument
+            task_files = [task_file for task_file in task_files if any(task_file.startswith(task) for task in options.tasks)]
+            print("Running the tasks:", ", ".join(task_files))
+        run_pipeline(config) 
+    elif options.list:
+        print("Tasks:".center(80, '-'))
+        print("\n".join(get_all_tasks()))
 
-def run_entire_pipeline(config):
-    # Get the path to the tasks directory
-    tasks_dir = os.path.join(os.path.dirname(__file__), 'tasks')
+def run_pipeline(tasks_files, config):
 
-    # Get a list of all Python files in the tasks directory
-    task_files = [f for f in os.listdir(tasks_dir) if f.endswith('.py')]
-
-    # Sort the task files alphabetically
-    task_files.sort()
     pos = 1
 
     # Loop through the task files and import the modules
@@ -71,4 +82,17 @@ def run_entire_pipeline(config):
 
     print(f"Pipeline output {data}")
 
-main()
+def get_all_tasks():
+    # Get the path to the tasks directory
+    tasks_dir = os.path.join(os.path.dirname(__file__), 'tasks')
+
+    # Get a list of all Python files in the tasks directory
+    task_files = [f for f in os.listdir(tasks_dir) if f.endswith('.py')]
+
+    # Sort the task files alphabetically
+    task_files.sort()
+
+    return task_files
+
+if __name__ == "__main__":
+    main()
