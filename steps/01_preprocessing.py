@@ -1,6 +1,6 @@
-import model.pipeline_element as pe
+from pipeline.model.pipeline_step import PipelineStep
 
-class Preprocessing(pe.PipelineElement):
+class Preprocessing(PipelineStep):
     def __init__(self):
         super().__init__("Preprocessing data")
 

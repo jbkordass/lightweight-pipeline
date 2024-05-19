@@ -1,6 +1,6 @@
-import model.pipeline_element as pe
+from pipeline.model.pipeline_step import PipelineStep
 
-class Analysis(pe.PipelineElement):
+class Analysis(PipelineStep):
     def __init__(self):
         super().__init__("Data analysis")
 

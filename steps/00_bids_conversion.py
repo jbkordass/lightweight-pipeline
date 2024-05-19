@@ -1,4 +1,4 @@
-import model.pipeline_element as pe
+from pipeline.model.pipeline_step import PipelineStep
 import os
 import shutil
 
@@ -9,7 +9,7 @@ from mne_bids import (
     print_dir_tree,
 )
 
-class Bids_Conversion(pe.PipelineElement):
+class Bids_Conversion(PipelineStep):
     def __init__(self):
         super().__init__("Preprocessing data")
 

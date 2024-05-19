@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import model.config
 
-class PipelineElement(ABC):
+class PipelineStep(ABC):
 
     def __init__(self, description):
         self.description = description

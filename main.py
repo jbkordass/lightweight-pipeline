@@ -1,7 +1,7 @@
 
 import argparse
 import sys
-import model.pipeline_element as pe
+import pipeline.model.pipeline_step as ps
 import os
 import importlib
 
@@ -15,7 +15,7 @@ def main():
     )
 
     parser.add_argument(
-        "--run", action="store_true", help="Run the pipeline"
+        "-r", "--run", action="store_true", help="Run the pipeline"
     )
 
     parser.add_argument('tasks', metavar='TT', type=str, nargs='*',
@@ -71,7 +71,7 @@ def run_pipeline(tasks_files, config):
         # Get the subclasses of PipelineElement defined in the module
         pipeline_elements = [
             cls for cls in module.__dict__.values()
-            if isinstance(cls, type) and issubclass(cls, pe.PipelineElement)
+            if isinstance(cls, type) and issubclass(cls, ps.PipelineStep)
         ]
 
         data = None
