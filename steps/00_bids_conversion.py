@@ -1,4 +1,4 @@
-from pipeline.model.pipeline_step import PipelineStep
+from model.pipeline_step import PipelineStep
 import os
 import shutil
 
@@ -28,7 +28,7 @@ class Bids_Conversion(PipelineStep):
         for subj, subj_info in config.eeg_path.items():
             # check if config.subjects is empty (i.e. include all subjects) and 
             # if the current subject is in the list of subjects to include
-            if config.subject and subj not in config.subjects:
+            if config.subjects and subj not in config.subjects:
                 print(f"Skipping {subj}")
             else:
                 bids_paths[subj] = {}
@@ -59,6 +59,9 @@ class Bids_Conversion(PipelineStep):
                             print("Wrote bids", subj, cond, task, run, edf_file)
 
         # check 
-        print_dir_tree(bids_root)
+        try:
+            print_dir_tree(bids_root)
+        except:
+            print("Could not print directory tree")
 
         return bids_paths

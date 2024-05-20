@@ -1,4 +1,4 @@
-from pipeline.model.pipeline_step import PipelineStep
+from model.pipeline_step import PipelineStep
 
 class Preprocessing(PipelineStep):
     def __init__(self):

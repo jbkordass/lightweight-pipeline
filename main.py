@@ -1,7 +1,7 @@
 
 import argparse
 import sys
-import pipeline.model.pipeline_step as ps
+from model.pipeline_step import PipelineStep
 import os
 import importlib
 
@@ -18,15 +18,15 @@ def main():
         "-r", "--run", action="store_true", help="Run the pipeline"
     )
 
-    parser.add_argument('tasks', metavar='TT', type=str, nargs='*',
-                        help='List of tasks to run, separated by commas (only necessary to specify 00-99)')
+    parser.add_argument('steps', metavar='TT', type=str, nargs='*',
+                        help='List of steps to run, separated by commas (only necessary to specify 00-99)')
 
     parser.add_argument(
         "-c", "--config", help="Path to the configuration file"
     )
 
     parser.add_argument(
-        "-l", "--list", action="store_true", help="List all tasks in the task directory"
+        "-l", "--list", action="store_true", help="List all steps in the step directory"
     )
 
     options = parser.parse_args()
@@ -37,64 +37,72 @@ def main():
     print(config.data_dir)
 
     if options.run:
-        # retrieve all tasks files
-        task_files = get_all_task_files()
-        if not options.tasks:
+        # retrieve all steps script file names
+        step_files = find_all_steps()
+        if not options.steps:
             print("Running entire pipeline")
         else:
-            # filter tasks files based on the tasks specified in the command line argument
-            task_files = [task_file for task_file in task_files if any(task_file.startswith(task) for task in options.tasks)]
-            print("Running the tasks:", ", ".join(task_files))
-        run_pipeline(config) 
+            # filter step files based on the steps specified in the command line argument
+            step_files = [step_file for step_file in step_files if any(step_file.startswith(step) for step in options.steps)]
+            print("Running the steps:", ", ".join(step_files))
+        run_pipeline(step_files, config) 
     elif options.list:
-        print("Tasks:".center(80, '-'))
-        print("\n".join(get_all_task_files()))
+        print("Steps:".center(80, '-'))
+        print("\n".join(find_all_steps()))
     else:
         print("No action specified. Add --run or --list (or check --help for more options)")
 
-def run_pipeline(tasks_files, config):
+def run_pipeline(step_files, config):
+    '''
+    Run the pipeline through all steps given by PipelineStep classes contained in the 
+    step_files list
+    '''
 
+    # counter for executed steps/position in the pipeline
     pos = 1
 
-    # Loop through the task files and import the modules
-    for task_file in task_files:
+    # Loop through the step files and import the modules
+    for step_file in step_files:
         # Remove the file extension to get the module name
-        module_name = os.path.splitext(task_file)[0]
+        module_name = os.path.splitext(step_file)[0]
 
-        # print the number/name of task
-        print(f"Task {pos}: {module_name}".center(80, '-'))
+        # print the number/name of the step
+        print(f"Step {pos}: {module_name}".center(80, '-'))
         pos = pos+1
         
         # Import the module
-        module = importlib.import_module(f'tasks.{module_name}')
+        module = importlib.import_module(f'steps.{module_name}')
         
-        # Get the subclasses of PipelineElement defined in the module
-        pipeline_elements = [
+        # Get the subclasses of PipelineStep defined in the module
+        pipeline_step_classes = [
             cls for cls in module.__dict__.values()
-            if isinstance(cls, type) and issubclass(cls, ps.PipelineStep)
+            if isinstance(cls, type) and issubclass(cls, PipelineStep) and cls != PipelineStep
         ]
 
         data = None
         
         # Loop through the pipeline elements and invoke them
-        for pipeline_element_cls in pipeline_elements:
-            elt = pipeline_element_cls()
-            print(elt.description)
-            data = elt.process(data, config)
+        for pipeline_step_class in pipeline_step_classes:
+            step = pipeline_step_class()
+            print(step.description)
+            data = step.process(data, config)
 
     print(f"Pipeline output {data}")
 
-def get_all_task_files():
-    # Get the path to the tasks directory
-    tasks_dir = os.path.join(os.path.dirname(__file__), 'tasks')
+def find_all_steps():
+    '''
+    Function to find all the .py files in the steps directory
+    '''
+    # Get the path to the steps directory
+    steps_dir = os.path.join(os.path.dirname(__file__), 'steps')
 
-    # Get a list of all Python files in the tasks directory
-    task_files = [f for f in os.listdir(tasks_dir) if f.endswith('.py')]
+    # Get a list of all python files in the steps directory
+    step_files = [f for f in os.listdir(steps_dir) if f.endswith('.py')]
 
-    # Sort the task files alphabetically
-    task_files.sort()
+    # Sort the step files alphabetically
+    step_files.sort()
 
-    return task_files
+    return step_files
 
 if __name__ == "__main__":
     main()

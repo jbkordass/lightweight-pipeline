@@ -1,0 +1,5 @@
+* About Lightweight MNE Pipeline
+As the name suggests - a lightweight, easy to modify pipeline for EEG analysis using MNE python.
+
+* Installation and set up
+Requires =mne= and =mne-bids= packages.
