@@ -83,9 +83,9 @@ def run_pipeline(step_files, config):
         
         # Loop through the pipeline elements and invoke them
         for pipeline_step_class in pipeline_step_classes:
-            step = pipeline_step_class()
+            step = pipeline_step_class(config)
             print(step.description)
-            data = step.process(data, config)
+            data = step.process(data)
 
     print(f"Pipeline output {data}")
 

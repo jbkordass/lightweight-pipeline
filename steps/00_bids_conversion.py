@@ -10,10 +10,10 @@ from mne_bids import (
 )
 
 class Bids_Conversion(PipelineStep):
-    def __init__(self):
-        super().__init__("Preprocessing data")
+    def __init__(self, config):
+        super().__init__("Preprocessing data", config)
 
-    def process(self, data, config):
+    def process(self, data):
 
         # There is the root directory for where we will write our data.
         bids_root = os.path.join(config.data_dir, "ieeg_bids")
@@ -44,8 +44,8 @@ class Bids_Conversion(PipelineStep):
                                 task=task, 
                                 run=run, 
                                 root=bids_root, 
-                                acquisition='seeg', 
-                                extension='.edf'
+                                acquisition=config.eeg_acquisition, 
+                                extension=config
                             )
                             run += 1
                             bids_paths[subj][cond][task].append(bids_path)

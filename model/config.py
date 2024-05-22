@@ -45,6 +45,10 @@ class Config:
     # structure: subject -> condition -> task -> list of edf files
     eeg_path = {}
 
+    # EEG information that should be included in the BIDS file
+    eeg_acquisition = "eeg"
+    eeg_file_extension = ".edf"
+
     # subjects that should be included in the pipeline processing
     # if empty list, include all subjects
     subjects = []
