@@ -35,6 +35,8 @@ class Config:
         else:
             print("Using default configuration file.")
 
+    # auto respond to prompts (if not run interactively, default to "n")
+    auto_response = "n"
 
     # default data directory
     data_dir = os.path.join(os.path.expanduser('~'), 'data')

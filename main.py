@@ -1,11 +1,12 @@
 
 import argparse
 import sys
-from model.pipeline_step import PipelineStep
+from model.pipeline_step import PipelineStep, PipelineException
 import os
 import importlib
 
 from model.config import Config
+
 
 def main():
 
@@ -29,10 +30,15 @@ def main():
         "-l", "--list", action="store_true", help="List all steps in the step directory"
     )
 
+    parser.add_argument(
+        "--ignore-warnings", action="store_true", help="Ignore warnings, i.e. always respond with yes if there is a prompt"
+    )
+
     options = parser.parse_args()
 
     config = Config(options.config)
-
+    if options.ignore_warnings:
+        config.auto_response = "y"
    
     print(config.data_dir)
 
@@ -85,7 +91,11 @@ def run_pipeline(step_files, config):
         for pipeline_step_class in pipeline_step_classes:
             step = pipeline_step_class(config)
             print(step.description)
-            data = step.process(data)
+            try:
+                data = step.process(data)
+            except PipelineException as e:
+                print(f"Error in {step.description}: {e}")
+                sys.exit(1)
 
     print(f"Pipeline output {data}")
 

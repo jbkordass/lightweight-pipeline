@@ -1,5 +1,21 @@
-* About Lightweight MNE Pipeline
+* About the Lightweight MNE Pipeline
 As the name suggests - a lightweight, easy to modify pipeline for EEG analysis using MNE python.
+
+Main design criterion is to keep the controller part minimal.
 
 * Installation and set up
 Requires =mne= and =mne-bids= packages.
+
+* Arguments
+Usage: =main.py [-h] [-v] [-r] [-c CONFIG] [-l] [--ignore-warnings] [TT ...]=
+
+Positional arguments:
+  =TT= List of steps to run, separated by commas (only necessary to specify 00-99)
+
+Options:
+  =-h=, =--help= show this help message and exit
+  =-v=, =--version= show program's version number and exit
+  =-r=, =--run= Run the pipeline
+  =-c CONFIG=, =--config CONFIG= Path to the configuration file
+  =-l=, =--list= List all steps in the step directory
+  =--ignore-warnings= Ignore warnings, i.e. always respond with yes if there is a prompt

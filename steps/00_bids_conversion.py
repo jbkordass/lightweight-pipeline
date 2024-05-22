@@ -1,4 +1,4 @@
-from model.pipeline_step import PipelineStep
+from model.pipeline_step import PipelineStep, PipelineException
 import os
 import shutil
 
@@ -15,12 +15,17 @@ class Bids_Conversion(PipelineStep):
 
     def process(self, data):
 
+        config = self.config
+
         # There is the root directory for where we will write our data.
         bids_root = os.path.join(config.data_dir, "ieeg_bids")
 
         # Delete to make sure it is empty
         if os.path.exists(bids_root):
-            shutil.rmtree(bids_root)
+            if self.ask_permission(f"Delete existing bids_root directory? ({bids_root})"):
+                shutil.rmtree(bids_root)
+            else:
+                raise PipelineException("Please delete existing bids_root directory by hand (or run with --ignore-warnings).")
 
         # Create a dictionary to store the BIDS paths
         bids_paths = {}
@@ -45,7 +50,7 @@ class Bids_Conversion(PipelineStep):
                                 run=run, 
                                 root=bids_root, 
                                 acquisition=config.eeg_acquisition, 
-                                extension=config
+                                extension=config.eeg_file_extension
                             )
                             run += 1
                             bids_paths[subj][cond][task].append(bids_path)
