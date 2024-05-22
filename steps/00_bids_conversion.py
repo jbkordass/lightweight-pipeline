@@ -42,7 +42,7 @@ class Bids_Conversion(PipelineStep):
                     for task, task_info in cond_info.items():
                         run = 1
                         bids_paths[subj][cond][task] = []
-                        for edf_file in config.eeg_path[subj][cond][task]:
+                        for eeg_file in config.eeg_path[subj][cond][task]:
                             bids_path = BIDSPath(
                                 subject=subj, 
                                 session=cond.replace("-",""), 
@@ -50,18 +50,18 @@ class Bids_Conversion(PipelineStep):
                                 run=run, 
                                 root=bids_root, 
                                 acquisition=config.eeg_acquisition, 
-                                extension=config.eeg_file_extension
+                                extension=os.path.splitext(eeg_file)[1]
                             )
                             run += 1
                             bids_paths[subj][cond][task].append(bids_path)
-                            raw = mne.io.read_raw_edf(config.data_dir + os.path.sep + edf_file)
+                            raw = mne.io.read_raw(config.data_dir + os.path.sep + eeg_file)
                             write_raw_bids(
                                 raw, 
                                 bids_path, 
                                 anonymize=dict(daysback=40000),
                                 overwrite=True
                             )
-                            print("Wrote bids", subj, cond, task, run, edf_file)
+                            print("Wrote bids", subj, cond, task, run, eeg_file)
 
         # check 
         try:
