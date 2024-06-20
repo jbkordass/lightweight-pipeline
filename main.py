@@ -67,6 +67,8 @@ def run_pipeline(step_files, config):
     # counter for executed steps/position in the pipeline
     pos = 1
 
+    data = None
+
     # Loop through the step files and import the modules
     for step_file in step_files:
         # Remove the file extension to get the module name
@@ -84,15 +86,13 @@ def run_pipeline(step_files, config):
             cls for cls in module.__dict__.values()
             if isinstance(cls, type) and issubclass(cls, PipelineStep) and cls != PipelineStep
         ]
-
-        data = None
         
         # Loop through the pipeline elements and invoke them
         for pipeline_step_class in pipeline_step_classes:
             step = pipeline_step_class(config)
             print(step.description)
             try:
-                data = step.process(data)
+                data = step.step(data)
             except PipelineException as e:
                 print(f"Error in {step.description}: {e}")
                 sys.exit(1)

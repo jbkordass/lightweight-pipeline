@@ -41,6 +41,12 @@ class Config:
     # default data directory
     data_dir = os.path.join(os.path.expanduser('~'), 'data')
 
+    # bids_root
+    bids_root = os.path.join(data_dir, 'bids')
+
+    # derivatives root
+    deriv_root = os.path.join(data_dir, 'derivatives')
+
     # default variables bids conversion ...
 
     # path to the eeg data which should be converted to BIDS

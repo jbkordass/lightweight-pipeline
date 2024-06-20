@@ -1,0 +1,105 @@
+from mne_bids import (
+    BIDSPath,
+    read_raw_bids, 
+    write_raw_bids
+)
+
+from mne.io import BaseRaw
+
+import os
+
+class PipelineData():
+    """
+    Data representation of EEG files for the pipeline.
+
+    Contains Path or BidsPath objects of files the pipeline should be applied to.
+    """
+
+    config = None
+    
+    file_paths = None
+    """
+    Dictionary of file paths organized by subject, session, task, and run.
+    """
+
+    def __init__(self, config, from_bids=False):
+        """
+        Parameters
+        ----------
+        config : Config
+            Configuration object.
+        from_bids : bool
+            If True, the data is initialized from BIDS files located in the bids_root directory.
+        """
+        self.config = config
+
+        # use the eeg_path to create a stub of files organized by subject, session, task, and run
+        self.file_paths = config.eeg_path
+
+        if from_bids:
+            self.apply(self.get_bids_path, subjects=config.subjects, save=False)
+    
+    def get_bids_path(self, source_file, subject, session, task, run):
+        """
+        Create a BIDSPath without actually doing sth. with the source file.
+        """
+        bids_path = BIDSPath(
+            subject=subject, 
+            session=session.replace("-",""), 
+            task=task, 
+            run=run, 
+            acquisition=self.config.eeg_acquisition, 
+            root=self.config.bids_root,
+            extension=os.path.splitext(source_file)[1]
+        )
+        return bids_path
+
+    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True):
+        """
+        Apply a function to each data file individually. 
+        Can also save the output to the derivatives directory.
+
+        Parameters
+        ----------
+        function : function
+            Function to apply to the data with the signature (source_file, subject, session, task, run).
+        subjects : list
+            List of subjects to apply the function to.
+        sessions : list
+            List of sessions to apply the function to.
+        tasks : list
+            List of tasks to apply the function to.
+        save : bool
+            Whether to save the output to the derivatives directory (in case function return a raw object).
+        """
+        for subject, subject_info in self.config.eeg_path.items():
+            if subjects and subject not in subjects:
+                continue
+            for session, session_info in subject_info.items():
+                if sessions and session not in sessions:
+                    continue
+                for task, task_info in session_info.items():
+                    if tasks and task not in tasks:
+                        continue
+                    run = 1
+                    for source_file in self.file_paths[subject][session][task]:    
+
+                        answer = function(source_file, subject, session, task, run)
+
+                        # if the function returns a raw object, consider automatic saving
+                        # otherwise assume the answer is a path to the processed file,
+                        # i.e. the source file for the next pipeline step
+                        if not issubclass(type(answer), BaseRaw):
+                            self.file_paths[subject][session][task][run-1] = answer
+                        else:
+                            if save and isinstance(source_file, BIDSPath):
+                                new_bids_path = source_file.copy().update(
+                                    root=self.config.deriv_root, 
+                                    description=function.__name__,
+                                    extension=".fif")
+                                new_bids_path.mkdir()
+                                answer.save(os.path.join(new_bids_path.directory, new_bids_path.basename + new_bids_path.extension), overwrite=True)
+
+                                self.file_paths[subject][session][task][run-1] = new_bids_path
+                        run += 1
+                        

@@ -1,4 +1,5 @@
 from model.pipeline_step import PipelineStep, PipelineException
+from model.pipeline_data import PipelineData
 import os
 import shutil
 
@@ -13,12 +14,12 @@ class Bids_Conversion(PipelineStep):
     def __init__(self, config):
         super().__init__("Preprocessing data", config)
 
-    def process(self, data):
+    def step(self, data):
 
         config = self.config
 
         # There is the root directory for where we will write our data.
-        bids_root = os.path.join(config.data_dir, "ieeg_bids")
+        bids_root = config.bids_root
 
         # Delete to make sure it is empty
         if os.path.exists(bids_root):
@@ -27,46 +28,31 @@ class Bids_Conversion(PipelineStep):
             else:
                 raise PipelineException("Please delete existing bids_root directory by hand (or run with --ignore-warnings).")
 
-        # Create a dictionary to store the BIDS paths
-        bids_paths = {}
+        # this is step 0, so create new data object
+        data = PipelineData(config)
 
-        for subj, subj_info in config.eeg_path.items():
-            # check if config.subjects is empty (i.e. include all subjects) and 
-            # if the current subject is in the list of subjects to include
-            if config.subjects and subj not in config.subjects:
-                print(f"Skipping {subj}")
-            else:
-                bids_paths[subj] = {}
-                for cond, cond_info in subj_info.items():
-                    bids_paths[subj][cond] = {}
-                    for task, task_info in cond_info.items():
-                        run = 1
-                        bids_paths[subj][cond][task] = []
-                        for eeg_file in config.eeg_path[subj][cond][task]:
-                            bids_path = BIDSPath(
-                                subject=subj, 
-                                session=cond.replace("-",""), 
-                                task=task, 
-                                run=run, 
-                                root=bids_root, 
-                                acquisition=config.eeg_acquisition, 
-                                extension=os.path.splitext(eeg_file)[1]
-                            )
-                            run += 1
-                            bids_paths[subj][cond][task].append(bids_path)
-                            raw = mne.io.read_raw(config.data_dir + os.path.sep + eeg_file)
-                            write_raw_bids(
-                                raw, 
-                                bids_path, 
-                                anonymize=dict(daysback=40000),
-                                overwrite=True
-                            )
-                            print("Wrote bids", subj, cond, task, run, eeg_file)
+        # write the data to BIDS
+        data.apply(self.write_to_bids, subjects = config.subjects)                          
 
-        # check 
+        # check directory tree where the files should have been written to
         try:
             print_dir_tree(bids_root)
         except:
             print("Could not print directory tree")
 
-        return bids_paths
+        return data
+    
+    def write_to_bids(self, source_file, subject, session, task, run):
+        config = self.config
+
+        bids_path = PipelineData.get_bids_path(self, source_file, subject, session, task, run)
+        raw = mne.io.read_raw(config.data_dir + os.path.sep + source_file)
+        write_raw_bids(
+            raw, 
+            bids_path, 
+            anonymize=dict(daysback=40000),
+            overwrite=True
+        )
+        print("Wrote bids", subject, session, task, run, source_file)
+
+        return bids_path

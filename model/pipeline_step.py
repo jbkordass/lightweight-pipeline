@@ -26,7 +26,7 @@ class PipelineStep(ABC):
         return response.lower() == "y"
 
     @abstractmethod
-    def process(self, data):
+    def step(self, data):
         pass
 
 

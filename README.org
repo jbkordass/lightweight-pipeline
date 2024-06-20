@@ -1,3 +1,6 @@
+* TODO 
+- use [[https://mne.tools/mne-bids/stable/generated/mne_bids.find_matching_paths.html#mne_bids.find_matching_paths][find_matching_paths]]
+
 * About the Lightweight MNE Pipeline
 As the name suggests - a lightweight, easy to modify pipeline for EEG analysis using MNE python.
 
