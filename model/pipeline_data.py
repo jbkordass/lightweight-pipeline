@@ -1,7 +1,8 @@
 from mne_bids import (
     BIDSPath,
     read_raw_bids, 
-    write_raw_bids
+    write_raw_bids,
+    find_matching_paths
 )
 
 from mne.io import BaseRaw
@@ -22,7 +23,9 @@ class PipelineData():
     Dictionary of file paths organized by subject, session, task, and run.
     """
 
-    def __init__(self, config, from_bids=False):
+    from_deriv = ""
+
+    def __init__(self, config, from_bids=False, from_deriv=""):
         """
         Parameters
         ----------
@@ -30,6 +33,8 @@ class PipelineData():
             Configuration object.
         from_bids : bool
             If True, the data is initialized from BIDS files located in the bids_root directory.
+        from_deriv : str
+            Find bids styled files in the derivatives directory with the description from_deriv. 
         """
         self.config = config
 
@@ -38,6 +43,9 @@ class PipelineData():
 
         if from_bids:
             self.apply(self.get_bids_path, subjects=config.subjects, save=False)
+        if from_deriv:
+            self.from_deriv = from_deriv
+            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, save=False)
     
     def get_bids_path(self, source_file, subject, session, task, run):
         """
@@ -53,6 +61,17 @@ class PipelineData():
             extension=os.path.splitext(source_file)[1]
         )
         return bids_path
+    
+    def get_raw_from_derivatives(self, source_file, subject, session, task, run):
+        match = find_matching_paths(self.config.deriv_root, 
+            subjects=[subject],
+            sessions=[session],
+            tasks=[task],
+            runs=["0" + str(run)],
+            descriptions=self.from_deriv)
+        if len(match) != 1:
+            raise ValueError("Found {} matching files for subject {} session {} task {} run {} description {}".format(len(match), subject, session, task, run, self.from_deriv))
+        return match[0]
 
     def apply(self, function, subjects = None, sessions = None, tasks = None, save=True):
         """
@@ -96,9 +115,11 @@ class PipelineData():
                                 new_bids_path = source_file.copy().update(
                                     root=self.config.deriv_root, 
                                     description=function.__name__,
+                                    suffix="eeg", # not sure if this is optimal, "raw" not permitted though
                                     extension=".fif")
                                 new_bids_path.mkdir()
-                                answer.save(os.path.join(new_bids_path.directory, new_bids_path.basename + new_bids_path.extension), overwrite=True)
+
+                                answer.save(os.path.join(new_bids_path.directory, new_bids_path.basename), overwrite=True)
 
                                 self.file_paths[subject][session][task][run-1] = new_bids_path
                         run += 1
