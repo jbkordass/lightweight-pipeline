@@ -47,6 +47,27 @@ class Bids_Conversion(PipelineStep):
 
         bids_path = PipelineData.get_bids_path(self, source_file, subject, session, task, run)
         raw = mne.io.read_raw(config.data_dir + os.path.sep + source_file)
+
+        # set channel types correctly according to channel names 
+        set_types = {}
+        for channel in raw.ch_names:
+            
+            if "EMG" in channel:
+                t="emg"
+            elif "EKG" in channel:
+                t="ecg"
+            elif "EOG" in channel:
+                t="eog"
+            elif "EEG" in channel:
+                t="eeg"
+            elif "Nase" in channel:
+                t="eeg"
+            else:
+                t="seeg"      
+            set_types[channel] = t
+
+        raw.set_channel_types(set_types)
+
         write_raw_bids(
             raw, 
             bids_path, 
