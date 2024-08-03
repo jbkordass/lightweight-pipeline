@@ -1,5 +1,5 @@
-from model.pipeline_step import PipelineStep, PipelineException
-from model.pipeline_data import PipelineData
+from controller.pipeline_step import PipelineStep, PipelineException
+from controller.pipeline_data import PipelineData
 import os
 import shutil
 

@@ -1,5 +1,5 @@
-from model.pipeline_step import PipelineStep
-from model.pipeline_data import PipelineData
+from controller.pipeline_step import PipelineStep
+from controller.pipeline_data import PipelineData
 
 from mne_bids import (
     BIDSPath

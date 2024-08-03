@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from model.config import Config
+from controller.config import Config
 
 class PipelineStep(ABC):
 

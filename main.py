@@ -1,7 +1,7 @@
 
 import argparse
 import sys
-from model.pipeline_step import PipelineStep, PipelineException
+from controller.pipeline_step import PipelineStep, PipelineException
 import os
 import importlib
 
