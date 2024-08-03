@@ -47,6 +47,12 @@ class PipelineData():
             self.from_deriv = from_deriv
             self.apply(self.get_raw_from_derivatives, subjects=config.subjects, save=False)
     
+    def __str__(self):
+        if not self.file_paths:
+            return "PipelineData object with no files."
+        else:
+            return f"PipelineData object handling the following files: {self.file_paths}"
+
     def get_bids_path(self, source_file, subject, session, task, run):
         """
         Create a BIDSPath without actually doing sth. with the source file.

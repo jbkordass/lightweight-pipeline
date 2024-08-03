@@ -9,6 +9,8 @@ class Config:
     A class representing the configuration settings.
     """
 
+    _config_file_path = None
+
     def __init__(self, config_file_path=None):
         """
         Initialize the Config object.
@@ -18,6 +20,7 @@ class Config:
                 updated based on the variables defined in the file.
         """
         if config_file_path:
+            self._config_file_path = config_file_path
             config_file = os.path.abspath(config_file_path)
             if os.path.isfile(config_file):
                 config_dir = os.path.dirname(config_file)
@@ -67,3 +70,29 @@ class Config:
     # default variables preprocessing ...
 
     # default values analysis ...
+
+    def set_variable_and_write_to_config_file(self, variable, value):
+        """
+        Set a variable in this class and if it does not exist in the the configuration file,
+        then add a line with the specified value.
+
+        Args:
+            variable (str): The name of the variable to update.
+            value (str): The new value of the variable.
+        """
+        if hasattr(self, variable) and getattr(self, variable):
+            print("Error: Cannot overwrite already set variable in configuration file.")
+            return
+        
+        if not self._config_file_path:
+            print("Error: No configuration file specified. Cannot update default configuration file.")
+            return
+
+        setattr(self, variable, value)
+        with open(self._config_file_path, "a") as f:
+            f.write(f"\n{variable} = {value}\n")
+        print(f"Configuration file updated: {self._config_file_path}")
+
+            
+        
+       

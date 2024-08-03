@@ -104,7 +104,7 @@ def run_pipeline(step_files, config):
                 print(f"Error in {step.description}: {e}")
                 sys.exit(1)
 
-    print(f"Pipeline output {data}")
+    print(f"Pipeline output:\n{data}")
 
 def find_all_steps(steps_dir):
     '''
