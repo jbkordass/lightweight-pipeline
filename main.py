@@ -3,9 +3,9 @@ import argparse
 import sys
 from controller.pipeline_step import PipelineStep, PipelineException
 import os
-import importlib
+import importlib.util
 
-from model.config import Config
+from controller.config import Config
 
 
 def main():
@@ -44,7 +44,7 @@ def main():
 
     if options.run:
         # retrieve all steps script file names
-        step_files = find_all_steps()
+        step_files = find_all_steps(config.steps_dir)
         if not options.steps:
             print("Running entire pipeline")
         else:
@@ -54,7 +54,7 @@ def main():
         run_pipeline(step_files, config) 
     elif options.list:
         print("Steps:".center(80, '-'))
-        print("\n".join(find_all_steps()))
+        print("\n".join(find_all_steps(config.steps_dir)))
     else:
         print("No action specified. Add --run or --list (or check --help for more options)")
 
@@ -69,6 +69,9 @@ def run_pipeline(step_files, config):
 
     data = None
 
+    # sys.path.append(config.steps_dir)
+    # steps_dir_name = os.path.basename(config.steps_dir)
+
     # Loop through the step files and import the modules
     for step_file in step_files:
         # Remove the file extension to get the module name
@@ -79,7 +82,11 @@ def run_pipeline(step_files, config):
         pos = pos+1
         
         # Import the module
-        module = importlib.import_module(f'steps.{module_name}')
+        spec = importlib.util.spec_from_file_location(module_name, os.path.join(config.steps_dir, step_file))
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
+        # module = importlib.import_module(f'steps.{module_name}')
         
         # Get the subclasses of PipelineStep defined in the module
         pipeline_step_classes = [
@@ -99,12 +106,10 @@ def run_pipeline(step_files, config):
 
     print(f"Pipeline output {data}")
 
-def find_all_steps():
+def find_all_steps(steps_dir):
     '''
     Function to find all the .py files in the steps directory
     '''
-    # Get the path to the steps directory
-    steps_dir = os.path.join(os.path.dirname(__file__), 'steps')
 
     # Get a list of all python files in the steps directory
     step_files = [f for f in os.listdir(steps_dir) if f.endswith('.py')]

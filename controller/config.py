@@ -35,6 +35,9 @@ class Config:
         else:
             print("Using default configuration file.")
 
+    # steps directory, can also be chosen outside of the default location
+    steps_dir = os.path.join(os.path.dirname(__file__), '../steps')
+
     # auto respond to prompts (if not run interactively, default to "n")
     auto_response = "n"
 
@@ -50,7 +53,8 @@ class Config:
     # default variables bids conversion ...
 
     # path to the eeg data which should be converted to BIDS
-    # structure: subject -> condition -> task -> list of edf files
+    # structure: subject -> condition -> task -> list of eeg files (runs)
+    # file names expected relative to data_dir
     eeg_path = {}
 
     # EEG information that should be included in the BIDS file
