@@ -106,27 +106,45 @@ class PipelineData():
                 for task, task_info in session_info.items():
                     if tasks and task not in tasks:
                         continue
-                    run = 1
-                    for source_file in self.file_paths[subject][session][task]:    
+                    run = 0
+                    for source_file in self.file_paths[subject][session][task]: 
+                        run += 1
+
+                        # check if the functions output should be saved
+                        if save:
+                            output_bids_path = source_file.copy().update(
+                                    root=self.config.deriv_root, 
+                                    description=function.__name__,
+                                    suffix="eeg", # not sure if this is optimal, "raw" not permitted though
+                                    extension=".fif")
+
+                            # and if the file already exists, skip
+                            if not self.config.overwrite and output_bids_path.fpath.exists():
+                                print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
+                                self.file_paths[subject][session][task][run-1] = output_bids_path
+                                continue
 
                         answer = function(source_file, subject, session, task, run)
 
                         # if the function returns a raw object, consider automatic saving
                         # otherwise assume the answer is a path to the processed file,
                         # i.e. the source file for the next pipeline step
-                        if not issubclass(type(answer), BaseRaw):
+                        if issubclass(type(answer), BaseRaw):
+                            if save:
+                                if not isinstance(source_file, BIDSPath):
+                                    # throw exception save requires a BIDSPath object as a sourcefile
+                                    raise ValueError("Saving requires a BIDSPath object as a source file.")
+                                
+                                output_bids_path.mkdir()
+                                answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), overwrite=True)
+
+                                # pass on the output bids path to the next step
+                                self.file_paths[subject][session][task][run-1] = output_bids_path
+                            else:
+                                # simply pass on the raw object to the next step
+                                self.file_paths[subject][session][task][run-1] = answer
+                        else: 
+                            # pass on the path (or whatever it is) to the next step
                             self.file_paths[subject][session][task][run-1] = answer
-                        else:
-                            if save and isinstance(source_file, BIDSPath):
-                                new_bids_path = source_file.copy().update(
-                                    root=self.config.deriv_root, 
-                                    description=function.__name__,
-                                    suffix="eeg", # not sure if this is optimal, "raw" not permitted though
-                                    extension=".fif")
-                                new_bids_path.mkdir()
 
-                                answer.save(os.path.join(new_bids_path.directory, new_bids_path.basename), overwrite=True)
-
-                                self.file_paths[subject][session][task][run-1] = new_bids_path
-                        run += 1
                         

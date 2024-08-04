@@ -10,6 +10,7 @@ class Config:
     """
 
     _config_file_path = None
+    """The path to an external configuration file."""
 
     def __init__(self, config_file_path=None):
         """
@@ -38,39 +39,6 @@ class Config:
         else:
             print("Using default configuration file.")
 
-    # steps directory, can also be chosen outside of the default location
-    steps_dir = os.path.join(os.path.dirname(__file__), '../steps')
-
-    # auto respond to prompts (if not run interactively, default to "n")
-    auto_response = "n"
-
-    # default data directory
-    data_dir = os.path.join(os.path.expanduser('~'), 'data')
-
-    # bids_root
-    bids_root = os.path.join(data_dir, 'bids')
-
-    # derivatives root
-    deriv_root = os.path.join(data_dir, 'derivatives')
-
-    # default variables bids conversion ...
-
-    # path to the eeg data which should be converted to BIDS
-    # structure: subject -> condition -> task -> list of eeg files (runs)
-    # file names expected relative to data_dir
-    eeg_path = {}
-
-    # EEG information that should be included in the BIDS file
-    eeg_acquisition = "eeg"
-
-    # subjects that should be included in the pipeline processing
-    # if empty list, include all subjects
-    subjects = []
-
-    # default variables preprocessing ...
-
-    # default values analysis ...
-
     def set_variable_and_write_to_config_file(self, variable, value):
         """
         Set a variable in this class and if it does not exist in the the configuration file,
@@ -78,7 +46,7 @@ class Config:
 
         Args:
             variable (str): The name of the variable to update.
-            value (str): The new value of the variable.
+            value (mixed): The value to set the variable to.
         """
         if hasattr(self, variable) and getattr(self, variable):
             print("Error: Cannot overwrite already set variable in configuration file.")
@@ -93,6 +61,44 @@ class Config:
             f.write(f"\n{variable} = {value}\n")
         print(f"Configuration file updated: {self._config_file_path}")
 
-            
-        
-       
+    # general default variables
+    # -------------------------
+
+    steps_dir = os.path.join(os.path.dirname(__file__), '../steps')
+    """Steps directory, can also be chosen outside of the default location!"""
+
+    auto_response = "n"
+    """Auto respond to prompts (if not run interactively, default to "n")"""
+
+    data_dir = os.path.join(os.path.expanduser('~'), 'data')
+    """Default data directory"""
+
+    bids_root = os.path.join(data_dir, 'bids')
+    """Root directory for BIDS formatted data"""
+
+    subjects = []
+    """List of subjects to include in the pipeline processing. If empty list, include all subjects"""
+
+    # variables for PipelineData class
+    # --------------------------------
+
+    deriv_root = os.path.join(data_dir, 'derivatives')
+    """Root directory for derivatives"""
+
+    overwrite = False
+    """Overwrite existing derivative files, if False they are skipped"""
+    
+    eeg_path = {}
+    """Path to the eeg data which should be converted to BIDS
+
+    Structure: subject -> condition -> task -> list of eeg files (runs)
+    File names expected relative to data_dir"""
+
+    eeg_acquisition = "eeg"
+    """EEG information that should be included in the BIDS file"""
+
+    # default variables for conversion ...
+
+    # default variables preprocessing ...
+
+    # default values analysis ...
