@@ -2,12 +2,15 @@ from mne_bids import (
     BIDSPath,
     read_raw_bids, 
     write_raw_bids,
-    find_matching_paths
+    find_matching_paths,
+    update_sidecar_json,
 )
+from mne_bids.write import _sidecar_json
 
 from mne.io import BaseRaw
 
 import os
+import time
 
 class PipelineData():
     """
@@ -112,32 +115,79 @@ class PipelineData():
 
                         # check if the functions output should be saved
                         if save:
-                            output_bids_path = source_file.copy().update(
+                            if not isinstance(source_file, BIDSPath):
+                                # throw exception save requires a BIDSPath object as a sourcefile
+                                raise ValueError("Saving requires a BIDSPath object as a source file.")
+                            else:
+                                output_bids_path = source_file.copy().update(
                                     root=self.config.deriv_root, 
                                     description=function.__name__,
+                                    datatype = self.config.bids_datatype,
                                     suffix="eeg", # not sure if this is optimal, "raw" not permitted though
                                     extension=".fif")
-
-                            # and if the file already exists, skip
+                            
+                            # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
                                 print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
                                 self.file_paths[subject][session][task][run-1] = output_bids_path
                                 continue
 
+                        # Start the timer for the step
+                        start_time = time.time()
+
                         answer = function(source_file, subject, session, task, run)
+
+
+                        # Print duration
+                        duration = time.time() - start_time
+                        print(f"Step {function.__name__} took {duration:.2f} seconds.")
+
+                        # check if answer has two varaiables
+                        # the second one would be a dictionary with entries to update in the sidecar json
+                        if isinstance(answer, tuple):
+                            answer, sidecar_info_dict = answer
+                            # print type of 
+                            print(f"Type of answer: {type(sidecar_info_dict)}")
+                        else:
+                            sidecar_info_dict = None
 
                         # if the function returns a raw object, consider automatic saving
                         # otherwise assume the answer is a path to the processed file,
                         # i.e. the source file for the next pipeline step
                         if issubclass(type(answer), BaseRaw):
                             if save:
-                                if not isinstance(source_file, BIDSPath):
-                                    # throw exception save requires a BIDSPath object as a sourcefile
-                                    raise ValueError("Saving requires a BIDSPath object as a source file.")
+                                # we already checked above that the source file is a BIDSPath object
                                 
-                                output_bids_path.mkdir()
-                                answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), overwrite=True)
+                                # unfortunately write_raw_bids does work to save preloaded (modified) raw objects
+                                # to a .fif file → we have to do some bids stuff by hand/internal mne_bids functions
 
+                                output_bids_path.mkdir()
+
+                                answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), overwrite=self.config.overwrite)
+
+                                # create a sidecar json file
+                                sidecar_bids_path = output_bids_path.copy().update(suffix=output_bids_path.datatype, extension=".json")                 
+                                _sidecar_json(
+                                    answer,
+                                    task=output_bids_path.task,
+                                    fname=sidecar_bids_path.fpath,
+                                    manufacturer="n/a",
+                                    datatype=output_bids_path.datatype,
+                                    overwrite=self.config.overwrite,
+                                )
+                                pipeline_step_info = {
+                                    "Pipeline": {
+                                        "Version": self.config.get_version(),
+                                        "LastStep": function.__name__,
+                                        "SourceFile": str(source_file.basename),
+                                        "Duration": duration,
+                                        "NJobs": self.config.n_jobs,
+                                    },
+                                }
+                                if sidecar_info_dict:
+                                    pipeline_step_info = pipeline_step_info | sidecar_info_dict
+                                update_sidecar_json(sidecar_bids_path, pipeline_step_info)
+                                    
                                 # pass on the output bids path to the next step
                                 self.file_paths[subject][session][task][run-1] = output_bids_path
                             else:

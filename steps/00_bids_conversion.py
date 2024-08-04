@@ -32,7 +32,7 @@ class Bids_Conversion(PipelineStep):
         data = PipelineData(config)
 
         # write the data to BIDS
-        data.apply(self.write_to_bids, subjects = config.subjects)                          
+        data.apply(self.write_to_bids, subjects = config.subjects, save = False)                          
 
         # check directory tree where the files should have been written to
         try:

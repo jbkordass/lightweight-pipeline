@@ -39,26 +39,14 @@ class Preprocessing(PipelineStep):
         channels =raw.ch_names
         annotations = raw.annotations
 
-        set_types = {}
-        for channel in channels:
-            
-            if "EMG" in channel:
-                t="emg"
-            elif "EKG" in channel:
-                t="ecg"
-            elif "EOG" in channel:
-                t="eog"
-            elif "EEG" in channel:
-                t="eeg"
-            elif "Nase" in channel:
-                t="eeg"
-            else:
-                t="seeg"      
-            set_types[channel] = t
-
-        raw.set_channel_types(set_types)
-
         # events = mne.events_from_annotations(raw)
         raw = raw.resample(300) #, events=events)
 
-        return raw
+        # write some information to the sidecar json
+        sidecar_updated_info = {
+            "Preprocessing": {
+                "ResampleFreq": 300,
+            }
+        }
+
+        return raw, sidecar_updated_info

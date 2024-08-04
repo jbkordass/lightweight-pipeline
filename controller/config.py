@@ -61,6 +61,21 @@ class Config:
             f.write(f"\n{variable} = {value}\n")
         print(f"Configuration file updated: {self._config_file_path}")
 
+    def get_version(self):
+        """
+        Get the version of the pipeline by getting the last commit hash from the git repository.
+        """
+        try:
+            import subprocess
+            # make sure to execute git commands in the root directory of the repository
+            root_dir = os.path.dirname(os.path.abspath(__file__))
+            git_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root_dir).strip().decode("utf-8")
+            version = f"git-{git_hash}"
+        except:
+            version = "unknown"
+        return version
+
+
     # general default variables
     # -------------------------
 
@@ -96,6 +111,12 @@ class Config:
 
     eeg_acquisition = "eeg"
     """EEG information that should be included in the BIDS file"""
+
+    bids_datatype = "eeg"
+    """BIDS datatype of the data created as derivatives in the pipeline"""
+
+    n_jobs = 1
+    """Number of parallel jobs to run"""
 
     # default variables for conversion ...
 
