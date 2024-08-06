@@ -75,7 +75,7 @@ class PipelineData():
             subjects=[subject],
             sessions=[session],
             tasks=[task],
-            runs=["0" + str(run)],
+            runs=[str(run)],
             descriptions=self.from_deriv)
         if len(match) != 1:
             raise ValueError("Found {} matching files for subject {} session {} task {} run {} description {}".format(len(match), subject, session, task, run, self.from_deriv))
@@ -108,9 +108,7 @@ class PipelineData():
                 for task, task_info in session_info.items():
                     if tasks and task not in tasks:
                         continue
-                    run = 0
-                    for source_file in self.file_paths[subject][session][task]: 
-                        run += 1
+                    for run, source_file in task_info.items(): 
 
                         # check if the functions output should be saved
                         if save:
@@ -128,7 +126,7 @@ class PipelineData():
                             # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
                                 print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
-                                self.file_paths[subject][session][task][run-1] = output_bids_path
+                                self.file_paths[subject][session][task][run] = output_bids_path
                                 continue
 
                         # Start the timer for the step
@@ -188,12 +186,12 @@ class PipelineData():
                                 update_sidecar_json(sidecar_bids_path, pipeline_step_info)
                                     
                                 # pass on the output bids path to the next step
-                                self.file_paths[subject][session][task][run-1] = output_bids_path
+                                self.file_paths[subject][session][task][run] = output_bids_path
                             else:
                                 # simply pass on the raw object to the next step
-                                self.file_paths[subject][session][task][run-1] = answer
+                                self.file_paths[subject][session][task][run] = answer
                         else: 
                             # pass on the path (or whatever it is) to the next step
-                            self.file_paths[subject][session][task][run-1] = answer
+                            self.file_paths[subject][session][task][run] = answer
 
                         
