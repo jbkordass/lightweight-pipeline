@@ -3,7 +3,6 @@ import os
 import sys
 import importlib
 
-
 class Config:
     """
     A class representing the configuration settings.
@@ -38,6 +37,25 @@ class Config:
                 print(f"Error: Configuration file {config_file_path} does not exist; using default configuration.")
         else:
             print("Using default configuration file.")
+
+    def ask(self, message, default = "n"):
+        """
+        Ask to do something, e.g. before potentially deleting data, etc.
+
+        Make sure to specify options, e.g. (y/n), in the message.
+        """
+        if self.auto_response == "off":
+            try:
+                response = input(f"\u26A0 Question: {message}: ")
+            except EOFError:
+                # e.g. if not run interactively
+                raise PipelineException(f"Could not obtain response to question: ({message}). \
+                        Make sure to specify auto_response in the config, or run with --ignore-questions to use the default response")
+            return response
+        elif self.auto_response == "default":
+            return default
+        else:
+            return self.auto_response
 
     def set_variable_and_write_to_config_file(self, variable, value):
         """
@@ -82,8 +100,8 @@ class Config:
     steps_dir = os.path.join(os.path.dirname(__file__), '../steps')
     """Steps directory, can also be chosen outside of the default location!"""
 
-    auto_response = "n"
-    """Auto respond to prompts (if not run interactively, default to "n")"""
+    auto_response = "off"
+    """Decide how questions are answered (off/y/n/default)"""
 
     data_dir = os.path.join(os.path.expanduser('~'), 'data')
     """Default data directory"""

@@ -31,14 +31,14 @@ def main():
     )
 
     parser.add_argument(
-        "--ignore-warnings", action="store_true", help="Ignore warnings, i.e. always respond with yes if there is a prompt"
+        "--ignore-questions", action="store_true", help="Ignore questions, i.e. always respond with default answer to a question."
     )
 
     options = parser.parse_args()
 
     config = Config(options.config)
-    if options.ignore_warnings:
-        config.auto_response = "y"
+    if options.ignore_questions:
+        config.auto_response = "default"
    
     print(config.data_dir)
 

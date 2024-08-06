@@ -60,7 +60,7 @@ class PipelineData():
         """
         Create a BIDSPath without actually doing sth. with the source file.
         """
-        bids_path = BIDSPath(
+        return BIDSPath(
             subject=subject, 
             session=session.replace("-",""), 
             task=task, 
@@ -69,7 +69,6 @@ class PipelineData():
             root=self.config.bids_root,
             extension=os.path.splitext(source_file)[1]
         )
-        return bids_path
     
     def get_raw_from_derivatives(self, source_file, subject, session, task, run):
         match = find_matching_paths(self.config.deriv_root, 

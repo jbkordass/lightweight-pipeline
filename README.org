@@ -18,4 +18,4 @@ Options:
 - =-r=, =--run= Run the pipeline
 - =-c CONFIG=, =--config CONFIG= Path to the configuration file
 - =-l=, =--list= List all steps in the step directory
-- =--ignore-warnings= Ignore warnings, i.e. always respond with yes if there is a prompt
+- =--ignore-questions= Ignore questions, i.e. always respond with default answer
