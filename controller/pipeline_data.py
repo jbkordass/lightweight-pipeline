@@ -77,9 +77,10 @@ class PipelineData():
             sessions=[session],
             tasks=[task],
             runs=["0" + str(run)],
-            descriptions=self.from_deriv)
+            descriptions=self.from_deriv,
+            extensions=".fif")
         if len(match) != 1:
-            raise ValueError("Found {} matching files for subject {} session {} task {} run {} description {}".format(len(match), subject, session, task, run, self.from_deriv))
+            raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
 
     def apply(self, function, subjects = None, sessions = None, tasks = None, save=True):

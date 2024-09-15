@@ -21,7 +21,7 @@ class Preprocessing(PipelineStep):
             print("No data object found, creating new one")
             data = PipelineData(config, from_bids=True)
         
-        data.apply(self.preprocessing)
+        data.apply(self.preprocessing, subjects=config.subjects)
 
         return data
     
@@ -33,20 +33,21 @@ class Preprocessing(PipelineStep):
             source_file = source_file.fpath 
 
         raw = read_raw(source_file)
-        raw_data = raw.get_data()
+        # raw_data = raw.get_data()
 
-        info = raw.info
-        channels =raw.ch_names
-        annotations = raw.annotations
-
+        # info = raw.info
+        # channels =raw.ch_names
+        # annotations = raw.annotations
+        
+        print("Resampling data to 500 Hz")
         # events = mne.events_from_annotations(raw)
-        raw = raw.resample(300) #, events=events)
+        raw = raw.resample(500) #, events=events)
 
         # write some information to the sidecar json
         sidecar_updated_info = {
             "Preprocessing": {
-                "ResampleFreq": 300,
+                "ResampleFreq": 500,
             }
         }
-
+        print("returning raw and sidecar_updated_info")
         return raw, sidecar_updated_info

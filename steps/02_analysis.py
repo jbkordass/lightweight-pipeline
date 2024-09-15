@@ -18,7 +18,7 @@ class Analysis(PipelineStep):
             print("No data object found, try to find in derivatives files after preprocessing")
             data = PipelineData(config, from_deriv="preprocessing")
         
-        data.apply(self.analysis)
+        data.apply(self.analysis, subjects=config.subjects)
 
         return data
     
