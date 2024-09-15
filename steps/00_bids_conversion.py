@@ -23,10 +23,10 @@ class Bids_Conversion(PipelineStep):
 
         # Delete to make sure it is empty
         if os.path.exists(bids_root):
-            if self.ask_permission(f"Delete existing bids_root directory? ({bids_root})"):
+            if config.ask(f"Delete existing bids_root directory? ({bids_root}) (y/n)", default = "n") == "y":
                 shutil.rmtree(bids_root)
             else:
-                raise PipelineException("Please delete existing bids_root directory by hand (or run with --ignore-warnings).")
+                raise PipelineException("Please delete existing bids_root directory by hand (or run with --ignore-questions).")
 
         # this is step 0, so create new data object
         data = PipelineData(config)
