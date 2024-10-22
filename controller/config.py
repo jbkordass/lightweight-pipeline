@@ -112,6 +112,12 @@ class Config:
     subjects = []
     """List of subjects to include in the pipeline processing. If empty list, include all subjects"""
 
+    sessions = []
+    """List of sessions to include in the pipeline processing. If empty list, include all sessions"""
+
+    tasks = []
+    """List of tasks to include in the pipeline processing. If empty list, include all tasks"""
+
     # variables for PipelineData class
     # --------------------------------
 
