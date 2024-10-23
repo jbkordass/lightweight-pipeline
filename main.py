@@ -72,21 +72,34 @@ def run_pipeline(step_files, config):
     # sys.path.append(config.steps_dir)
     # steps_dir_name = os.path.basename(config.steps_dir)
 
+
+    # Set module name to the name of the steps directory
+    module_name = os.path.basename(config.steps_dir)
+
+    # Import the module
+    spec = importlib.util.spec_from_file_location(module_name, 
+                                                    os.path.join(config.steps_dir, "__init__.py"), 
+                                                    submodule_search_locations=[config.steps_dir])
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
     # Loop through the step files and import the modules
     for step_file in step_files:
+
+        # Skip files like __init__.py, etc.
+        if step_file.startswith("__"):
+            continue
+
         # Remove the file extension to get the module name
-        module_name = os.path.splitext(step_file)[0]
+        step_name = os.path.splitext(step_file)[0]
 
         # print the number/name of the step
-        print(f"Step {pos}: {module_name}".center(80, '-'))
+        print(f"Step {pos}: {step_name}".center(80, '-'))
         pos = pos+1
-        
-        # Import the module
-        spec = importlib.util.spec_from_file_location(module_name, os.path.join(config.steps_dir, step_file))
-        module = importlib.util.module_from_spec(spec)
-        sys.modules[module_name] = module
-        spec.loader.exec_module(module)
-        # module = importlib.import_module(f'steps.{module_name}')
+
+        # import the submodule
+        module = importlib.import_module(f'{module_name}.{step_name}')
         
         # Get the subclasses of PipelineStep defined in the module
         pipeline_step_classes = [
@@ -112,7 +125,7 @@ def find_all_steps(steps_dir):
     '''
 
     # Get a list of all python files in the steps directory
-    step_files = [f for f in os.listdir(steps_dir) if f.endswith('.py')]
+    step_files = [f for f in os.listdir(steps_dir) if f.endswith('.py') and not f.startswith("__")]
 
     # Sort the step files alphabetically
     step_files.sort()
