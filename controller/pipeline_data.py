@@ -45,10 +45,10 @@ class PipelineData():
         self.file_paths = config.eeg_path
 
         if from_bids:
-            self.apply(self.get_bids_path, subjects=config.subjects, save=False)
+            self.apply(self.get_bids_path, subjects=config.subjects, save=False, print_duration = False)
         if from_deriv:
             self.from_deriv = from_deriv
-            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, save=False)
+            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, save=False, print_duration = False)
     
     def __str__(self):
         if not self.file_paths:
@@ -82,7 +82,7 @@ class PipelineData():
             raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
 
-    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True):
+    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True):
         """
         Apply a function to each data file individually. 
         Can also save the output to the derivatives directory.
@@ -100,7 +100,7 @@ class PipelineData():
         save : bool
             Whether to save the output to the derivatives directory (in case function return a raw object).
         """
-        for subject, subject_info in self.config.eeg_path.items():
+        for subject, subject_info in self.file_paths.items():
             if subjects and subject not in subjects:
                 continue
             for session, session_info in subject_info.items():
@@ -138,7 +138,8 @@ class PipelineData():
 
                         # Print duration
                         duration = time.time() - start_time
-                        print(f"Step {function.__name__} took {duration:.2f} seconds.")
+                        if print_duration:
+                            print(f"Step {function.__name__} took {duration:.2f} seconds.")
 
                         # check if answer has two varaiables
                         # the second one would be a dictionary with entries to update in the sidecar json
