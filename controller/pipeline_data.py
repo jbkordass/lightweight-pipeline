@@ -45,10 +45,10 @@ class PipelineData():
         self.file_paths = config.eeg_path
 
         if from_bids:
-            self.apply(self.get_bids_path, subjects=config.subjects, save=False, print_duration = False)
+            self.apply(self.get_bids_path, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
         if from_deriv:
             self.from_deriv = from_deriv
-            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, save=False, print_duration = False)
+            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
     
     def __str__(self):
         if not self.file_paths:
@@ -77,7 +77,9 @@ class PipelineData():
             tasks=[task],
             runs=[str(run)],
             descriptions=self.from_deriv,
-            extensions=".fif")
+            datatypes = [self.config.bids_datatype],
+            suffixes=["eeg"], # not sure if this is optimal, "raw" not permitted though
+            extensions=[".fif"])
         if len(match) != 1:
             raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
@@ -100,6 +102,8 @@ class PipelineData():
         save : bool
             Whether to save the output to the derivatives directory (in case function return a raw object).
         """
+        remove_from_file_paths = []
+
         for subject, subject_info in self.file_paths.items():
             if subjects and subject not in subjects:
                 continue
@@ -133,8 +137,13 @@ class PipelineData():
                         # Start the timer for the step
                         start_time = time.time()
 
-                        answer = function(source_file, subject, session, task, run)
-
+                        try:
+                            answer = function(source_file, subject, session, task, run)
+                        except Exception as e:
+                            print(f"Something went wrong with {function.__name__} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
+                            print(e)
+                            remove_from_file_paths.append((subject, session, task, run))
+                            continue
 
                         # Print duration
                         duration = time.time() - start_time
@@ -195,5 +204,12 @@ class PipelineData():
                         else: 
                             # pass on the path (or whatever it is) to the next step
                             self.file_paths[subject][session][task][run] = answer
+        
+        # remove files that could not be processed for the next step
+        for subject, session, task, run in remove_from_file_paths:
+            try:
+                del self.file_paths[subject][session][task][run]
+            except KeyError:
+                pass
 
                         
