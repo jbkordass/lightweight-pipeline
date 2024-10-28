@@ -12,6 +12,8 @@ from mne.io import BaseRaw
 import os
 import time
 
+import traceback
+
 class PipelineData():
     """
     Data representation of EEG files for the pipeline.
@@ -140,8 +142,8 @@ class PipelineData():
                         try:
                             answer = function(source_file, subject, session, task, run)
                         except Exception as e:
-                            print(f"Something went wrong with {function.__name__} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
-                            print(e)
+                            print(f"\u26A0 Something went wrong with {function.__name__} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
+                            print(traceback.format_exc())
                             remove_from_file_paths.append((subject, session, task, run))
                             continue
 
