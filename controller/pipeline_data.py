@@ -6,8 +6,10 @@ from mne_bids import (
     update_sidecar_json,
 )
 from mne_bids.write import _sidecar_json
+from mne_bids.utils import _write_json
 
 from mne.io import BaseRaw
+from mne.annotations import Annotations
 
 import os
 import time
@@ -86,7 +88,7 @@ class PipelineData():
             raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
 
-    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True):
+    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg"):
         """
         Apply a function to each data file individually. 
         Can also save the output to the derivatives directory.
@@ -102,7 +104,15 @@ class PipelineData():
         tasks : list
             List of tasks to apply the function to.
         save : bool
-            Whether to save the output to the derivatives directory (in case function return a raw object).
+            Whether to save the output to the derivatives directory (in case function return a raw object, i.e. subclass of mne.io.BaseRaw or 
+            an mne.Annotations instance).
+        print_duration : bool
+            Whether to print the duration of the function.
+        suffix : str
+            Suffix of the output Bidspath. Default is "eeg". For Anntations one could use "markers".
+            Only certain values allowed, cf. MNE-BIDS documentation (https://mne.tools/mne-bids/stable/generated/mne_bids.BIDSPath.html#mne_bids.BIDSPath).
+            If suffix is not in ["meg", "eeg", "ieeg"], the output file path will not be updated in the file_paths dictionary.
+            Annotations are saved, but not directly passed on to the next step.
         """
         remove_from_file_paths = []
 
@@ -127,13 +137,15 @@ class PipelineData():
                                     root=self.config.deriv_root, 
                                     description=function.__name__,
                                     datatype = self.config.bids_datatype,
-                                    suffix="eeg", # not sure if this is optimal, "raw" not permitted though
+                                    suffix=suffix, # not sure if this is optimal, "raw/annot" not permitted though
                                     extension=".fif")
                             
                             # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
                                 print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
-                                self.file_paths[subject][session][task][run] = output_bids_path
+                                
+                                if suffix in ["meg", "eeg", "ieeg"]:
+                                    self.file_paths[subject][session][task][run] = output_bids_path
                                 continue
 
                         # Start the timer for the step
@@ -164,7 +176,7 @@ class PipelineData():
                         # if the function returns a raw object, consider automatic saving
                         # otherwise assume the answer is a path to the processed file,
                         # i.e. the source file for the next pipeline step
-                        if issubclass(type(answer), BaseRaw):
+                        if issubclass(type(answer), BaseRaw) or isinstance(answer, Annotations):
                             if save:
                                 # we already checked above that the source file is a BIDSPath object
                                 
@@ -176,15 +188,19 @@ class PipelineData():
                                 answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), overwrite=self.config.overwrite)
 
                                 # create a sidecar json file
-                                sidecar_bids_path = output_bids_path.copy().update(suffix=output_bids_path.datatype, extension=".json")                 
-                                _sidecar_json(
-                                    answer,
-                                    task=output_bids_path.task,
-                                    fname=sidecar_bids_path.fpath,
-                                    manufacturer="n/a",
-                                    datatype=output_bids_path.datatype,
-                                    overwrite=self.config.overwrite,
-                                )
+                                sidecar_bids_path = output_bids_path.copy().update(extension=".json")
+                                if suffix in ["meg", "eeg", "ieeg"]:              
+                                    _sidecar_json(
+                                        answer,
+                                        task=output_bids_path.task,
+                                        fname=sidecar_bids_path.fpath,
+                                        manufacturer="n/a",
+                                        datatype=output_bids_path.datatype,
+                                        overwrite=self.config.overwrite,
+                                    )
+                                else:
+                                    # write an empty json file
+                                    _write_json(sidecar_bids_path.fpath, {}, overwrite=self.config.overwrite)
                                 pipeline_step_info = {
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
@@ -198,8 +214,10 @@ class PipelineData():
                                     pipeline_step_info = pipeline_step_info | sidecar_info_dict
                                 update_sidecar_json(sidecar_bids_path, pipeline_step_info)
                                     
-                                # pass on the output bids path to the next step
-                                self.file_paths[subject][session][task][run] = output_bids_path
+                                # only update file path, if the step produced eeg, meg, or ieeg data (not markers, etc.)
+                                if suffix in ["meg", "eeg", "ieeg"]:
+                                    # pass on the output bids path to the next step
+                                    self.file_paths[subject][session][task][run] = output_bids_path
                             else:
                                 # simply pass on the raw object to the next step
                                 self.file_paths[subject][session][task][run] = answer
