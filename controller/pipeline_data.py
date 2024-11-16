@@ -88,7 +88,7 @@ class PipelineData():
             raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
 
-    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg"):
+    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = ""):
         """
         Apply a function to each data file individually. 
         Can also save the output to the derivatives directory.
@@ -113,8 +113,12 @@ class PipelineData():
             Only certain values allowed, cf. MNE-BIDS documentation (https://mne.tools/mne-bids/stable/generated/mne_bids.BIDSPath.html#mne_bids.BIDSPath).
             If suffix is not in ["meg", "eeg", "ieeg"], the output file path will not be updated in the file_paths dictionary.
             Annotations are saved, but not directly passed on to the next step.
+        description : str
+            Description of the output Bidspath for the derivative, if none specified use the function name instead.
         """
         remove_from_file_paths = []
+
+        step_description = function.__name__ if not description else description
 
         for subject, subject_info in self.file_paths.items():
             if subjects and subject not in subjects:
@@ -135,7 +139,7 @@ class PipelineData():
                             else:
                                 output_bids_path = source_file.copy().update(
                                     root=self.config.deriv_root, 
-                                    description=function.__name__,
+                                    description=step_description,
                                     datatype = self.config.bids_datatype,
                                     suffix=suffix, # not sure if this is optimal, "raw/annot" not permitted though
                                     extension=".fif")
@@ -154,7 +158,7 @@ class PipelineData():
                         try:
                             answer = function(source_file, subject, session, task, run)
                         except Exception as e:
-                            print(f"\u26A0 Something went wrong with {function.__name__} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
+                            print(f"\u26A0 Something went wrong with {step_description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
                             print(traceback.format_exc())
                             remove_from_file_paths.append((subject, session, task, run))
                             continue
@@ -162,7 +166,7 @@ class PipelineData():
                         # Print duration
                         duration = time.time() - start_time
                         if print_duration:
-                            print(f"Step {function.__name__} took {duration:.2f} seconds.")
+                            print(f"Step {step_description} took {duration:.2f} seconds.")
 
                         # check if answer has two varaiables
                         # the second one would be a dictionary with entries to update in the sidecar json
@@ -204,7 +208,7 @@ class PipelineData():
                                 pipeline_step_info = {
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
-                                        "LastStep": function.__name__,
+                                        "LastStep": step_description,
                                         "SourceFile": str(source_file.basename),
                                         "Duration": duration,
                                         "NJobs": self.config.n_jobs,
