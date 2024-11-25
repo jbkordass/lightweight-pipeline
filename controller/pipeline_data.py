@@ -9,6 +9,7 @@ from mne_bids.write import _sidecar_json
 from mne_bids.utils import _write_json
 
 from mne.io import BaseRaw
+from mne.epochs import BaseEpochs
 from mne.annotations import Annotations
 
 import os
@@ -180,7 +181,7 @@ class PipelineData():
                         # if the function returns a raw object, consider automatic saving
                         # otherwise assume the answer is a path to the processed file,
                         # i.e. the source file for the next pipeline step
-                        if issubclass(type(answer), BaseRaw) or isinstance(answer, Annotations):
+                        if issubclass(type(answer), BaseRaw) or issubclass(type(answer), BaseEpochs) or isinstance(answer, Annotations):
                             if save:
                                 # we already checked above that the source file is a BIDSPath object
                                 
