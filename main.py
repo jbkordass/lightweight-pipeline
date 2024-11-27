@@ -40,7 +40,7 @@ def main():
     )
 
     parser.add_argument(
-        "--store-report", action="store_true", help="Store the report in a file in the derivatives dir."
+        "--store-report", action="store_true", help="Store the report tables in .tsv files in the derivatives dir (pipeline_report_bids_dir.tsv, pipeline_report_deriv_dir.tsv)."
     )
 
     parser.add_argument(
@@ -68,7 +68,7 @@ def main():
     elif options.list:
         print("Steps:".center(80, '-'))
         print("\n".join(find_all_steps(config.steps_dir)))
-    elif options.report:
+    elif options.report or options.store_report or options.full_report:
         print("Generating report")
         generate_report(config, options.store_report, options.full_report)
     else:

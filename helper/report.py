@@ -39,17 +39,37 @@ def generate_report(config, store_report = False, full_report = False):
     print(df_deriv_report)
     
     if store_report:
-        df_deriv_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_bids_dir.csv'))
-        df_bids_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_deriv_dir.csv'))
+        df_deriv_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_bids_dir.tsv'), sep='\t')
+        df_bids_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_deriv_dir.tsv'), sep='\t')
 
     # if ipython is available, use display to show the dataframes
     try:
         from IPython.display import display
-        display(df_bids_report)
-        display(df_deriv_report)
+
+        df_styler = df_bids_report.style.set_caption("Bids directory contents overview")
+        display(df_styler)
+
+        df_styler = df_deriv_report.style.set_caption("Derivatives directory contents overview")
+
+        # find columns after the "runs" column, if there are any
+        derivatives_columns = df_deriv_report.columns[df_deriv_report.columns.get_loc('runs')+1:]
+        dc_subset = pd.IndexSlice[:, derivatives_columns]
+
+        if len(derivatives_columns) > 0:
+            df_styler = df_styler.map(_highlight_derivatives, subset=dc_subset)
+        display(df_styler)
+
     except ImportError:
         print("Error getting ipython")
         pass
+
+# display the data frame with a green tick mark if the value is 1 and a red cross if the value is 0
+def _highlight_derivatives(val):
+    color = {
+        False: 'red', # no file
+        True: 'yellowgreen', # there is a file
+    }
+    return f'background-color: {color[val]}; color: white'
 
 
 def _df_report_for_directory(config, root_dir, full_report = False):
