@@ -190,7 +190,13 @@ class PipelineData():
 
                                 output_bids_path.mkdir()
 
-                                answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), overwrite=self.config.overwrite)
+                                if isinstance(answer, Annotations):
+                                    answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename),
+                                                overwrite=self.config.overwrite)
+                                else:
+                                    answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), 
+                                                split_naming='bids',
+                                                overwrite=self.config.overwrite)
 
                                 # create a sidecar json file
                                 sidecar_bids_path = output_bids_path.copy().update(extension=".json")
