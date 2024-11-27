@@ -7,6 +7,7 @@ import importlib.util
 
 from controller.config import Config
 
+from helper.report import generate_report
 
 def main():
 
@@ -34,6 +35,18 @@ def main():
         "--ignore-questions", action="store_true", help="Ignore questions, i.e. always respond with default answer to a question."
     )
 
+    parser.add_argument(
+        "--report", action="store_true", help="Generate a report of the pipeline's derivatives."
+    )
+
+    parser.add_argument(
+        "--store-report", action="store_true", help="Store the report in a file in the derivatives dir."
+    )
+
+    parser.add_argument(
+        "--full-report", action="store_true", help="Generate a full report (do not limit to subj, ses, task specification in the config) of the pipeline's derivatives."
+    )
+
     options = parser.parse_args()
 
     config = Config(options.config)
@@ -55,8 +68,12 @@ def main():
     elif options.list:
         print("Steps:".center(80, '-'))
         print("\n".join(find_all_steps(config.steps_dir)))
+    elif options.report:
+        print("Generating report")
+        generate_report(config, options.store_report, options.full_report)
     else:
         print("No action specified. Add --run or --list (or check --help for more options)")
+
 
 def run_pipeline(step_files, config):
     '''
