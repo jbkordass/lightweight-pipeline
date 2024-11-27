@@ -9,7 +9,7 @@ class PipelineStep(ABC):
             self.short_id = short_id
         else:
             # cook up sth by using first letters in description
-            ''.join([w[0].lower() for w in description.split()])
+            self.short_id = ''.join([w[0].lower() for w in self.__class__.__name__.split("_")])
         self._config = config
 
     @property

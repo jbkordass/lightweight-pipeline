@@ -7,7 +7,7 @@ import importlib.util
 
 from controller.config import Config
 
-from helper.report import generate_report
+from helper.report import generate_report, find_steps_derivatives
 
 def main():
 
@@ -29,6 +29,10 @@ def main():
 
     parser.add_argument(
         "-l", "--list", action="store_true", help="List all steps in the step directory"
+    )
+
+    parser.add_argument(
+        "--list-derivatives", action="store_true", help="List methods in steps that could be used to produce derivatives."
     )
 
     parser.add_argument(
@@ -68,6 +72,9 @@ def main():
     elif options.list:
         print("Steps:".center(80, '-'))
         print("\n".join(find_all_steps(config.steps_dir)))
+    elif options.list_derivatives:
+        print("Derivatives:".center(80, '-'))
+        find_steps_derivatives(find_all_steps(config.steps_dir), config)
     elif options.report or options.store_report or options.full_report:
         print("Generating report")
         generate_report(config, options.store_report, options.full_report)

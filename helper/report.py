@@ -8,6 +8,12 @@ from mne_bids import (
     get_entity_vals
 )
 
+import importlib
+import sys
+import inspect
+from controller.pipeline_step import PipelineStep
+
+
 def generate_report(config, store_report = False, full_report = False):
     """
     Create a report of the pipeline's derivatives
@@ -63,11 +69,10 @@ def generate_report(config, store_report = False, full_report = False):
         print("Error getting ipython")
         pass
 
-# display the data frame with a green tick mark if the value is 1 and a red cross if the value is 0
 def _highlight_derivatives(val):
     color = {
-        False: 'red', # no file
-        True: 'yellowgreen', # there is a file
+        False: 'red', 
+        True: 'yellowgreen', 
     }
     return f'background-color: {color[val]}; color: white'
 
@@ -127,3 +132,52 @@ def _df_report_for_directory(config, root_dir, full_report = False):
     df = df[df.runs != '']
 
     return df
+
+def find_steps_derivatives(step_files, config):
+    """
+    Find possible derivatives from pipeline steps using inspect.
+    Import the pipeline steps and find methods with signature "(source_file, subject, session, task, run)", this takes a while..
+    """
+
+    # Set module name to the name of the steps directory
+    module_name = os.path.basename(config.steps_dir)
+
+    # Import the module
+    spec = importlib.util.spec_from_file_location(module_name, 
+                                                    os.path.join(config.steps_dir, "__init__.py"), 
+                                                    submodule_search_locations=[config.steps_dir])
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
+    # Loop through the step files and import the modules
+    for step_file in step_files:
+
+        # Skip files like __init__.py, etc.
+        if step_file.startswith("__"):
+            continue
+
+        # Remove the file extension to get the module name
+        step_name = os.path.splitext(step_file)[0]
+
+        # import the submodule
+        module = importlib.import_module(f'{module_name}.{step_name}')
+        
+        # Get the subclasses of PipelineStep defined in the module
+        pipeline_step_classes = [
+            cls for cls in module.__dict__.values()
+            if isinstance(cls, type) and issubclass(cls, PipelineStep) and cls != PipelineStep
+        ]
+        
+        # Loop through the pipeline elements and invoke them
+        for pipeline_step_class in pipeline_step_classes:
+            step = pipeline_step_class(config)
+
+            print(f"{pipeline_step_class.__module__} {pipeline_step_class.__name__}: {step.description}")
+
+            # use inspect to find methods in step of signature (self, source_file, subject, session, task, run)
+            methods = inspect.getmembers(step, predicate=inspect.ismethod)
+            for method in methods:
+                # print signature of method
+                if str(inspect.signature(method[1])) == "(source_file, subject, session, task, run)":
+                    print(f"\t↳ {step.short_id}{method[0].capitalize()}")

@@ -1,3 +1,5 @@
+from controller.pipeline_step import PipelineStep
+
 from mne_bids import (
     BIDSPath,
     read_raw_bids, 
@@ -14,6 +16,8 @@ from mne.annotations import Annotations
 
 import os
 import time
+
+import sys
 
 import traceback
 
@@ -119,7 +123,13 @@ class PipelineData():
         """
         remove_from_file_paths = []
 
-        step_description = function.__name__ if not description else description
+        if not description:
+            # bit of a hack, but somehow obtain the class the function is defined in
+            step_class = vars(sys.modules[function.__module__])[function.__qualname__.split('.')[0]]
+            if isinstance(step_class, PipelineStep):
+                description = step_class.description + function.__name__
+            else:
+                description = function.__name__
 
         for subject, subject_info in self.file_paths.items():
             if subjects and subject not in subjects:
@@ -140,7 +150,7 @@ class PipelineData():
                             else:
                                 output_bids_path = source_file.copy().update(
                                     root=self.config.deriv_root, 
-                                    description=step_description,
+                                    description=description,
                                     datatype = self.config.bids_datatype,
                                     suffix=suffix, # not sure if this is optimal, "raw/annot" not permitted though
                                     extension=".fif")
@@ -159,7 +169,7 @@ class PipelineData():
                         try:
                             answer = function(source_file, subject, session, task, run)
                         except Exception as e:
-                            print(f"\u26A0 Something went wrong with {step_description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
+                            print(f"\u26A0 Something went wrong with {description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
                             print(traceback.format_exc())
                             remove_from_file_paths.append((subject, session, task, run))
                             continue
@@ -167,7 +177,7 @@ class PipelineData():
                         # Print duration
                         duration = time.time() - start_time
                         if print_duration:
-                            print(f"Step {step_description} took {duration:.2f} seconds.")
+                            print(f"Step {description} took {duration:.2f} seconds.")
 
                         # check if answer has two varaiables
                         # the second one would be a dictionary with entries to update in the sidecar json
@@ -215,7 +225,7 @@ class PipelineData():
                                 pipeline_step_info = {
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
-                                        "LastStep": step_description,
+                                        "LastStep": description,
                                         "SourceFile": str(source_file.basename),
                                         "Duration": duration,
                                         "NJobs": self.config.n_jobs,
