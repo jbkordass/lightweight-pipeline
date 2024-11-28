@@ -26,7 +26,9 @@ def generate_report(config, store_report = False, full_report = False):
     
     print("Bids".center(80, '-'))
     
-    print_dir_tree(config.bids_root, max_depth=4)
+    if full_report:
+        print_dir_tree(config.bids_root, max_depth=4)
+        print("".center(80, '-'))
 
     df_bids_report = _df_report_for_directory(config, config.bids_root, full_report)
     print(df_bids_report)
@@ -38,8 +40,10 @@ def generate_report(config, store_report = False, full_report = False):
         return
     
     print("Derivatives".center(80, '-'))
-
-    print_dir_tree(config.deriv_root, max_depth=4)
+    
+    if full_report:
+        print_dir_tree(config.deriv_root, max_depth=4)
+        print("".center(80, '-'))
 
     df_deriv_report = _df_report_for_directory(config, config.deriv_root, full_report)
     print(df_deriv_report)
@@ -80,9 +84,6 @@ def _highlight_derivatives(val):
 def _df_report_for_directory(config, root_dir, full_report = False):
 
     root_path = BIDSPath(root=root_dir)
-
-    # print line
-    print("-".center(80, '-'))
 
     # find all subjects, sessions, tasks, runs in the derivatives directory
     subjects = get_entity_vals(root_dir, 'subject')

@@ -76,7 +76,7 @@ def main():
         print("Derivatives:".center(80, '-'))
         find_steps_derivatives(find_all_steps(config.steps_dir), config)
     elif options.report or options.store_report or options.full_report:
-        print("Generating report")
+        print(f"Generating {'limited ' if not options.full_report else 'full '}report")
         generate_report(config, options.store_report, options.full_report)
     else:
         print("No action specified. Add --run or --list (or check --help for more options)")
