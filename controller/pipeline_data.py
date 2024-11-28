@@ -6,6 +6,7 @@ from mne_bids import (
     write_raw_bids,
     find_matching_paths,
     update_sidecar_json,
+    get_entity_vals
 )
 from mne_bids.write import _sidecar_json
 from mne_bids.utils import _write_json
@@ -37,7 +38,7 @@ class PipelineData():
 
     from_deriv = ""
 
-    def __init__(self, config, from_bids=False, from_deriv=""):
+    def __init__(self, config, from_bids=False, from_deriv="", from_deriv_dir=""):
         """
         Parameters
         ----------
@@ -47,6 +48,9 @@ class PipelineData():
             If True, the data is initialized from BIDS files located in the bids_root directory.
         from_deriv : str
             Find bids styled files in the derivatives directory with the description from_deriv. 
+        from_deriv_dir : str
+            Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
+            Requires bids styled files in the derivatives directory.
         """
         self.config = config
 
@@ -55,15 +59,27 @@ class PipelineData():
 
         if from_bids:
             self.apply(self.get_bids_path, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
-        if from_deriv:
+        elif from_deriv:
             self.from_deriv = from_deriv
             self.apply(self.get_raw_from_derivatives, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
-    
+        elif from_deriv_dir:
+            self.get_raw_from_derivatives_dir(from_deriv_dir)
+
     def __str__(self):
         if not self.file_paths:
             return "PipelineData object with no files."
         else:
-            return f"PipelineData object handling the following files: {self.file_paths}"
+            # print the file_paths variable of the object in a tree format
+            tree = ""
+            for subject, subject_info in self.file_paths.items():
+                tree += f"| Subject {subject}\n"
+                for session, session_info in subject_info.items():
+                    tree += f"|--- Session {session}\n"
+                    for task, task_info in session_info.items():
+                        tree += f"|----- Task {task}\n"
+                        for run, source_file in task_info.items():
+                            tree += f"|------- Run {run}: {str(source_file)}\n"
+            return f"PipelineData object handling the following files:\n{tree}"
 
     def get_bids_path(self, source_file, subject, session, task, run):
         """
@@ -93,6 +109,46 @@ class PipelineData():
             raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
         return match[0]
 
+    def get_raw_from_derivatives_dir(self, derivative_description):
+        """
+        Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
+        Requires bids styled files in the derivatives directory.
+        """
+        config = self.config
+        
+        root_dir = config.deriv_root
+        root_path = BIDSPath(root=root_dir)
+
+        # find all subjects, sessions, tasks, runs in the derivatives directory
+        subjects = get_entity_vals(root_dir, 'subject')
+        sessions = get_entity_vals(root_dir, 'session')
+        tasks = get_entity_vals(root_dir, 'task')
+
+        # intersect with subjects, sessions, tasks from config
+        if config.subjects:
+            subjects = list(set(subjects) & set(config.subjects))
+        if config.sessions:
+            sessions = list(set(sessions) & set(config.sessions))
+        if config.tasks:
+            tasks = list(set(tasks) & set(config.tasks))
+
+        # create a dictionary with file paths organized by subject, session, task, and run
+        constructed_file_paths = {}
+        for subject in subjects:
+            for session in sessions:
+                for task in tasks:
+                    files = root_path.copy().update(subject=subject, session=session, task=task, description=derivative_description).match()
+                    for file in files:
+                        if subject not in constructed_file_paths.keys():
+                            constructed_file_paths[subject] = {}
+                        if session not in constructed_file_paths[subject].keys():
+                            constructed_file_paths[subject][session] = {}
+                        if task not in constructed_file_paths[subject][session].keys():
+                            constructed_file_paths[subject][session][task] = {}
+                        constructed_file_paths[subject][session][task][file.run] = file
+
+        self.file_paths = constructed_file_paths
+
     def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = ""):
         """
         Apply a function to each data file individually. 
@@ -119,7 +175,7 @@ class PipelineData():
             If suffix is not in ["meg", "eeg", "ieeg"], the output file path will not be updated in the file_paths dictionary.
             Annotations are saved, but not directly passed on to the next step.
         description : str
-            Description of the output Bidspath for the derivative, if none specified use the function name instead.
+            Description of the output Bidspath for the derivative, if none specified use PipelineStep.short_id + function name instead.
         """
         remove_from_file_paths = []
 
