@@ -5,11 +5,21 @@ class PipelineStep(ABC):
 
     def __init__(self, description, config, short_id = ""):
         self.description = description
-        if short_id:
-            self.short_id = short_id
-        else:
-            # cook up sth by using first letters in description
-            self.short_id = ''.join([w[0].lower() for w in self.__class__.__name__.split("_")])
+
+        if not short_id:
+            short_id = ""
+            # get the module name and cook up some naming
+            module_name = self.__class__.__module__.split(".")[-1].split("_")
+            for i, word in enumerate(module_name):
+                # check if word is just numbers
+                if word.isdigit():
+                    short_id += word
+                else:
+                    # if we do not get enough numbers in the beginning, use first letters
+                    if len(short_id) < 2:
+                        short_id += word[0].lower()
+        self.short_id = short_id
+
         self._config = config
 
     @property
