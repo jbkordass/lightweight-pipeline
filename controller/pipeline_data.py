@@ -57,6 +57,17 @@ class PipelineData():
         # use the eeg_path to create a stub of files organized by subject, session, task, and run
         self.file_paths = config.eeg_path
 
+        # filter the file_paths dictionary by the subjects, sessions, and tasks specified in the config
+        if config.subjects:
+            self.file_paths = {k: v for k, v in self.file_paths.items() if k in config.subjects}
+        if config.sessions:
+            for subject, sessions in self.file_paths.items():
+                self.file_paths[subject] = {k: v for k, v in sessions.items() if k in config.sessions}
+        if config.tasks:
+            for subject, sessions in self.file_paths.items():
+                for session, tasks in sessions.items():
+                    self.file_paths[subject][session] = {k: v for k, v in tasks.items() if k in config.tasks}
+
         if from_bids:
             self.apply(self.get_bids_path_from_bids_root, save=False, print_duration = False)
         elif from_deriv:
