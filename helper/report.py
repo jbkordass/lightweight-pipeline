@@ -137,7 +137,7 @@ def _df_report_for_directory(config, root_dir, full_report = False):
 def find_steps_derivatives(step_files, config):
     """
     Find possible derivatives from pipeline steps using inspect.
-    Import the pipeline steps and find methods with signature "(source_file, subject, session, task, run)", this takes a while..
+    Import the pipeline steps and find methods with signature "(source, bids_path)", this takes a while..
     """
 
     # Set module name to the name of the steps directory
@@ -180,5 +180,5 @@ def find_steps_derivatives(step_files, config):
             methods = inspect.getmembers(step, predicate=inspect.ismethod)
             for method in methods:
                 # print signature of method
-                if str(inspect.signature(method[1])) == "(source_file, subject, session, task, run)":
+                if str(inspect.signature(method[1])) == "(source, bids_path)":
                     print(f"\t↳ {step.short_id}{method[0].capitalize()}")

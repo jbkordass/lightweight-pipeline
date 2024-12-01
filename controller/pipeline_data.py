@@ -58,10 +58,10 @@ class PipelineData():
         self.file_paths = config.eeg_path
 
         if from_bids:
-            self.apply(self.get_bids_path, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
+            self.apply(self.get_bids_path_from_bids_root, save=False, print_duration = False)
         elif from_deriv:
             self.from_deriv = from_deriv
-            self.apply(self.get_raw_from_derivatives, subjects=config.subjects, sessions=config.sessions, tasks=config.tasks, save=False, print_duration = False)
+            self.apply(self.get_raw_from_derivatives, save=False, print_duration = False)
         elif from_deriv_dir:
             self.get_raw_from_derivatives_dir(from_deriv_dir)
 
@@ -81,10 +81,14 @@ class PipelineData():
                             tree += f"|------- Run {run}: {str(source_file)}\n"
             return f"PipelineData object handling the following files:\n{tree}"
 
-    def get_bids_path(self, source_file, subject, session, task, run):
+    def get_bids_path(self, source, subject, session, task, run):
         """
         Create a BIDSPath without actually doing sth. with the source file.
         """
+        if isinstance(source, str):
+            extension = os.path.splitext(source)[1]
+        else:
+            extension = ".fif"
         return BIDSPath(
             subject=subject, 
             session=session.replace("-",""), 
@@ -92,21 +96,31 @@ class PipelineData():
             run=run, 
             acquisition=self.config.eeg_acquisition, 
             root=self.config.bids_root,
-            extension=os.path.splitext(source_file)[1]
+            extension=extension
         )
+
+    def get_bids_path_from_bids_root(self, source, bids_path):
+        bids_path.update(
+            root=self.config.bids_root,
+            description=None,
+            extension=self.config.bids_extension
+            )
+        if not bids_path.match():
+            raise ValueError(f"File {bids_path.fpath} not found in BIDS directory.")
+        return bids_path
     
-    def get_raw_from_derivatives(self, source_file, subject, session, task, run):
+    def get_raw_from_derivatives(self, source, bids_path):
         match = find_matching_paths(self.config.deriv_root, 
-            subjects=[subject],
-            sessions=[session],
-            tasks=[task],
-            runs=[str(run)],
+            subjects=[bids_path.subject],
+            sessions=[bids_path.session],
+            tasks=[bids_path.task],
+            runs=[str(bids_path.run)],
             descriptions=self.from_deriv,
             datatypes = [self.config.bids_datatype],
             suffixes=["eeg"], # not sure if this is optimal, "raw" not permitted though
             extensions=[".fif"])
         if len(match) != 1:
-            raise ValueError(f"Found {len(match)} matching files for subject {subject} session {session} task {task} run {run} description {self.from_deriv}")
+            raise ValueError(f"Found {len(match)} matching files for subject {bids_path.subject} session {bids_path.session} task {bids_path.task} run {bids_path.run} description {self.from_deriv}")
         return match[0]
 
     def get_raw_from_derivatives_dir(self, derivative_description):
@@ -149,7 +163,7 @@ class PipelineData():
 
         self.file_paths = constructed_file_paths
 
-    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = ""):
+    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = "", bids_root = None):
         """
         Apply a function to each data file individually. 
         Can also save the output to the derivatives directory.
@@ -157,7 +171,7 @@ class PipelineData():
         Parameters
         ----------
         function : function
-            Function to apply to the data with the signature (source_file, subject, session, task, run).
+            Function to apply to the data with the signature (source, bids_path).
         subjects : list
             List of subjects to apply the function to.
         sessions : list
@@ -176,6 +190,8 @@ class PipelineData():
             Annotations are saved, but not directly passed on to the next step.
         description : str
             Description of the output Bidspath for the derivative, if none specified use PipelineStep.short_id + function name instead.
+        bids_root : str
+            Root directory for the destination. If None, the bids derivatives directory from the config is used.
         """
         remove_from_file_paths = []
 
@@ -186,6 +202,19 @@ class PipelineData():
                 description = step_class.description + function.__name__
             else:
                 description = function.__name__
+            description = description.replace("_", "")
+
+
+        # if no subjects, sessions, or tasks are specified, use the ones from the config
+        if not subjects:
+            subjects = self.config.subjects
+        if not sessions:
+            sessions = self.config.sessions
+        if not tasks:
+            tasks = self.config.tasks
+
+        if not bids_root:
+            bids_root = self.config.deriv_root
 
         for subject, subject_info in self.file_paths.items():
             if subjects and subject not in subjects:
@@ -196,21 +225,22 @@ class PipelineData():
                 for task, task_info in session_info.items():
                     if tasks and task not in tasks:
                         continue
-                    for run, source_file in task_info.items(): 
+                    for run, source_data in task_info.items(): 
 
+                        if not isinstance(source_data, BIDSPath):
+                            output_bids_path = self.get_bids_path(source_data, subject, session, task, run)
+                        else:
+                            output_bids_path = source_data.copy()
+
+                        output_bids_path.update(
+                            root=bids_root, 
+                            description=description,
+                            datatype = self.config.bids_datatype,
+                            suffix=suffix, 
+                            extension=".fif")
+                        
                         # check if the functions output should be saved
                         if save:
-                            if not isinstance(source_file, BIDSPath):
-                                # throw exception save requires a BIDSPath object as a sourcefile
-                                raise ValueError("Saving requires a BIDSPath object as a source file.")
-                            else:
-                                output_bids_path = source_file.copy().update(
-                                    root=self.config.deriv_root, 
-                                    description=description,
-                                    datatype = self.config.bids_datatype,
-                                    suffix=suffix, # not sure if this is optimal, "raw/annot" not permitted though
-                                    extension=".fif")
-                            
                             # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
                                 print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
@@ -223,7 +253,7 @@ class PipelineData():
                         start_time = time.time()
 
                         try:
-                            answer = function(source_file, subject, session, task, run)
+                            answer = function(source_data, output_bids_path)
                         except Exception as e:
                             print(f"\u26A0 Something went wrong with {description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
                             print(traceback.format_exc())
@@ -282,7 +312,7 @@ class PipelineData():
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
                                         "LastStep": description,
-                                        "SourceFile": str(source_file.basename),
+                                        "SourceFile": str(source_data.basename),
                                         "Duration": duration,
                                         "NJobs": self.config.n_jobs,
                                     },

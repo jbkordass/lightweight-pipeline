@@ -139,6 +139,9 @@ class Config:
     bids_datatype = "eeg"
     """BIDS datatype of the data created as derivatives in the pipeline"""
 
+    bids_extension = ".edf"
+    """Extension of the BIDS files in the bids root directory"""
+
     n_jobs = 1
     """Number of parallel jobs to run"""
 
