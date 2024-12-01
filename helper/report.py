@@ -22,56 +22,64 @@ def generate_report(config, store_report = False, full_report = False):
     # check if config.bids_root exists
     if not os.path.exists(config.bids_root):
         print(f"Error: BIDS root directory {config.bids_root} does not exist.")
-        return
-    
-    print("Bids".center(80, '-'))
-    
-    if full_report:
-        print_dir_tree(config.bids_root, max_depth=4)
-        print("".center(80, '-'))
+    else:
+        
+        print("Bids".center(80, '-'))
+        
+        if full_report:
+            print_dir_tree(config.bids_root, max_depth=4)
+            print("".center(80, '-'))
 
-    df_bids_report = _df_report_for_directory(config, config.bids_root, full_report)
-    print(df_bids_report)
+        df_bids_report = _df_report_for_directory(config, config.bids_root, full_report)
+        print(df_bids_report)
 
+        if store_report:
+            df_bids_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_deriv_dir.tsv'), sep='\t')
+        
+        # if ipython is available, use display to show the dataframes
+        try:
+            from IPython.display import display
+
+            df_styler = df_bids_report.style.set_caption("Bids directory contents overview")
+            display(df_styler)
+
+        except ImportError:
+            print("Error getting ipython")
+            pass
 
     # check if config.deriv_root exists
     if not os.path.exists(config.deriv_root):
         print("Error: Derivatives root directory does not exist.")
-        return
-    
-    print("Derivatives".center(80, '-'))
-    
-    if full_report:
-        print_dir_tree(config.deriv_root, max_depth=4)
-        print("".center(80, '-'))
+    else:
+        
+        print("Derivatives".center(80, '-'))
+        
+        if full_report:
+            print_dir_tree(config.deriv_root, max_depth=4)
+            print("".center(80, '-'))
 
-    df_deriv_report = _df_report_for_directory(config, config.deriv_root, full_report)
-    print(df_deriv_report)
-    
-    if store_report:
-        df_deriv_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_bids_dir.tsv'), sep='\t')
-        df_bids_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_deriv_dir.tsv'), sep='\t')
+        df_deriv_report = _df_report_for_directory(config, config.deriv_root, full_report)
+        print(df_deriv_report)
+        
+        if store_report:
+            df_deriv_report.to_csv(os.path.join(config.deriv_root, 'pipeline_report_bids_dir.tsv'), sep='\t')
 
-    # if ipython is available, use display to show the dataframes
-    try:
-        from IPython.display import display
+        # if ipython is available, use display to show the dataframes
+        try:
+            from IPython.display import display
+            df_styler = df_deriv_report.style.set_caption("Derivatives directory contents overview")
 
-        df_styler = df_bids_report.style.set_caption("Bids directory contents overview")
-        display(df_styler)
+            # find columns after the "runs" column, if there are any
+            derivatives_columns = df_deriv_report.columns[df_deriv_report.columns.get_loc('runs')+1:]
+            dc_subset = pd.IndexSlice[:, derivatives_columns]
 
-        df_styler = df_deriv_report.style.set_caption("Derivatives directory contents overview")
+            if len(derivatives_columns) > 0:
+                df_styler = df_styler.map(_highlight_derivatives, subset=dc_subset)
+            display(df_styler)
 
-        # find columns after the "runs" column, if there are any
-        derivatives_columns = df_deriv_report.columns[df_deriv_report.columns.get_loc('runs')+1:]
-        dc_subset = pd.IndexSlice[:, derivatives_columns]
-
-        if len(derivatives_columns) > 0:
-            df_styler = df_styler.map(_highlight_derivatives, subset=dc_subset)
-        display(df_styler)
-
-    except ImportError:
-        print("Error getting ipython")
-        pass
+        except ImportError:
+            print("Error getting ipython")
+            pass
 
 def _highlight_derivatives(val):
     color = {
@@ -123,13 +131,16 @@ def _df_report_for_directory(config, root_dir, full_report = False):
                     df.loc[(subject, session, task), description] = (not len(files) == 0)
                 # find runs (removing duplicates)
                 run_files = root_path.copy().update(subject=subject, session=session, task=task).match()
-                df.loc[(subject, session, task), 'runs'] = ', '.join(list(set([file.run for file in run_files])))
+                run_list = list(set([file.run for file in run_files]))
+                run_list.sort()
+                df.loc[(subject, session, task), 'runs'] = ', '.join(run_list)
     
     # sort the dataframe by subject, session, task
     df.sort_index(inplace=True)
 
     # remove rows where runs is empty and all descriptions are False
-    df = df.dropna(subset=descriptions, how='all')
+    if descriptions:
+        df = df.dropna(subset=descriptions, how='all')
     df = df[df.runs != '']
 
     return df

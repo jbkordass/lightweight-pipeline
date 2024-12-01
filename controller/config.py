@@ -133,7 +133,7 @@ class Config:
     Structure: subject -> condition -> task -> list of eeg files (runs)
     File names expected relative to data_dir"""
 
-    eeg_acquisition = "eeg"
+    bids_acquisition = None
     """EEG information that should be included in the BIDS file"""
 
     bids_datatype = "eeg"

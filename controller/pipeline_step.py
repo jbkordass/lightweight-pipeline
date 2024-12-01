@@ -1,35 +1,31 @@
 from abc import ABC, abstractmethod
 from controller.config import Config
 
+from helper.naming import guess_short_id
+
 class PipelineStep(ABC):
 
     def __init__(self, description, config, short_id = ""):
         self.description = description
 
-        if not short_id:
-            short_id = ""
-            # get the module name and cook up some naming
-            module_name = self.__class__.__module__.split(".")[-1].split("_")
-            for i, word in enumerate(module_name):
-                # check if word is just numbers
-                if word.isdigit():
-                    short_id += word
-                else:
-                    # if we do not get enough numbers in the beginning, use first letters
-                    if len(short_id) < 2:
-                        short_id += word[0].lower()
-        self.short_id = short_id
+        if short_id:
+            self._short_id = short_id 
+        else:
+            self._short_id = guess_short_id(self.__class__.__module__)
 
         self._config = config
 
     @property
     def config(self):
         return self._config
+    
+    @property
+    def short_id(self):
+        return self._short_id
 
     @abstractmethod
     def step(self, data):
         pass
-
 
 class PipelineException(Exception):
     pass

@@ -22,6 +22,8 @@ import sys
 
 import traceback
 
+from helper.naming import guess_short_id
+
 class PipelineData():
     """
     Data representation of EEG files for the pipeline.
@@ -105,7 +107,7 @@ class PipelineData():
             session=session.replace("-",""), 
             task=task, 
             run=run, 
-            acquisition=self.config.eeg_acquisition, 
+            acquisition=self.config.bids_acquisition, 
             root=self.config.bids_root,
             extension=extension
         )
@@ -114,7 +116,9 @@ class PipelineData():
         bids_path.update(
             root=self.config.bids_root,
             description=None,
-            extension=self.config.bids_extension
+            extension=self.config.bids_extension,
+            datatype=self.config.bids_datatype,
+            suffix=self.config.bids_datatype,
             )
         if not bids_path.match():
             raise ValueError(f"File {bids_path.fpath} not found in BIDS directory.")
@@ -206,15 +210,15 @@ class PipelineData():
         """
         remove_from_file_paths = []
 
-        if not description:
+        # possibly cook up a discription by default, but allow None as well
+        if description == "":
             # bit of a hack, but somehow obtain the class the function is defined in
             step_class = vars(sys.modules[function.__module__])[function.__qualname__.split('.')[0]]
-            if isinstance(step_class, PipelineStep):
-                description = step_class.description + function.__name__
+            if issubclass(step_class, PipelineStep):
+                description = guess_short_id(function.__module__) + function.__name__.capitalize()
             else:
                 description = function.__name__
             description = description.replace("_", "")
-
 
         # if no subjects, sessions, or tasks are specified, use the ones from the config
         if not subjects:
@@ -302,7 +306,7 @@ class PipelineData():
                                                 overwrite=self.config.overwrite)
                                 else:
                                     answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), 
-                                                split_naming='bids',
+                                                # split_naming='bids',
                                                 overwrite=self.config.overwrite)
 
                                 # create a sidecar json file
