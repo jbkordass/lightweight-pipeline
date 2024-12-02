@@ -327,7 +327,7 @@ class PipelineData():
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
                                         "LastStep": description,
-                                        "SourceFile": str(source_data.basename),
+                                        # "SourceFile": str(source_data.basename),
                                         "Duration": duration,
                                         "NJobs": self.config.n_jobs,
                                     },
