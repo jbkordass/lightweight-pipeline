@@ -40,7 +40,7 @@ class PipelineData():
 
     from_deriv = ""
 
-    def __init__(self, config, from_bids=False, from_deriv="", from_deriv_dir=""):
+    def __init__(self, config, from_bids=False, from_deriv="", from_deriv_dir="", concatenate_runs=False):
         """
         Parameters
         ----------
@@ -69,6 +69,9 @@ class PipelineData():
             for subject, sessions in self.file_paths.items():
                 for session, tasks in sessions.items():
                     self.file_paths[subject][session] = {k: v for k, v in tasks.items() if k in config.tasks}
+
+        if concatenate_runs:
+            self.concatenate_runs()
 
         if from_bids:
             self.apply(self.get_bids_path_from_bids_root, save=False, print_duration = False)
@@ -353,5 +356,32 @@ class PipelineData():
                 del self.file_paths[subject][session][task][run]
             except KeyError:
                 pass
+          
+    
+    def concatenate_runs(self):
+        """
+        Concatenate runs of the same task for each subject and session.
+        Creates a new run "99".
+        """
+        config = self.config
+        
+        # start by building a new data object for run concatenated files
+        # we call a concatenated run now "99"
+        file_paths_runs_concatenated = {}
 
-                        
+        for subject, sessions in self.file_paths.items():
+            if config.subjects and subject not in config.subjects:
+                continue
+            file_paths_runs_concatenated[subject] = {}
+            for session, tasks in sessions.items():
+                if config.sessions and session not in config.sessions:
+                    continue
+                file_paths_runs_concatenated[subject][session] = {}
+                for task, runs in tasks.items():
+                    if config.tasks and task not in config.tasks:
+                        continue
+                    file_paths_runs_concatenated[subject][session][task] = {
+                        "99": list(runs.values())
+                    }
+
+        self.file_paths = file_paths_runs_concatenated
