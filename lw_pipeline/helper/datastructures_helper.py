@@ -1,4 +1,7 @@
+"""Datastructures helpers"""
 
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
 
 
 def keys_exists(element, *keys):

@@ -1,9 +1,16 @@
-from abc import ABC, abstractmethod
-from controller.config import Config
+"""Main pipeline class to abstract from pipeline steps."""
 
-from helper.naming import guess_short_id
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
+
+from abc import ABC, abstractmethod
+
+from lw_pipeline.helper.naming import guess_short_id
 
 class PipelineStep(ABC):
+    """
+    Abstract class for a pipeline step.
+    """
 
     def __init__(self, description, config, short_id = ""):
         self.description = description
@@ -28,4 +35,7 @@ class PipelineStep(ABC):
         pass
 
 class PipelineException(Exception):
+    """
+    Exception class for the pipeline.
+    """
     pass

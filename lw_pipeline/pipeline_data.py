@@ -1,4 +1,10 @@
-from controller.pipeline_step import PipelineStep
+"""Pipeline data representation to pass through the pipeline."""
+
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
+
+from lw_pipeline.pipeline_step import PipelineStep
+from lw_pipeline.helper.naming import guess_short_id
 
 from mne_bids import (
     BIDSPath,
@@ -21,8 +27,6 @@ import time
 import sys
 
 import traceback
-
-from helper.naming import guess_short_id
 
 class PipelineData():
     """

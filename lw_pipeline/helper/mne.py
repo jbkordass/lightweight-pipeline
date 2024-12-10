@@ -1,3 +1,7 @@
+"""MNE helpers"""
+
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
 
 import mne 
 
