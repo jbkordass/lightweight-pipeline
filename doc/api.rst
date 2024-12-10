@@ -20,52 +20,25 @@ lw_pipeline
    :toctree: generated/
 
     main
+    Config
+    PipelineException
+    PipelineStep
+    PipelineData
 
-lw_pipeline.config
+lw_pipeline.helper
 ------------------
 
-:py:mod:`lw_pipeline.config`:
+:py:mod:`lw_pipeline.helper`:
 
-.. automodule:: lw_pipeline.config
+.. automodule:: lw_pipeline.helper
    :no-members:
    :no-inherited-members:
 
-.. currentmodule:: lw_pipeline.config
+.. currentmodule:: lw_pipeline.helper
 
 .. autosummary::
    :toctree: generated/
 
-   Config
-
-lw_pipeline.pipeline_step
--------------------------
-
-:py:mod:`lw_pipeline.pipeline_step`:
-
-.. automodule:: lw_pipeline.pipeline_step
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: lw_pipeline.pipeline_step
-
-.. autosummary::
-   :toctree: generated/
-
-   PipelineStep
-   PipelineException
-
-lw_pipeline.pipeline_data
--------------------------
-
-:py:mod:`lw_pipeline.pipeline_data`:
-
-.. automodule:: lw_pipeline.pipeline_data
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: lw_pipeline.pipeline_data
-
-.. autosummary::
-   :toctree: generated/
-
-   PipelineData
+   mne
+   naming
+   report

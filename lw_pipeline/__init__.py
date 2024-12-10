@@ -2,6 +2,8 @@
 
 __version__ = "0.1.0"
 
+from lw_pipeline.config import Config
+
 from lw_pipeline.pipeline_step import (
     PipelineStep,
     PipelineException
