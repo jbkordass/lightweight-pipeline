@@ -10,4 +10,4 @@ from lw_pipeline.pipeline_step import (
 )
 from lw_pipeline.pipeline_data import PipelineData
 
-import lw_pipeline.main
+import lw_pipeline.__main__
