@@ -1,13 +1,19 @@
+"""Run the pipeline from the command line."""
+
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
 
 import argparse
 import sys
-from controller.pipeline_step import PipelineStep, PipelineException
 import os
 import importlib.util
 
-from controller.config import Config
-
-from helper.report import generate_report, find_steps_derivatives
+from lw_pipeline import (
+    Config,
+    PipelineStep, 
+    PipelineException
+)
+from lw_pipeline.helper.report import generate_report, find_steps_derivatives
 
 def main():
 

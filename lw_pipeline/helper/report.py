@@ -1,3 +1,7 @@
+"""Create a report of the pipeline's derivatives"""
+
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
 
 import os
 import pandas as pd
@@ -11,8 +15,8 @@ from mne_bids import (
 import importlib
 import sys
 import inspect
-from controller.pipeline_step import PipelineStep
 
+from lw_pipeline.pipeline_step import PipelineStep
 
 def generate_report(config, store_report = False, full_report = False):
     """

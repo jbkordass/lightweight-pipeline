@@ -1,3 +1,7 @@
+"""Configuration settings to pass throught the pipeline"""
+
+# Authors: The Lightweight Pipeline developers
+# SPDX-License-Identifier: BSD-3-Clause
 
 import os
 import sys
