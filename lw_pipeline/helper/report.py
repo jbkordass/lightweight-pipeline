@@ -1,33 +1,26 @@
-"""Create a report of the pipeline's derivatives"""
+"""Create a report of the pipeline's derivatives."""
 
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
-import os
-import pandas as pd
-
-from mne_bids import (
-    BIDSPath,
-    print_dir_tree,
-    get_entity_vals
-)
-
 import importlib
-import sys
 import inspect
+import os
+import sys
+
+import pandas as pd
+from mne_bids import BIDSPath, get_entity_vals, print_dir_tree
 
 from lw_pipeline.pipeline_step import PipelineStep
 
-def generate_report(config, store_report = False, full_report = False):
-    """
-    Create a report of the pipeline's derivatives
-    """
 
+def generate_report(config, store_report = False, full_report = False):
+    """Create a report of the pipeline's derivatives."""
     # check if config.bids_root exists
     if not os.path.exists(config.bids_root):
         print(f"Error: BIDS root directory {config.bids_root} does not exist.")
     else:
-        
+
         print("Bids".center(80, '-'))
         
         if full_report:
@@ -152,9 +145,9 @@ def _df_report_for_directory(config, root_dir, full_report = False):
 def find_steps_derivatives(step_files, config):
     """
     Find possible derivatives from pipeline steps using inspect.
+
     Import the pipeline steps and find methods with signature "(source, bids_path)", this takes a while..
     """
-
     # Set module name to the name of the steps directory
     module_name = os.path.basename(config.steps_dir)
 

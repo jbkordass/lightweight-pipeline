@@ -4,19 +4,16 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import argparse
-import sys
-import os
 import importlib.util
+import os
+import sys
 
-from lw_pipeline import (
-    Config,
-    PipelineStep, 
-    PipelineException
-)
-from lw_pipeline.helper.report import generate_report, find_steps_derivatives
+from lw_pipeline import Config, PipelineException, PipelineStep
+from lw_pipeline.helper.report import find_steps_derivatives, generate_report
+
 
 def main():
-
+    """Run pipeline from command line."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-v", "--version", action="version", version="0.1"
@@ -62,7 +59,7 @@ def main():
     config = Config(options.config)
     if options.ignore_questions:
         config.auto_response = "default"
-   
+
     print(config.data_dir)
 
     if options.run:
@@ -89,11 +86,7 @@ def main():
 
 
 def run_pipeline(step_files, config):
-    '''
-    Run the pipeline through all steps given by PipelineStep classes contained in the 
-    step_files list
-    '''
-
+    """Run the pipeline through all steps given by PipelineStep classes contained in the step_files list."""
     # counter for executed steps/position in the pipeline
     pos = 1
 
@@ -151,10 +144,7 @@ def run_pipeline(step_files, config):
     print(data)
 
 def find_all_steps(steps_dir):
-    '''
-    Function to find all the .py files in the steps directory
-    '''
-
+    """Find all the .py files in the steps directory."""
     # Get a list of all python files in the steps directory
     step_files = [f for f in os.listdir(steps_dir) if f.endswith('.py') and not f.startswith("__")]
 

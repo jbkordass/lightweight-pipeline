@@ -1,17 +1,14 @@
-"""MNE helpers"""
+"""MNE helpers."""
 
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
-import mne 
-
+import mne
 from mne_bids import BIDSPath
 
-def raw_from_source(source, **kwargs):
-    """
-    Helper to produce an mne raw object from a number of different sources that could be passed through the pipeline.
-    """
 
+def raw_from_source(source, **kwargs):
+    """Produce an mne raw object from a number of different sources that could be passed through the pipeline."""
     # check if the source_file is an instance of BidsPath
     if isinstance(source, BIDSPath):
         try:

@@ -1,16 +1,17 @@
-"""Configuration settings to pass throught the pipeline"""
+"""Configuration settings to pass throught the pipeline."""
 
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import importlib
 import os
 import sys
-import importlib
+
+from lw_pipeline import PipelineException
+
 
 class Config:
-    """
-    A class representing the configuration settings.
-    """
+    """A class representing the configuration settings."""
 
     _config_file_path = None
     """The path to an external configuration file."""
@@ -63,8 +64,7 @@ class Config:
 
     def set_variable_and_write_to_config_file(self, variable, value):
         """
-        Set a variable in this class and if it does not exist in the the configuration file,
-        then add a line with the specified value.
+        Set a variable in this class and if it does not exist in the the configuration file, then add a line with the specified value.
 
         Args:
             variable (str): The name of the variable to update.
@@ -84,9 +84,7 @@ class Config:
         print(f"Configuration file updated: {self._config_file_path}")
 
     def get_version(self):
-        """
-        Get the version of the pipeline by getting the last commit hash from the git repository.
-        """
+        """Get the version of the pipeline by getting the last commit hash from the git repository."""
         try:
             import subprocess
             # make sure to execute git commands in the root directory of the repository

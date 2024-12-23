@@ -3,30 +3,23 @@
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+import sys
+import time
+import traceback
+
+from mne.annotations import Annotations
+from mne.epochs import BaseEpochs
+from mne.io import BaseRaw
+from mne_bids import BIDSPath, find_matching_paths, get_entity_vals, update_sidecar_json
+from mne_bids.utils import _write_json
+from mne_bids.write import _sidecar_json
+
 from lw_pipeline import PipelineStep
 from lw_pipeline.helper.naming import guess_short_id
 
-from mne_bids import (
-    BIDSPath,
-    find_matching_paths,
-    update_sidecar_json,
-    get_entity_vals
-)
-from mne_bids.write import _sidecar_json
-from mne_bids.utils import _write_json
 
-from mne.io import BaseRaw
-from mne.epochs import BaseEpochs
-from mne.annotations import Annotations
-
-import os
-import time
-
-import sys
-
-import traceback
-
-class PipelineData():
+class PipelineData:
     """
     Data representation of EEG files for the pipeline.
 
@@ -34,7 +27,7 @@ class PipelineData():
     """
 
     config = None
-    
+
     file_paths = None
     """
     Dictionary of file paths organized by subject, session, task, and run.
@@ -44,6 +37,8 @@ class PipelineData():
 
     def __init__(self, config, from_bids=False, from_deriv="", from_deriv_dir="", concatenate_runs=False):
         """
+        Initialize the PipelineData object.
+
         Parameters
         ----------
         config : Config
@@ -100,9 +95,7 @@ class PipelineData():
             return f"PipelineData object handling the following files:\n{tree}"
 
     def get_bids_path(self, source, subject, session, task, run):
-        """
-        Create a BIDSPath without actually doing sth. with the source file.
-        """
+        """Create a BIDSPath without actually doing sth. with the source file."""
         if isinstance(source, str):
             extension = os.path.splitext(source)[1]
         else:
@@ -128,7 +121,7 @@ class PipelineData():
         if not bids_path.match():
             raise ValueError(f"File {bids_path.fpath} not found in BIDS directory.")
         return bids_path
-    
+
     def get_raw_from_derivatives(self, source, bids_path):
         match = find_matching_paths(self.config.deriv_root, 
             subjects=[bids_path.subject],
@@ -146,10 +139,11 @@ class PipelineData():
     def get_raw_from_derivatives_dir(self, derivative_description):
         """
         Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
+
         Requires bids styled files in the derivatives directory.
         """
         config = self.config
-        
+
         root_dir = config.deriv_root
         root_path = BIDSPath(root=root_dir)
 
@@ -185,7 +179,8 @@ class PipelineData():
 
     def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = "", bids_root = None):
         """
-        Apply a function to each data file individually. 
+        Apply a function to each data file individually.
+
         Can also save the output to the derivatives directory.
 
         Parameters
@@ -258,13 +253,13 @@ class PipelineData():
                             datatype = self.config.bids_datatype,
                             suffix=suffix, 
                             extension=".fif")
-                        
+
                         # check if the functions output should be saved
                         if save:
                             # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
                                 print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
-                                
+
                                 if suffix in ["meg", "eeg", "ieeg"]:
                                     self.file_paths[subject][session][task][run] = output_bids_path
                                 continue
@@ -300,7 +295,7 @@ class PipelineData():
                         if issubclass(type(answer), BaseRaw) or issubclass(type(answer), BaseEpochs) or isinstance(answer, Annotations):
                             if save:
                                 # we already checked above that the source file is a BIDSPath object
-                                
+
                                 # unfortunately write_raw_bids does work to save preloaded (modified) raw objects
                                 # to a .fif file → we have to do some bids stuff by hand/internal mne_bids functions
 
@@ -340,7 +335,7 @@ class PipelineData():
                                 if sidecar_info_dict:
                                     pipeline_step_info = pipeline_step_info | sidecar_info_dict
                                 update_sidecar_json(sidecar_bids_path, pipeline_step_info)
-                                    
+
                                 # only update file path, if the step produced eeg, meg, or ieeg data (not markers, etc.)
                                 if suffix in ["meg", "eeg", "ieeg"]:
                                     # pass on the output bids path to the next step
@@ -351,22 +346,22 @@ class PipelineData():
                         else: 
                             # pass on the path (or whatever it is) to the next step
                             self.file_paths[subject][session][task][run] = answer
-        
+
         # remove files that could not be processed for the next step
         for subject, session, task, run in remove_from_file_paths:
             try:
                 del self.file_paths[subject][session][task][run]
             except KeyError:
                 pass
-          
-    
+
     def concatenate_runs(self):
         """
         Concatenate runs of the same task for each subject and session.
+
         Creates a new run "99".
         """
         config = self.config
-        
+
         # start by building a new data object for run concatenated files
         # we call a concatenated run now "99"
         file_paths_runs_concatenated = {}
