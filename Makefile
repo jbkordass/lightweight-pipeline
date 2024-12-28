@@ -1,6 +1,6 @@
-.PHONY: all clean-pyc clean-so clean-build clean-ctags clean-cache clean-e clean inplace ruff-check ruff-format pep build-doc
+.PHONY: all clean-pyc clean-so clean-build clean-ctags clean-cache clean-e clean inplace test ruff-check ruff-format pep build-doc dist-build
 
-all: clean inplace pep build-doc
+all: clean inplace pep test build-doc dist-build
 
 clean-pyc:
 	find . -name "*.pyc" | xargs rm -f
@@ -22,6 +22,15 @@ clean-e:
 	find . -name "*-e" | xargs rm -rf
 
 clean: clean-build clean-pyc clean-so clean-ctags clean-cache clean-e
+
+inplace:
+	@python -m pip install -e ".[dev]"
+
+test:
+	@echo "Running tests"
+	@python -m pytest . \
+		--verbose \
+	--ignore examples
 
 ruff-format:
 	@echo "Running ruff format"
