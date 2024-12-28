@@ -11,7 +11,7 @@ import sys
 import pandas as pd
 from mne_bids import BIDSPath, get_entity_vals, print_dir_tree
 
-from lw_pipeline.pipeline_step import PipelineStep
+from lw_pipeline.pipeline_step import Pipeline_Step
 
 
 def generate_report(config, store_report = False, full_report = False):
@@ -175,7 +175,7 @@ def find_steps_derivatives(step_files, config):
         # Get the subclasses of PipelineStep defined in the module
         pipeline_step_classes = [
             cls for cls in module.__dict__.values()
-            if isinstance(cls, type) and issubclass(cls, PipelineStep) and cls != PipelineStep
+            if isinstance(cls, type) and issubclass(cls, Pipeline_Step) and cls != Pipeline_Step
         ]
         
         # Loop through the pipeline elements and invoke them

@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from lw_pipeline.helper.naming import guess_short_id
 
 
-class PipelineStep(ABC):
+class Pipeline_Step(ABC):
     """Abstract class for a pipeline step."""
 
     def __init__(self, description, config, short_id = ""):
@@ -33,9 +33,10 @@ class PipelineStep(ABC):
 
     @abstractmethod
     def step(self, data):
+        """Abstract method to be implemented by the pipeline step."""
         pass
 
-class PipelineException(Exception):
+class Pipeline_Exception(Exception):
     """Exception class for the pipeline."""
 
     pass

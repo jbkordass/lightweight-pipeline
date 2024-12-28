@@ -8,7 +8,7 @@ import importlib.util
 import os
 import sys
 
-from lw_pipeline import Config, PipelineException, PipelineStep
+from lw_pipeline import Config, Pipeline_Exception, Pipeline_Step
 from lw_pipeline.helper.report import find_steps_derivatives, generate_report
 
 
@@ -127,7 +127,7 @@ def run_pipeline(step_files, config):
         # Get the subclasses of PipelineStep defined in the module
         pipeline_step_classes = [
             cls for cls in module.__dict__.values()
-            if isinstance(cls, type) and issubclass(cls, PipelineStep) and cls != PipelineStep
+            if isinstance(cls, type) and issubclass(cls, Pipeline_Step) and cls != Pipeline_Step
         ]
         
         # Loop through the pipeline elements and invoke them
@@ -136,7 +136,7 @@ def run_pipeline(step_files, config):
             print(step.description)
             try:
                 data = step.step(data)
-            except PipelineException as e:
+            except Pipeline_Exception as e:
                 print(f"Error in {step.description}: {e}")
                 sys.exit(1)
 

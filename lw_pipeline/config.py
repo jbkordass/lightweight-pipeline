@@ -7,7 +7,7 @@ import importlib
 import os
 import sys
 
-from lw_pipeline import PipelineException
+from lw_pipeline import Pipeline_Exception
 
 
 class Config:
@@ -54,7 +54,7 @@ class Config:
                 response = input(f"\u26A0 Question: {message}: ")
             except EOFError:
                 # e.g. if not run interactively
-                raise PipelineException(f"Could not obtain response to question: ({message}). \
+                raise Pipeline_Exception(f"Could not obtain response to question: ({message}). \
                         Make sure to specify auto_response in the config, or run with --ignore-questions to use the default response")
             return response
         elif self.auto_response == "default":
