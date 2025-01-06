@@ -9,6 +9,8 @@ from abc import ABC
 class Pipeline_Data(ABC):
     """Data representation for the pipeline."""
 
+    config = None
+    
     def __init__(self, config):
         self._config = config
 

@@ -26,8 +26,6 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
     Contains Path or BidsPath objects of files the pipeline should be applied to.
     """
 
-    config = None
-
     file_paths = None
     """
     Dictionary of file paths organized by subject, session, task, and run.
