@@ -9,7 +9,7 @@ import os
 import sys
 
 import pandas as pd
-from mne_bids import BIDSPath, get_entity_vals, print_dir_tree
+from mne_bids import BIDSPath, get_entity_vals, print_dir_tree, find_matching_paths
 
 from lw_pipeline.pipeline_step import Pipeline_Step
 
@@ -124,13 +124,16 @@ def _df_report_for_directory(config, root_dir, full_report = False):
             for task in tasks:
                 # find all files for the subject, session, task matching the description
                 for description in descriptions:
-                    files = root_path.copy().update(subject=subject, session=session, task=task, description=description).match()
+                    # files = root_path.copy().update(subject=subject, session=session, task=task, description=description).match(check=True)
+                    files = find_matching_paths(subjects=subject, sessions=session, tasks=task, descriptions=description, root=root_dir, check=True)
                     df.loc[(subject, session, task), description] = (not len(files) == 0)
                 # find runs (removing duplicates)
-                run_files = root_path.copy().update(subject=subject, session=session, task=task).match()
+                # run_files = root_path.copy().update(subject=subject, session=session, task=task).match(check=True)
+                run_files = find_matching_paths(subjects=subject, sessions=session, tasks=task, root=root_dir, check=True)
                 run_list = list(set([file.run for file in run_files]))
                 run_list.sort()
                 df.loc[(subject, session, task), 'runs'] = ', '.join(run_list)
+
     
     # sort the dataframe by subject, session, task
     df.sort_index(inplace=True)

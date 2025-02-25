@@ -256,7 +256,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         if save:
                             # and if overwrite is False and the file already exists, skip
                             if not self.config.overwrite and output_bids_path.fpath.exists():
-                                print(f"\u26A0 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
+                                print(f"\u23E9 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
 
                                 if suffix in ["meg", "eeg", "ieeg"]:
                                     self.file_paths[subject][session][task][run] = output_bids_path
