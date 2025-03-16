@@ -1,6 +1,8 @@
 ---
 marp: true
+theme: default
 class: invert
+paginate: true
 ---
 
 # Minimal MNE processing example using `lw_pipeline`
@@ -158,6 +160,46 @@ data = Pipeline_MNE_BIDS_Data(config,
 
 ---
 
+# Applying processing to data
+
+Main function of `Pipeline_MNE_BIDS_Data`is `apply()`. Given
+
+```python
+class Some_Pipeline_Step(Pipeline_Step):
+
+    def some_processing(self, source, bids_path):
+        
+        # apply processing to the source
+
+        return source
+```
+
+this function can be applied to all 'sources' in `data` via
+
+```python
+data.apply(self.some_processing)
+```
+
+
+---
+
+# Saving data
+
+By default, `apply` tries to save what is returned from the passed function as a derivative at the location specified in `bids_path`.
+
+- works for subclasses of MNE classes `BaseRaw`, `BaseRaw` or MNE `Annotations`
+
+- BIDS description for derivative is constructed from module identifier and function name, e.g.
+  - module `01_some_pipeline_step.py` → `01`
+  - function `some_processing` → `SomeProcessing`
+    (BIDS doesn't allow underscores...)
+
+- can be disabled by passing `save=False`
+
+
+
+---
+
 # Config
 
 `config.py` (some lines)
@@ -179,4 +221,100 @@ config.bids_root
 
 ---
 
-# Docs
+# Docs (with sphinx)
+
+Use docstrings: `"""..."""` for documentation within the code.
+
+```python
+class Some_Pipeline_Step(Pipeline_Step):
+    """
+    A short description of Some_Pipeline_Step.
+
+    More detailed description of Some_Pipeline_Step.
+
+    Attributes:
+        attr1 (type): Description of `attr1`.
+
+    Relevant config variables:
+    - some_variable_1
+    """
+```
+
+cf. [Sphinx documentation](https://www.sphinx-doc.org/en/master/).
+
+---
+
+# `run.ipynb`
+
+<style scoped>
+table {
+    font-size: 0.9em;
+    margin-top: 1.5em;
+}
+table th {
+    display: none;
+}
+</style>
+
+Run the pipeline interactively (ipython).
+
+```python
+%run $pipeline_path -c config.py -r 
+```
+
+
+|                    |                                                  |
+|--------------------|--------------------------------------------------|
+| `-c`               | Path to the configuration file                   |
+| `-l`               | List pipeline steps (found in the config)        |
+| `-r`               | Run the pipeline                                 |
+| `-r 01 02`         | Run pipeline steps 01 and 02                     |
+| `--report`         | Print a report of pipeline derivatives           | 
+| `--help`           | Show help message (with further explanations)    |
+
+---
+
+# Demonstrating sth.
+
+<style scoped>
+div.columns { columns: 2; }
+</style>
+
+1. Create a jupyter notebook in the main folder
+2. Load Config file (as above)
+
+    ```python
+    from lw_pipeline.config import Config
+    config = Config("config.py")
+    ```
+3. Load raw file identified via BIDS
+    
+    ```python
+    bids_path = find_matching_paths(
+                        subjects="1001",
+                        sessions="session1",
+                        descriptions="01Preprocessing",
+                        extensions=".fif", 
+                        root=config.deriv_root)[0]
+    ```
+
+---
+
+4. Load raw file
+    
+    ```python
+    raw = mne.io.read_raw(bids_path.fpath, preload=True)
+    ```
+
+5. Load step usng importlib (necessary because of leading digits..)
+
+    ```python
+    import importlib
+    step_c = importlib.import_module('steps.02_continue').Continue_With_More_Data_Analysis(config)
+
+    annotations = step_c.annotate(raw, None)
+
+    raw.set_annotations(annotations)
+    ```
+
+6. Continue demonstrating sth.
