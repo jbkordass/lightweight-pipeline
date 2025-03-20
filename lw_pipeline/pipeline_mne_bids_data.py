@@ -380,3 +380,29 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                     }
 
         self.file_paths = file_paths_runs_concatenated
+
+    def as_df(self):
+        """
+        Return the file_paths dictionary as a pandas DataFrame.
+
+        Returns
+        -------
+        df : pd.DataFrame
+            DataFrame with columns "Subject", "Session", "Task", "Run", "Source".
+        """
+        import pandas as pd
+
+        data = []
+        for subject, sessions in self.file_paths.items():
+            for session, tasks in sessions.items():
+                for task, runs in tasks.items():
+                    for run, source in runs.items():
+                        data.append({
+                            "Subject": subject,
+                            "Session": session,
+                            "Task": task,
+                            "Run": run,
+                            "Source": source,
+                        })
+
+        return pd.DataFrame(data)
