@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e .
-          pip install sphinx_sphinx_theme pandas mne mne-bids
+          pip install sphinx pydata_sphinx_theme pandas mne mne-bids
       - name: Sphinx build
         run: |
           sphinx-apidoc -o docs src/sphinxy/ --separate
