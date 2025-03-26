@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-python@v5
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme pandas mne mne-bids
+          pip install sphinx pydata_sphinx_theme pandas mne mne-bids
       - name: Sphinx build
         run: |
           sphinx-build doc _build
