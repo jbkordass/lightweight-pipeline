@@ -13,7 +13,7 @@ from lw_pipeline import Pipeline_Exception
 class Config:
     """A class representing the configuration settings."""
 
-    _config_file_path = None
+    config_file_path = None
     """The path to an external configuration file."""
 
     def __init__(self, config_file_path=None):
@@ -25,7 +25,7 @@ class Config:
                 updated based on the variables defined in the file.
         """
         if config_file_path:
-            self._config_file_path = config_file_path
+            self.config_file_path = config_file_path
             config_file = os.path.abspath(config_file_path)
             if os.path.isfile(config_file):
                 config_dir = os.path.dirname(config_file)
@@ -74,14 +74,14 @@ class Config:
             print("Error: Cannot overwrite already set variable in configuration file.")
             return
         
-        if not self._config_file_path:
+        if not self.config_file_path:
             print("Error: No configuration file specified. Cannot update default configuration file.")
             return
 
         setattr(self, variable, value)
-        with open(self._config_file_path, "a") as f:
+        with open(self.config_file_path, "a") as f:
             f.write(f"\n{variable} = {value}\n")
-        print(f"Configuration file updated: {self._config_file_path}")
+        print(f"Configuration file updated: {self.config_file_path}")
 
     def get_version(self):
         """Get the version of the pipeline by getting the last commit hash from the git repository."""
@@ -99,8 +99,8 @@ class Config:
     # general default variables
     # -------------------------
 
-    steps_dir = os.path.join(os.path.dirname(__file__), '../steps')
-    """Steps directory, can also be chosen outside of the default location!"""
+    steps_dir = "steps/"
+    """Steps directory relative to config file or current working directory if no external config file is used."""
 
     auto_response = "off"
     """Decide how questions are answered (off/y/n/default)"""

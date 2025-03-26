@@ -92,12 +92,21 @@ def run_pipeline(step_files, config):
 
     data = None
 
-    # sys.path.append(config.steps_dir)
-    # steps_dir_name = os.path.basename(config.steps_dir)
+    steps_dir = config.steps_dir
 
+    # check if steps dir is relative in that case make it relative to the config file or the current working directory
+    if not os.path.isabs(steps_dir):
+        # check if there is an externatl config file or if default config is used
+        if config.config_file_path is not None:
+            steps_dir = os.path.join(os.path.dirname(config.config_file_path), steps_dir)
+        else:
+            steps_dir = os.path.join(os.getcwd(), steps_dir)
+    
+    # make steps dir absolute
+    steps_dir = os.path.abspath(steps_dir)
 
     # Set module name to the name of the steps directory
-    module_name = os.path.basename(config.steps_dir)
+    module_name = os.path.basename(steps_dir)
 
     # Import the module
     spec = importlib.util.spec_from_file_location(module_name, 
