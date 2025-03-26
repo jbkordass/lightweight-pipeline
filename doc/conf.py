@@ -13,8 +13,6 @@ author = 'The Lightweight Pipeline developers'
 
 import os
 import sys
-curdir = os.path.dirname(__file__)
-sys.path.insert(0, os.path.abspath(os.path.join(curdir, "..")))  # Source code dir relative to this file
 
 import lw_pipeline
 

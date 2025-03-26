@@ -24,4 +24,5 @@ view:
 	@python -c "import webbrowser; webbrowser.open_new_tab('file://$(PWD)/_build/html/index.html')"
 
 clean:
-	-rm -rf _build auto_examples generated
+	@$(SPHINXBUILD) -M clean "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O);
+	cd _build; git worktree add -f html gh-pages
