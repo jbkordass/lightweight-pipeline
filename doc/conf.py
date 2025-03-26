@@ -24,6 +24,7 @@ import lw_pipeline
 extensions = [
     'sphinx.ext.autodoc',  # Core library for html generation from docstrings
     'sphinx.ext.autosummary',  # Create neat summary tables
+    "sphinx.ext.githubpages",
 ]
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
