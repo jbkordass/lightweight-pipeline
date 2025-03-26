@@ -11,19 +11,21 @@ lw_pipeline
 :py:mod:`lw_pipeline`:
 
 .. automodule:: lw_pipeline
-   :no-members:
-   :no-inherited-members:
+   :members:
+   :inherited-members:
 
 .. currentmodule:: lw_pipeline
 
 .. autosummary::
+   :template: custom-class-template.rst
    :toctree: generated/
 
     main
     Config
-    PipelineException
-    PipelineStep
-    PipelineData
+    Pipeline_Exception
+    Pipeline_Step
+    Pipeline_Data
+    Pipeline_MNE_BIDS_Data
 
 lw_pipeline.helper
 ------------------
@@ -37,6 +39,7 @@ lw_pipeline.helper
 .. currentmodule:: lw_pipeline.helper
 
 .. autosummary::
+   :template: custom-module-template.rst
    :toctree: generated/
 
    mne
