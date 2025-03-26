@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  publish_sphinx_docs:
+  publish_sphinx_doc:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -21,12 +21,11 @@ jobs:
           pip install sphinx pydata_sphinx_theme pandas mne mne-bids
       - name: Sphinx build
         run: |
-          sphinx-apidoc -o docs src/sphinxy/ --separate
-          sphinx-build docs docs/_build/html
+          sphinx-build doc doc/_build/html
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
+          publish_dir: doc/_build/html
           force_orphan: true
