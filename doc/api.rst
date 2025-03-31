@@ -20,7 +20,6 @@ lw_pipeline
    :template: custom-class-template.rst
    :toctree: generated/
 
-    main
     Config
     Pipeline_Exception
     Pipeline_Step

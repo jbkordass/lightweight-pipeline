@@ -19,4 +19,5 @@ Goals
    :maxdepth: 2
    :caption: Contents:
 
-   api
+   API<api>
+   Use & Examples<use>

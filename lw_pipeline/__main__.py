@@ -60,8 +60,6 @@ def main():
     if options.ignore_questions:
         config.auto_response = "default"
 
-    print(config.data_dir)
-
     if options.run:
         # retrieve all steps script file names
         step_files = find_all_steps(config.steps_dir)
