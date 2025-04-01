@@ -48,7 +48,7 @@ Each step should implement the `step` method, which contains the processing logi
     output_data = step.step(input_data)
     print(f"Input: {input_data}, Output: {output_data}")
 
-In practice necessarily meant to be instatiated except for demonstration or testing.
+In practice, it is not necessarily meant to be instatiated except for demonstration or testing.
 The CLI part of the pipeline aggregates all steps and handles running them.
 
 

@@ -2,7 +2,14 @@
 Minimal Example
 ===============
 
-This section provides a detailed explanation of the minimal example pipeline setup. It demonstrates how to configure and run a simple pipeline using `lw_pipeline`.
+This section provides an overview of a minimal example pipeline setup processing EEG data using the MNE-BIDS package.
+
+It demonstrates
+
+#. More complex pipeline steps.
+#. Using the Pipeline_MNE_BIDS_Data class to handle MNE-BIDS data.
+#. Running the pipeline (interactively) from a jupyter notebook.
+#. Using sphinx doc to document the pipeline steps.
 
 Folder Structure
 ----------------
@@ -28,7 +35,7 @@ The minimal example folder contains the following files:
 Configuration File
 ------------------
 
-The `config.py` file defines the directories and variables used in the pipeline. For example:
+Here is an example of a configuration file that 
 
 .. literalinclude:: ../examples/minimal/config.py
     :language: Python
