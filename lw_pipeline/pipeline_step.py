@@ -11,11 +11,11 @@ from lw_pipeline.helper.naming import guess_short_id
 class Pipeline_Step(ABC):
     """Abstract class for a pipeline step."""
 
-    def __init__(self, description, config, short_id = ""):
+    def __init__(self, description, config, short_id=""):
         self.description = description
 
         if short_id:
-            self._short_id = short_id 
+            self._short_id = short_id
         else:
             self._short_id = guess_short_id(self.__class__.__module__)
 
@@ -35,6 +35,7 @@ class Pipeline_Step(ABC):
     def step(self, data):
         """Abstract method to be implemented by the pipeline step."""
         pass
+
 
 class Pipeline_Exception(Exception):
     """Exception class for the pipeline."""

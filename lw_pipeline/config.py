@@ -29,21 +29,33 @@ class Config:
             config_file = os.path.abspath(config_file_path)
             if os.path.isfile(config_file):
                 config_dir = os.path.dirname(config_file)
-                sys.path.insert(0, config_dir)  # add the config directory to the module search path
+                sys.path.insert(
+                    0, config_dir
+                )  # add the config directory to the module search path
 
                 module_name = os.path.splitext(os.path.basename(config_file))[0]
                 config_module = importlib.import_module(module_name)
-            
+
                 # Update the current variables in the this class with the ones from the specified configuration file
-                vars(self).update({k: v for k, v in vars(config_module).items() if not k.startswith("_")} )
-            
-                print(f"Using configuration file: {config_file_path}, assuming it's a python file")
+                vars(self).update(
+                    {
+                        k: v
+                        for k, v in vars(config_module).items()
+                        if not k.startswith("_")
+                    }
+                )
+
+                print(
+                    f"Using configuration file: {config_file_path}, assuming it's a python file"
+                )
             else:
-                print(f"Error: Configuration file {config_file_path} does not exist; using default configuration.")
+                print(
+                    f"Error: Configuration file {config_file_path} does not exist; using default configuration."
+                )
         else:
             print("Using default configuration file.")
 
-    def ask(self, message, default = "n"):
+    def ask(self, message, default="n"):
         """
         Ask to do something, e.g. before potentially deleting data, etc.
 
@@ -51,11 +63,13 @@ class Config:
         """
         if self.auto_response == "off":
             try:
-                response = input(f"\u26A0 Question: {message}: ")
+                response = input(f"\u26a0 Question: {message}: ")
             except EOFError:
                 # e.g. if not run interactively
-                raise Pipeline_Exception(f"Could not obtain response to question: ({message}). \
-                        Make sure to specify auto_response in the config, or run with --ignore-questions to use the default response")
+                raise Pipeline_Exception(
+                    f"Could not obtain response to question: ({message}). \
+                        Make sure to specify auto_response in the config, or run with --ignore-questions to use the default response"
+                )
             return response
         elif self.auto_response == "default":
             return default
@@ -73,9 +87,11 @@ class Config:
         if hasattr(self, variable) and getattr(self, variable):
             print("Error: Cannot overwrite already set variable in configuration file.")
             return
-        
+
         if not self.config_file_path:
-            print("Error: No configuration file specified. Cannot update default configuration file.")
+            print(
+                "Error: No configuration file specified. Cannot update default configuration file."
+            )
             return
 
         setattr(self, variable, value)
@@ -87,14 +103,20 @@ class Config:
         """Get the version of the pipeline by getting the last commit hash from the git repository."""
         try:
             import subprocess
+
             # make sure to execute git commands in the root directory of the repository
             root_dir = os.path.dirname(os.path.abspath(__file__))
-            git_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], cwd=root_dir).strip().decode("utf-8")
+            git_hash = (
+                subprocess.check_output(
+                    ["git", "rev-parse", "--short", "HEAD"], cwd=root_dir
+                )
+                .strip()
+                .decode("utf-8")
+            )
             version = f"git-{git_hash}"
         except:
             version = "unknown"
         return version
-
 
     # general default variables
     # -------------------------
@@ -105,10 +127,10 @@ class Config:
     auto_response = "off"
     """Decide how questions are answered (off/y/n/default)"""
 
-    data_dir = os.path.join(os.path.expanduser('~'), 'data')
+    data_dir = os.path.join(os.path.expanduser("~"), "data")
     """Default data directory"""
 
-    bids_root = os.path.join(data_dir, 'bids')
+    bids_root = os.path.join(data_dir, "bids")
     """Root directory for BIDS formatted data"""
 
     subjects = []
@@ -123,12 +145,12 @@ class Config:
     # variables for PipelineData class
     # --------------------------------
 
-    deriv_root = os.path.join(data_dir, 'derivatives')
+    deriv_root = os.path.join(data_dir, "derivatives")
     """Root directory for derivatives"""
 
     overwrite = False
     """Overwrite existing derivative files, if False they are skipped"""
-    
+
     eeg_path = {}
     """Path to the eeg data which should be converted to BIDS
 

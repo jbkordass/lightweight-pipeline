@@ -11,6 +11,7 @@ class Dummy_Pipeline_Step(Pipeline_Step):
     def step(self, data):
         return data
 
+
 def test_pipeline_step_initialization():
     """Test the initialization of the Pipeline_Step class."""
     description = "Test step"
@@ -21,6 +22,7 @@ def test_pipeline_step_initialization():
     assert step.config == config
     assert step.short_id is not None
 
+
 def test_pipeline_step_short_id():
     """Test the short_id property of the Pipeline_Step class."""
     description = "Test step"
@@ -29,6 +31,7 @@ def test_pipeline_step_short_id():
     step = Dummy_Pipeline_Step(description, config, short_id)
 
     assert step.short_id == short_id
+
 
 def test_pipeline_step_method():
     """Test the step method of the Pipeline_Step class."""
@@ -39,6 +42,7 @@ def test_pipeline_step_method():
 
     result = step.step(data)
     assert result == data
+
 
 def test_pipeline_exception():
     """Test the Pipeline_Exception class."""

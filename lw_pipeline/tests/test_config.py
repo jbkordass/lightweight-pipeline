@@ -11,10 +11,12 @@ script_path = os.path.realpath(__file__)
 # get config path
 config_path = os.path.join(os.path.dirname(script_path), "config.py")
 
+
 def test_config_initialization():
     """Test the initialization of the Config class."""
     config = Config(config_path)
     assert config.config_file_path == config_path
+
 
 def test_config_data_dir():
     """Test the data_dir property of the Config class."""

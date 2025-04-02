@@ -33,7 +33,14 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
 
     from_deriv = ""
 
-    def __init__(self, config, from_bids=False, from_deriv="", from_deriv_dir="", concatenate_runs=False):
+    def __init__(
+        self,
+        config,
+        from_bids=False,
+        from_deriv="",
+        from_deriv_dir="",
+        concatenate_runs=False,
+    ):
         """
         Initialize the PipelineData object.
 
@@ -44,7 +51,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         from_bids : bool
             If True, the data is initialized from BIDS files located in the bids_root directory.
         from_deriv : str
-            Find bids styled files in the derivatives directory with the description from_deriv. 
+            Find bids styled files in the derivatives directory with the description from_deriv.
         from_deriv_dir : str
             Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
             Requires bids styled files in the derivatives directory.
@@ -56,23 +63,31 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
 
         # filter the file_paths dictionary by the subjects, sessions, and tasks specified in the config
         if config.subjects:
-            self.file_paths = {k: v for k, v in self.file_paths.items() if k in config.subjects}
+            self.file_paths = {
+                k: v for k, v in self.file_paths.items() if k in config.subjects
+            }
         if config.sessions:
             for subject, sessions in self.file_paths.items():
-                self.file_paths[subject] = {k: v for k, v in sessions.items() if k in config.sessions}
+                self.file_paths[subject] = {
+                    k: v for k, v in sessions.items() if k in config.sessions
+                }
         if config.tasks:
             for subject, sessions in self.file_paths.items():
                 for session, tasks in sessions.items():
-                    self.file_paths[subject][session] = {k: v for k, v in tasks.items() if k in config.tasks}
+                    self.file_paths[subject][session] = {
+                        k: v for k, v in tasks.items() if k in config.tasks
+                    }
 
         if concatenate_runs:
             self.concatenate_runs()
 
         if from_bids:
-            self.apply(self.get_bids_path_from_bids_root, save=False, print_duration = False)
+            self.apply(
+                self.get_bids_path_from_bids_root, save=False, print_duration=False
+            )
         elif from_deriv:
             self.from_deriv = from_deriv
-            self.apply(self.get_raw_from_derivatives, save=False, print_duration = False)
+            self.apply(self.get_raw_from_derivatives, save=False, print_duration=False)
         elif from_deriv_dir:
             self.get_raw_from_derivatives_dir(from_deriv_dir)
 
@@ -99,13 +114,13 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         else:
             extension = ".fif"
         return BIDSPath(
-            subject=subject, 
-            session=session.replace("-",""), 
-            task=task, 
-            run=run, 
-            acquisition=self.config.bids_acquisition, 
+            subject=subject,
+            session=session.replace("-", ""),
+            task=task,
+            run=run,
+            acquisition=self.config.bids_acquisition,
             root=self.config.bids_root,
-            extension=extension
+            extension=extension,
         )
 
     def get_bids_path_from_bids_root(self, source, bids_path):
@@ -115,23 +130,27 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
             extension=self.config.bids_extension,
             datatype=self.config.bids_datatype,
             suffix=self.config.bids_datatype,
-            )
+        )
         if not bids_path.match():
             raise ValueError(f"File {bids_path.fpath} not found in BIDS directory.")
         return bids_path
 
     def get_raw_from_derivatives(self, source, bids_path):
-        match = find_matching_paths(self.config.deriv_root, 
+        match = find_matching_paths(
+            self.config.deriv_root,
             subjects=[bids_path.subject],
             sessions=[bids_path.session],
             tasks=[bids_path.task],
             runs=[str(bids_path.run)],
             descriptions=self.from_deriv,
-            datatypes = [self.config.bids_datatype],
-            suffixes=["eeg"], # not sure if this is optimal, "raw" not permitted though
-            extensions=[".fif"])
+            datatypes=[self.config.bids_datatype],
+            suffixes=["eeg"],  # not sure if this is optimal, "raw" not permitted though
+            extensions=[".fif"],
+        )
         if len(match) != 1:
-            raise ValueError(f"Found {len(match)} matching files for subject {bids_path.subject} session {bids_path.session} task {bids_path.task} run {bids_path.run} description {self.from_deriv}")
+            raise ValueError(
+                f"Found {len(match)} matching files for subject {bids_path.subject} session {bids_path.session} task {bids_path.task} run {bids_path.run} description {self.from_deriv}"
+            )
         return match[0]
 
     def get_raw_from_derivatives_dir(self, derivative_description):
@@ -146,9 +165,9 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         root_path = BIDSPath(root=root_dir)
 
         # find all subjects, sessions, tasks, runs in the derivatives directory
-        subjects = get_entity_vals(root_dir, 'subject')
-        sessions = get_entity_vals(root_dir, 'session')
-        tasks = get_entity_vals(root_dir, 'task')
+        subjects = get_entity_vals(root_dir, "subject")
+        sessions = get_entity_vals(root_dir, "session")
+        tasks = get_entity_vals(root_dir, "task")
 
         # intersect with subjects, sessions, tasks from config
         if config.subjects:
@@ -163,7 +182,16 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         for subject in subjects:
             for session in sessions:
                 for task in tasks:
-                    files = root_path.copy().update(subject=subject, session=session, task=task, description=derivative_description).match()
+                    files = (
+                        root_path.copy()
+                        .update(
+                            subject=subject,
+                            session=session,
+                            task=task,
+                            description=derivative_description,
+                        )
+                        .match()
+                    )
                     for file in files:
                         if subject not in constructed_file_paths.keys():
                             constructed_file_paths[subject] = {}
@@ -175,7 +203,18 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
 
         self.file_paths = constructed_file_paths
 
-    def apply(self, function, subjects = None, sessions = None, tasks = None, save=True, print_duration=True, suffix = "eeg", description = "", bids_root = None):
+    def apply(
+        self,
+        function,
+        subjects=None,
+        sessions=None,
+        tasks=None,
+        save=True,
+        print_duration=True,
+        suffix="eeg",
+        description="",
+        bids_root=None,
+    ):
         """
         Apply a function to each data file individually.
 
@@ -192,7 +231,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         tasks : list
             List of tasks to apply the function to.
         save : bool
-            Whether to save the output to the derivatives directory (in case function return a raw object, i.e. subclass of mne.io.BaseRaw or 
+            Whether to save the output to the derivatives directory (in case function return a raw object, i.e. subclass of mne.io.BaseRaw or
             an mne.Annotations instance).
         print_duration : bool
             Whether to print the duration of the function.
@@ -211,9 +250,13 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         # possibly cook up a discription by default, but allow None as well
         if description == "":
             # bit of a hack, but somehow obtain the class the function is defined in
-            step_class = vars(sys.modules[function.__module__])[function.__qualname__.split('.')[0]]
+            step_class = vars(sys.modules[function.__module__])[
+                function.__qualname__.split(".")[0]
+            ]
             if issubclass(step_class, Pipeline_Step):
-                description = guess_short_id(function.__module__) + function.__name__.capitalize()
+                description = (
+                    guess_short_id(function.__module__) + function.__name__.capitalize()
+                )
             else:
                 description = function.__name__
             description = description.replace("_", "")
@@ -238,28 +281,37 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                 for task, task_info in session_info.items():
                     if tasks and task not in tasks:
                         continue
-                    for run, source_data in task_info.items(): 
-
+                    for run, source_data in task_info.items():
                         if not isinstance(source_data, BIDSPath):
-                            output_bids_path = self.get_bids_path(source_data, subject, session, task, run)
+                            output_bids_path = self.get_bids_path(
+                                source_data, subject, session, task, run
+                            )
                         else:
                             output_bids_path = source_data.copy()
 
                         output_bids_path.update(
-                            root=bids_root, 
+                            root=bids_root,
                             description=description,
-                            datatype = self.config.bids_datatype,
-                            suffix=suffix, 
-                            extension=".fif")
+                            datatype=self.config.bids_datatype,
+                            suffix=suffix,
+                            extension=".fif",
+                        )
 
                         # check if the functions output should be saved
                         if save:
                             # and if overwrite is False and the file already exists, skip
-                            if not self.config.overwrite and output_bids_path.fpath.exists():
-                                print(f"\u23E9 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)")
+                            if (
+                                not self.config.overwrite
+                                and output_bids_path.fpath.exists()
+                            ):
+                                print(
+                                    f"\u23e9 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)"
+                                )
 
                                 if suffix in ["meg", "eeg", "ieeg"]:
-                                    self.file_paths[subject][session][task][run] = output_bids_path
+                                    self.file_paths[subject][session][task][run] = (
+                                        output_bids_path
+                                    )
                                 continue
 
                         # Start the timer for the step
@@ -268,7 +320,9 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         try:
                             answer = function(source_data, output_bids_path)
                         except Exception as e:
-                            print(f"\u26A0 Something went wrong with {description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue.")
+                            print(
+                                f"\u26a0 Something went wrong with {description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue."
+                            )
                             print(traceback.format_exc())
                             remove_from_file_paths.append((subject, session, task, run))
                             continue
@@ -282,7 +336,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         # the second one would be a dictionary with entries to update in the sidecar json
                         if isinstance(answer, tuple):
                             answer, sidecar_info_dict = answer
-                            # print type of 
+                            # print type of
                             print(f"Type of answer: {type(sidecar_info_dict)}")
                         else:
                             sidecar_info_dict = None
@@ -290,7 +344,11 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         # if the function returns a raw object, consider automatic saving
                         # otherwise assume the answer is a path to the processed file,
                         # i.e. the source file for the next pipeline step
-                        if issubclass(type(answer), BaseRaw) or issubclass(type(answer), BaseEpochs) or isinstance(answer, Annotations):
+                        if (
+                            issubclass(type(answer), BaseRaw)
+                            or issubclass(type(answer), BaseEpochs)
+                            or isinstance(answer, Annotations)
+                        ):
                             if save:
                                 # we already checked above that the source file is a BIDSPath object
 
@@ -300,16 +358,28 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                                 output_bids_path.mkdir()
 
                                 if isinstance(answer, Annotations):
-                                    answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename),
-                                                overwrite=self.config.overwrite)
+                                    answer.save(
+                                        os.path.join(
+                                            output_bids_path.directory,
+                                            output_bids_path.basename,
+                                        ),
+                                        overwrite=self.config.overwrite,
+                                    )
                                 else:
-                                    answer.save(os.path.join(output_bids_path.directory, output_bids_path.basename), 
-                                                # split_naming='bids',
-                                                overwrite=self.config.overwrite)
+                                    answer.save(
+                                        os.path.join(
+                                            output_bids_path.directory,
+                                            output_bids_path.basename,
+                                        ),
+                                        # split_naming='bids',
+                                        overwrite=self.config.overwrite,
+                                    )
 
                                 # create a sidecar json file
-                                sidecar_bids_path = output_bids_path.copy().update(extension=".json")
-                                if suffix in ["meg", "eeg", "ieeg"]:              
+                                sidecar_bids_path = output_bids_path.copy().update(
+                                    extension=".json"
+                                )
+                                if suffix in ["meg", "eeg", "ieeg"]:
                                     _sidecar_json(
                                         answer,
                                         task=output_bids_path.task,
@@ -320,7 +390,11 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                                     )
                                 else:
                                     # write an empty json file
-                                    _write_json(sidecar_bids_path.fpath, {}, overwrite=self.config.overwrite)
+                                    _write_json(
+                                        sidecar_bids_path.fpath,
+                                        {},
+                                        overwrite=self.config.overwrite,
+                                    )
                                 pipeline_step_info = {
                                     "Pipeline": {
                                         "Version": self.config.get_version(),
@@ -331,17 +405,23 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                                     },
                                 }
                                 if sidecar_info_dict:
-                                    pipeline_step_info = pipeline_step_info | sidecar_info_dict
-                                update_sidecar_json(sidecar_bids_path, pipeline_step_info)
+                                    pipeline_step_info = (
+                                        pipeline_step_info | sidecar_info_dict
+                                    )
+                                update_sidecar_json(
+                                    sidecar_bids_path, pipeline_step_info
+                                )
 
                                 # only update file path, if the step produced eeg, meg, or ieeg data (not markers, etc.)
                                 if suffix in ["meg", "eeg", "ieeg"]:
                                     # pass on the output bids path to the next step
-                                    self.file_paths[subject][session][task][run] = output_bids_path
+                                    self.file_paths[subject][session][task][run] = (
+                                        output_bids_path
+                                    )
                             else:
                                 # simply pass on the raw object to the next step
                                 self.file_paths[subject][session][task][run] = answer
-                        else: 
+                        else:
                             # pass on the path (or whatever it is) to the next step
                             self.file_paths[subject][session][task][run] = answer
 
@@ -397,12 +477,14 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
             for session, tasks in sessions.items():
                 for task, runs in tasks.items():
                     for run, source in runs.items():
-                        data.append({
-                            "Subject": subject,
-                            "Session": session,
-                            "Task": task,
-                            "Run": run,
-                            "Source": source,
-                        })
+                        data.append(
+                            {
+                                "Subject": subject,
+                                "Session": session,
+                                "Task": task,
+                                "Run": run,
+                                "Source": source,
+                            }
+                        )
 
         return pd.DataFrame(data)

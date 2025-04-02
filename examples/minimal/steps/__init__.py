@@ -4,7 +4,9 @@
 from os.path import dirname, abspath, join
 import sys
 
-sys.path.insert(0, abspath(join(dirname(__file__), "..", "..", "pipeline")))  # Source code dir relative to this file
+sys.path.insert(
+    0, abspath(join(dirname(__file__), "..", "..", "pipeline"))
+)  # Source code dir relative to this file
 
 # import steps to make them visible in the sphinx documentation
 from importlib import import_module

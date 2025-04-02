@@ -3,6 +3,7 @@
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+
 def guess_short_id(module):
     """
     Obtain a short id (used for a PipelineStep) to obtain a short id from the module name.
