@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Lightweight Pipeline'
-copyright = '2024, The Lightweight Pipeline developers'
+copyright = '2025, The Lightweight Pipeline developers'
 author = 'The Lightweight Pipeline developers'
 
 

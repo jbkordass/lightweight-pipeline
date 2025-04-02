@@ -4,15 +4,15 @@ Quickstart
 
 Rough idea:
 
-#. Write a `config.py` specifying the locations of steps, data, and other configurations.
+#. Write a :file:`config.py` specifying the locations of steps, data, and other configurations.
 #. Define the steps of a pipeline in separate `.py` files and store them in a folder.
-#. Pass the `config.py` to the pipeline CLI, which will handle the execution order based on a naming convention.
+#. Pass the :file:`config.py` to the pipeline CLI, which will handle the execution order based on a naming convention.
 
 
 Config
 ~~~~~~
 
-The `Config` class is used to manage the configuration settings for your pipeline.
+The configuration class :class:`lw_pipeline.Config` is used to manage the configuration settings for your pipeline.
 If passed a path to a file all defined variables in the file will be available as attributes of the `Config` instance.
 
 .. code-block:: python
@@ -25,7 +25,7 @@ If passed a path to a file all defined variables in the file will be available a
 Pipeline_Step
 ~~~~~~~~~~~~~
 
-`Pipeline_Step` is an abstract base class that you can subclass to define individual steps in your pipeline. 
+:class:`lw_pipeline.Pipeline_Step` is an abstract base class that you can subclass to define individual steps in your pipeline. 
 Each step should implement the `step` method, which contains the processing logic for that step.
 
 .. code-block:: python
@@ -55,8 +55,8 @@ The CLI part of the pipeline aggregates all steps and handles running them.
 Pipeline_Data
 ~~~~~~~~~~~~~
 
-The abstract `Pipeline_Data` class is used to manage the data that flows through the pipeline.
-As of now, the pipeline comes with a `Pipeline_MNE_BIDS_Data` class that is used to handle MNE-BIDS data.
+The abstract :class:`lw_pipeline.Pipeline_Data` class is used to manage the data that flows through the pipeline.
+As of now, the pipeline comes with a :class:`lw_pipeline.Pipeline_MNE_BIDS_Data` class that is used to handle MNE-BIDS data.
 
 
 We refer to the :doc:`minimal example<minimal_example>` for a more detailed explanation.
@@ -65,7 +65,7 @@ We refer to the :doc:`minimal example<minimal_example>` for a more detailed expl
 Command line interface
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The package defines a `lw_pipeline` CLI accepting the following arguments:
+The package defines a :code:`lw_pipeline` CLI accepting the following arguments:
 
 .. glossary::
 
