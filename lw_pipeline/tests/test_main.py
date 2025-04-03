@@ -2,11 +2,11 @@
 
 import os
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from lw_pipeline.__main__ import find_all_steps, main, run_pipeline
+from lw_pipeline.__main__ import find_all_steps, main
 
 # get path of this script
 script_path = os.path.realpath(__file__)

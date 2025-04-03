@@ -2,8 +2,6 @@
 
 import os
 
-import pytest
-
 from lw_pipeline.config import Config
 from lw_pipeline.pipeline_data import Pipeline_Data
 

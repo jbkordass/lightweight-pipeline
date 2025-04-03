@@ -2,8 +2,6 @@
 
 import os
 
-import pytest
-
 from lw_pipeline.config import Config
 
 # get path of this script

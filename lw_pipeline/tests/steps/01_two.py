@@ -1,8 +1,7 @@
 """Tests for the Pipeline_Step class."""
 
-import pytest
 
-from lw_pipeline.pipeline_step import Pipeline_Exception, Pipeline_Step
+from lw_pipeline.pipeline_step import Pipeline_Step
 
 
 class Step_Two(Pipeline_Step):

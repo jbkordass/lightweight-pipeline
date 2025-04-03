@@ -22,14 +22,14 @@ The config file can be used to define custom variables.
     :language: Python
     :caption: config.py
 
-In the context of an `lw_pipeline.Config` instance `config`, such a variable can be accessed as:
+In the context of a :class:`Config <lw_pipeline.Config>` instance `config`, such a variable can be accessed as:
 
 .. code-block:: python
 
     config.variable_a
 
-Next we define some steps, i.e. subclasses of `lw_pipeline.Pipeline_Step` that implement the `step()` method. 
-The steps are defined in the `steps` directory.
+Next we define some steps, i.e. subclasses of :class:`Pipeline_Step <lw_pipeline.Pipeline_Step>` that implement the :func:`step() <lw_pipeline.Pipeline_Step.step>` method. 
+The steps are defined in the :file:`steps/` directory.
 
 .. literalinclude:: ../examples/trivial/steps/00_start.py
     :language: Python

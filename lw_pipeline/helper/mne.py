@@ -13,7 +13,7 @@ def raw_from_source(source, **kwargs):
     if isinstance(source, BIDSPath):
         try:
             raw = mne.io.read_raw(source, **kwargs)
-        except Exception as e:
+        except Exception:
             raw = mne.io.read_raw(source, encoding="latin1", **kwargs)
     # check if it is a list of bids paths
     elif isinstance(source, list) and all(
@@ -21,7 +21,7 @@ def raw_from_source(source, **kwargs):
     ):
         try:
             raws = [mne.io.read_raw(fpath, **kwargs) for fpath in source]
-        except Exception as e:
+        except Exception:
             raws = [
                 mne.io.read_raw(fpath, encoding="latin1", **kwargs) for fpath in source
             ]

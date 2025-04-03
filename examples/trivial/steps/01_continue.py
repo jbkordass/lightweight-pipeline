@@ -1,4 +1,4 @@
-from lw_pipeline import Pipeline_Step, Pipeline_Exception
+from lw_pipeline import Pipeline_Step
 
 
 class A_Continued_Pipeline_Step(Pipeline_Step):

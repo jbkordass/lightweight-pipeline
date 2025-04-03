@@ -7,7 +7,7 @@ This section provides an overview of a minimal example pipeline setup processing
 It demonstrates
 
 #. More complex pipeline steps.
-#. Using the Pipeline_MNE_BIDS_Data class to handle MNE-BIDS data.
+#. Using the :class:`Pipeline_MNE_BIDS_Data <lw_pipeline.Pipeline_MNE_BIDS_Data>` class to handle MNE-BIDS data.
 #. Running the pipeline (interactively) from a jupyter notebook.
 #. Using sphinx doc to document the pipeline steps.
 

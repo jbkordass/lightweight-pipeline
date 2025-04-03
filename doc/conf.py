@@ -11,10 +11,8 @@ copyright = '2025, The Lightweight Pipeline developers'
 author = 'The Lightweight Pipeline developers'
 
 
-import os
-import sys
 
-import lw_pipeline
+import lw_pipeline  # noqa: E402
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -17,10 +17,8 @@ import sys
 curdir = os.path.dirname(__file__)
 sys.path.insert(0, os.path.abspath(os.path.join(curdir, "..")))
 
-import steps
-import config
 
-import lw_pipeline
+import lw_pipeline  # noqa: E402
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

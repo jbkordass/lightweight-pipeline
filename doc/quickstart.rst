@@ -5,15 +5,15 @@ Quickstart
 Rough idea:
 
 #. Write a :file:`config.py` specifying the locations of steps, data, and other configurations.
-#. Define the steps of a pipeline in separate `.py` files and store them in a folder.
+#. Define the steps of a pipeline in separate :file:`.py` files and store them in a folder.
 #. Pass the :file:`config.py` to the pipeline CLI, which will handle the execution order based on a naming convention.
 
 
 Config
 ~~~~~~
 
-The configuration class :class:`lw_pipeline.Config` is used to manage the configuration settings for your pipeline.
-If passed a path to a file all defined variables in the file will be available as attributes of the `Config` instance.
+The configuration class :class:`Config <lw_pipeline.Config>` is used to manage the configuration settings for your pipeline.
+If passed a path to a file all defined variables in the file will be available as attributes of the :class:`Config <lw_pipeline.Config>` instance.
 
 .. code-block:: python
 
@@ -25,8 +25,8 @@ If passed a path to a file all defined variables in the file will be available a
 Pipeline_Step
 ~~~~~~~~~~~~~
 
-:class:`lw_pipeline.Pipeline_Step` is an abstract base class that you can subclass to define individual steps in your pipeline. 
-Each step should implement the `step` method, which contains the processing logic for that step.
+:class:`Pipeline_Step <lw_pipeline.Pipeline_Step>` is an abstract base class that you can subclass to define individual steps in your pipeline. 
+Each step should implement the :func:`step() <lw_pipeline.Pipeline_Step.step>` method, which contains the processing logic for that step.
 
 .. code-block:: python
 
@@ -48,15 +48,15 @@ Each step should implement the `step` method, which contains the processing logi
     output_data = step.step(input_data)
     print(f"Input: {input_data}, Output: {output_data}")
 
-In practice, it is not necessarily meant to be instatiated except for demonstration or testing.
+In practice, it is not necessarily meant to be instantiated except for demonstration or testing.
 The CLI part of the pipeline aggregates all steps and handles running them.
 
 
 Pipeline_Data
 ~~~~~~~~~~~~~
 
-The abstract :class:`lw_pipeline.Pipeline_Data` class is used to manage the data that flows through the pipeline.
-As of now, the pipeline comes with a :class:`lw_pipeline.Pipeline_MNE_BIDS_Data` class that is used to handle MNE-BIDS data.
+The abstract :class:`Pipeline_Data <lw_pipeline.Pipeline_Data>` class is used to manage the data that flows through the pipeline.
+As of now, the pipeline comes with a :class:`Pipeline_MNE_BIDS_Data <lw_pipeline.Pipeline_MNE_BIDS_Data>` class that is used to handle MNE-BIDS data.
 
 
 We refer to the :doc:`minimal example<minimal_example>` for a more detailed explanation.

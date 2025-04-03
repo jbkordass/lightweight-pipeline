@@ -9,7 +9,7 @@ import os
 import sys
 
 import pandas as pd
-from mne_bids import BIDSPath, get_entity_vals, print_dir_tree, find_matching_paths
+from mne_bids import BIDSPath, find_matching_paths, get_entity_vals, print_dir_tree
 
 from lw_pipeline.pipeline_step import Pipeline_Step
 
