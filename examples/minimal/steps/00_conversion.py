@@ -1,3 +1,5 @@
+"""Conversion Step to Bids format."""
+
 import os
 import re
 import shutil
@@ -18,7 +20,8 @@ class Conversion(Pipeline_Step):
     """
     Conversion Step to Bids format.
 
-    For the sake of example, create a folder directory structure with random data as follows:
+    For the sake of example, create a folder directory structure with random data as
+    follows:
 
         * data/
             * raw/
@@ -35,6 +38,11 @@ class Conversion(Pipeline_Step):
         super().__init__("Generate example data, then convert to BIDS format", config)
 
     def step(self, data):
+        """
+        Pipeline step.
+
+        Generate example data, then convert to BIDS format.
+        """
         config = self.config
 
         # check if config.data_dir has a raw directory and empty it
@@ -56,7 +64,7 @@ class Conversion(Pipeline_Step):
             filelist = listdir(raw_dir)  # get list of all files in raw directory
 
             for file in filelist:
-                # find out subject id (4 digits) and condition (T1, T2, T3, T4) from file name
+                # find out subject id (4 digits) and session from file name
                 match = re.search(
                     "(?P<subject>\\d{4})_(?P<session>session\\d{1})_task1.edf", file
                 )
@@ -106,7 +114,7 @@ class Conversion(Pipeline_Step):
         # check directory tree where the files should have been written to
         try:
             print_dir_tree(config.bids_root)
-        except:
+        except Exception:
             print("Could not print directory tree")
 
         return data
@@ -125,7 +133,8 @@ class Conversion(Pipeline_Step):
             and bids_path.fpath.exists()
         ):
             print(
-                f"\u26a0 File {bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)"
+                f"\u26a0 File {bids_path.fpath} already exists. Skipping. "
+                "(To change this behaviour, set config variable 'overwrite = True'.)"
             )
         else:
             try:

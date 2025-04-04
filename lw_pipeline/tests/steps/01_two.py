@@ -1,6 +1,5 @@
 """Tests for the Pipeline_Step class."""
 
-
 from lw_pipeline.pipeline_step import Pipeline_Step
 
 
@@ -11,4 +10,5 @@ class Step_Two(Pipeline_Step):
         super().__init__("Step Two", config)
 
     def step(self, data):
+        """Step method returning a string."""
         return "Data from Step Two"

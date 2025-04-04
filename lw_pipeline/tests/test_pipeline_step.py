@@ -9,6 +9,7 @@ class Dummy_Pipeline_Step(Pipeline_Step):
     """A concrete implementation of Pipeline_Step for testing purposes."""
 
     def step(self, data):
+        """Step method that simply returns the input data."""
         return data
 
 

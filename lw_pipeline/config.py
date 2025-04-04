@@ -21,8 +21,9 @@ class Config:
         Initialize the Config object.
 
         Args:
-            config_file_path (str): The path to the configuration file. If provided, the configuration settings will be
-                updated based on the variables defined in the file.
+            config_file_path (str): The path to the configuration file. If provided,
+                the configuration settings will be updated based on the variables
+                defined in the file.
         """
         if config_file_path:
             self.config_file_path = config_file_path
@@ -36,7 +37,8 @@ class Config:
                 module_name = os.path.splitext(os.path.basename(config_file))[0]
                 config_module = importlib.import_module(module_name)
 
-                # Update the current variables in the this class with the ones from the specified configuration file
+                # Update the current variables in the this class with the ones from
+                # the specified configuration file
                 vars(self).update(
                     {
                         k: v
@@ -45,12 +47,11 @@ class Config:
                     }
                 )
 
-                print(
-                    f"Using configuration file: {config_file_path}, assuming it's a python file"
-                )
+                print(f"Using configuration file: {config_file_path}.")
             else:
                 print(
-                    f"Error: Configuration file {config_file_path} does not exist; using default configuration."
+                    f"Error: Configuration file {config_file_path} does not exist; "
+                    "Using default configuration."
                 )
         else:
             print("Using default configuration file.")
@@ -67,8 +68,9 @@ class Config:
             except EOFError:
                 # e.g. if not run interactively
                 raise Pipeline_Exception(
-                    f"Could not obtain response to question: ({message}). \
-                        Make sure to specify auto_response in the config, or run with --ignore-questions to use the default response"
+                    f"Could not obtain response to question: ({message}). "
+                    "Make sure to specify auto_response in the config, or run "
+                    "with --ignore-questions to use the default response."
                 )
             return response
         elif self.auto_response == "default":
@@ -78,20 +80,22 @@ class Config:
 
     def set_variable_and_write_to_config_file(self, variable, value):
         """
-        Set a variable in this class and if it does not exist in the the configuration file, then add a line with the specified value.
+        Set a variable in this class and write to config file, if not defined there.
+
+        For safety, only allow to write variables that are not already set.
 
         Args:
             variable (str): The name of the variable to update.
             value (mixed): The value to set the variable to.
         """
         if hasattr(self, variable) and getattr(self, variable):
-            print("Error: Cannot overwrite already set variable in configuration file.")
+            raise Pipeline_Exception(
+                "Cannot overwrite already set variable in configuration file."
+            )
             return
 
         if not self.config_file_path:
-            print(
-                "Error: No configuration file specified. Cannot update default configuration file."
-            )
+            raise Pipeline_Exception("No configuration file specified .")
             return
 
         setattr(self, variable, value)
@@ -100,7 +104,12 @@ class Config:
         print(f"Configuration file updated: {self.config_file_path}")
 
     def get_version(self):
-        """Get the version of the pipeline by getting the last commit hash from the git repository."""
+        """
+        Get a version of the pipeline by getting last commit hash from the git.
+
+        Cave: This only works if the pipeline is in a git repository.
+        If not, it will return "unknown".
+        """
         try:
             import subprocess
 
@@ -114,7 +123,7 @@ class Config:
                 .decode("utf-8")
             )
             version = f"git-{git_hash}"
-        except:
+        except Exception:
             version = "unknown"
         return version
 
@@ -122,7 +131,8 @@ class Config:
     # -------------------------
 
     steps_dir = "steps/"
-    """Steps directory relative to config file or current working directory if no external config file is used."""
+    """Steps directory relative to config file or current working directory if no """
+    """external config file is used."""
 
     auto_response = "off"
     """Decide how questions are answered (off/y/n/default)"""
@@ -134,13 +144,16 @@ class Config:
     """Root directory for BIDS formatted data"""
 
     subjects = []
-    """List of subjects to include in the pipeline processing. If empty list, include all subjects"""
+    """List of subjects to include in the pipeline processing. If empty list, \
+        include all subjects"""
 
     sessions = []
-    """List of sessions to include in the pipeline processing. If empty list, include all sessions"""
+    """List of sessions to include in the pipeline processing. If empty list, \
+        include all sessions"""
 
     tasks = []
-    """List of tasks to include in the pipeline processing. If empty list, include all tasks"""
+    """List of tasks to include in the pipeline processing. If empty list, \
+        include all tasks"""
 
     # variables for PipelineData class
     # --------------------------------

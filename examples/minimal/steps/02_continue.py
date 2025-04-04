@@ -1,3 +1,5 @@
+"""Continue with more data analysis."""
+
 import mne
 import numpy as np
 from mne_bids import find_matching_paths
@@ -10,7 +12,7 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
     """
     Continue with more data analysis.
 
-    Annotate the data with markers every 1 second and plot the first channel of the raw data.
+    Annotate data with markers every 1 second and plot the first channel of raw data.
 
     Relevant config variables:
     - None
@@ -20,12 +22,16 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
         super().__init__("Data analysis or something..", config)
 
     def step(self, data):
+        """
+        Pipeline step.
+
+        Load data from preprocessing step, annotate it with markers every 1 second,
+        and plot the first channel of the raw data.
+        """
         config = self.config
 
         if data is None:
-            print(
-                "No data object found, try to find in derivatives files after preprocessing"
-            )
+            print("No data object found. Trying to find preprocessing derivatives.")
             data = Pipeline_MNE_BIDS_Data(config, from_deriv="01Preprocessing")
 
         # generate some annotations and save them
@@ -37,6 +43,7 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
         return data
 
     def annotate(self, source, bids_path):
+        """Annotate the data with markers every 1 second."""
         raw = raw_from_source(source, preload=True)
 
         # create annotations every 1 second in the data
@@ -48,6 +55,11 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
         return annotations
 
     def analysis(self, source, bids_path):
+        """
+        'Analysis' of the data.
+
+        This function will plot the first channel of the raw data and save it as a PDF.
+        """
         config = self.config
 
         raw = raw_from_source(source, preload=True)
@@ -82,7 +94,8 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
 
         plt.show()
 
-        # save the plot, use short_id to have the same prefix as derivaties from this step
+        # save the plot, use short_id to have the same prefix as derivaties
+        # from this step
         bids_path_plot = bids_path.copy().update(
             extension=".pdf", description=self.short_id + "FirstChannelPlot"
         )

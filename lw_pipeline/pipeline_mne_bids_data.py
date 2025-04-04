@@ -49,19 +49,24 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         config : Config
             Configuration object.
         from_bids : bool
-            If True, the data is initialized from BIDS files located in the bids_root directory.
+            If True, the data is initialized from BIDS files located in the bids_root
+            directory.
         from_deriv : str
-            Find bids styled files in the derivatives directory with the description from_deriv.
+            Find bids styled files in the derivatives directory with the description
+            from_deriv.
         from_deriv_dir : str
-            Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
-            Requires bids styled files in the derivatives directory.
+            Ignore the variable config.eeg_path and construct file_paths from the
+            derivatives directory. Requires bids styled files in the derivatives
+            directory.
         """
         super().__init__(config)
 
-        # use the eeg_path to create a stub of files organized by subject, session, task, and run
+        # use the eeg_path to create a stub of files organized by subject, session,
+        # task, and run
         self.file_paths = config.eeg_path
 
-        # filter the file_paths dictionary by the subjects, sessions, and tasks specified in the config
+        # filter the file_paths dictionary by the subjects, sessions, and tasks
+        # specified in the config
         if config.subjects:
             self.file_paths = {
                 k: v for k, v in self.file_paths.items() if k in config.subjects
@@ -92,6 +97,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
             self.get_raw_from_derivatives_dir(from_deriv_dir)
 
     def __str__(self):
+        """Return a string representation of the PipelineData object."""
         if not self.file_paths:
             return "PipelineData object with no files."
         else:
@@ -124,6 +130,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         )
 
     def get_bids_path_from_bids_root(self, source, bids_path):
+        """Get BidsPath for raw data from the bids_root directory."""
         bids_path.update(
             root=self.config.bids_root,
             description=None,
@@ -136,6 +143,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         return bids_path
 
     def get_raw_from_derivatives(self, source, bids_path):
+        """Get BidsPath for raw data from the derivatives directory."""
         match = find_matching_paths(
             self.config.deriv_root,
             subjects=[bids_path.subject],
@@ -149,13 +157,17 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         )
         if len(match) != 1:
             raise ValueError(
-                f"Found {len(match)} matching files for subject {bids_path.subject} session {bids_path.session} task {bids_path.task} run {bids_path.run} description {self.from_deriv}"
+                f"Found {len(match)} matching files for subject {bids_path.subject}, "
+                f"session {bids_path.session}, "
+                f"task {bids_path.task}, "
+                f"run {bids_path.run}, "
+                f"description {self.from_deriv}"
             )
         return match[0]
 
     def get_raw_from_derivatives_dir(self, derivative_description):
         """
-        Ignore the variable config.eeg_path and construct file_paths from the derivatives directory.
+        Ignore the variable config.eeg_path and construct file_paths from deriv. dir.
 
         Requires bids styled files in the derivatives directory.
         """
@@ -177,7 +189,7 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         if config.tasks:
             tasks = list(set(tasks) & set(config.tasks))
 
-        # create a dictionary with file paths organized by subject, session, task, and run
+        # create a dict with file paths organized by subject, session, task, and run
         constructed_file_paths = {}
         for subject in subjects:
             for session in sessions:
@@ -231,19 +243,24 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
         tasks : list
             List of tasks to apply the function to.
         save : bool
-            Whether to save the output to the derivatives directory (in case function return a raw object, i.e. subclass of mne.io.BaseRaw or
-            an mne.Annotations instance).
+            Whether to save the output to the derivatives directory (in case function
+            return a raw object, i.e. subclass of mne.io.BaseRaw or an mne.Annotations
+            instance).
         print_duration : bool
             Whether to print the duration of the function.
         suffix : str
-            Suffix of the output Bidspath. Default is "eeg". For Anntations one could use "markers".
-            Only certain values allowed, cf. MNE-BIDS documentation (https://mne.tools/mne-bids/stable/generated/mne_bids.BIDSPath.html#mne_bids.BIDSPath).
-            If suffix is not in ["meg", "eeg", "ieeg"], the output file path will not be updated in the file_paths dictionary.
-            Annotations are saved, but not directly passed on to the next step.
+            Suffix of the output Bidspath. Default is "eeg". For Anntations one could
+            use "markers". Only certain values allowed, cf. MNE-BIDS documentation
+            (https://mne.tools/mne-bids/stable/generated/mne_bids.BIDSPath.html#mne_bids.BIDSPath).
+            If suffix is not in ["meg", "eeg", "ieeg"], the output file path will not
+            be updated in the file_paths dictionary. Annotations are saved, but not
+            directly passed on to the next step.
         description : str
-            Description of the output Bidspath for the derivative, if none specified use PipelineStep.short_id + function name instead.
+            Description of the output Bidspath for the derivative, if none specified
+            use PipelineStep.short_id + function name instead.
         bids_root : str
-            Root directory for the destination. If None, the bids derivatives directory from the config is used.
+            Root directory for the destination. If None, the bids derivatives
+            directory from the config is used.
         """
         remove_from_file_paths = []
 
@@ -299,13 +316,15 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
 
                         # check if the functions output should be saved
                         if save:
-                            # and if overwrite is False and the file already exists, skip
+                            # and if overwrite is False & the file already exists, skip
                             if (
                                 not self.config.overwrite
                                 and output_bids_path.fpath.exists()
                             ):
                                 print(
-                                    f"\u23e9 File {output_bids_path.fpath} already exists. Skipping. (To change this behaviour, set config variable 'overwrite = True'.)"
+                                    f"\u23e9 File {output_bids_path.fpath} already "
+                                    "exists. Skipping. (To change this behaviour, set"
+                                    "config variable 'overwrite = True'.)"
                                 )
 
                                 if suffix in ["meg", "eeg", "ieeg"]:
@@ -321,7 +340,9 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                             answer = function(source_data, output_bids_path)
                         except Exception:
                             print(
-                                f"\u26a0 Something went wrong with {description} for {subject}, {session}, {task}, {run}. Removing from processed files list to continue."
+                                f"\u26a0 Something went wrong with {description} for"
+                                f"{subject}, {session}, {task}, {run}. Removing from"
+                                "processed files list to continue."
                             )
                             print(traceback.format_exc())
                             remove_from_file_paths.append((subject, session, task, run))
@@ -333,7 +354,8 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                             print(f"Step {description} took {duration:.2f} seconds.")
 
                         # check if answer has two varaiables
-                        # the second one would be a dictionary with entries to update in the sidecar json
+                        # the second one would be a dictionary with entries to update
+                        # in the sidecar json
                         if isinstance(answer, tuple):
                             answer, sidecar_info_dict = answer
                             # print type of
@@ -341,19 +363,22 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         else:
                             sidecar_info_dict = None
 
-                        # if the function returns a raw object, consider automatic saving
-                        # otherwise assume the answer is a path to the processed file,
-                        # i.e. the source file for the next pipeline step
+                        # if the function returns a raw object, consider automatic
+                        # saving otherwise assume the answer is a path to the processed
+                        # file, i.e. the source file for the next pipeline step
                         if (
                             issubclass(type(answer), BaseRaw)
                             or issubclass(type(answer), BaseEpochs)
                             or isinstance(answer, Annotations)
                         ):
                             if save:
-                                # we already checked above that the source file is a BIDSPath object
+                                # we already checked above that the source file is
+                                # a BIDSPath object
 
-                                # unfortunately write_raw_bids does work to save preloaded (modified) raw objects
-                                # to a .fif file → we have to do some bids stuff by hand/internal mne_bids functions
+                                # unfortunately write_raw_bids does work to save
+                                # preloaded (modified) raw objects to a .fif file → we
+                                # have to do some bids stuff by hand/internal mne_bids
+                                # functions
 
                                 output_bids_path.mkdir()
 
@@ -412,7 +437,8 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                                     sidecar_bids_path, pipeline_step_info
                                 )
 
-                                # only update file path, if the step produced eeg, meg, or ieeg data (not markers, etc.)
+                                # only update file path, if the step produced eeg, meg,
+                                # or ieeg data (not markers, etc.)
                                 if suffix in ["meg", "eeg", "ieeg"]:
                                     # pass on the output bids path to the next step
                                     self.file_paths[subject][session][task][run] = (

@@ -25,13 +25,11 @@ clean: clean-build clean-pyc clean-so clean-ctags clean-cache clean-e
 
 ruff-format:
 	@echo "Running ruff format"
-	@ruff format lw_pipeline/
-	@ruff format examples/
+	@ruff format steps/
 
 ruff-check:
 	@echo "Running ruff check"
-	@ruff check lw_pipeline/
-	@ruff check examples/
+	@ruff check steps/
 
 pep: ruff-check ruff-format
 

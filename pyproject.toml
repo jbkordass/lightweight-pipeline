@@ -13,7 +13,6 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python",
   "Topic :: Scientific/Engineering",
-  "Topic :: Scientific/Engineering",
   "Topic :: Software Development",
 ]
 dependencies = []
@@ -51,12 +50,9 @@ test = ["lw_pipeline[full]", "pytest >= 8", "pytest-cov", "pytest-sugar", "ruff"
 exclude = [
   "**/tests",
   "/.*",
-  "/CITATION.cff",
-  "/CONTRIBUTING.md",
   "/doc",
   "/examples",
   "/Makefile",
-  "/paper",
 ]
 
 [tool.hatch.metadata]

@@ -35,12 +35,12 @@ test:
 ruff-format:
 	@echo "Running ruff format"
 	@ruff format lw_pipeline/
-	@ruff format examples/
+	@ruff format examples/ --exclude="*/doc/*,examples/trivial/*"
 
 ruff-check:
 	@echo "Running ruff check"
 	@ruff check lw_pipeline/
-	@ruff check examples/
+	@ruff check examples/ --exclude="*/doc/*,examples/trivial/*"
 
 pep: ruff-check ruff-format
 

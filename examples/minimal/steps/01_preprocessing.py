@@ -1,3 +1,5 @@
+"""Preprocessing Step to preprocess the data."""
+
 from lw_pipeline import Pipeline_MNE_BIDS_Data, Pipeline_Step
 from lw_pipeline.helper.mne import raw_from_source
 
@@ -6,7 +8,8 @@ class Preprocessing(Pipeline_Step):
     """
     Preprocessing Step to preprocess the data.
 
-    Apply a notch filter to remove power line artifact and resample the data to a lower frequency.
+    Apply a notch filter to remove power line artifact and resample the data to a lower
+    frequency.
 
     Relevant config variables:
     - notch_filter: Notch filter to remove power line artifact.
@@ -18,6 +21,7 @@ class Preprocessing(Pipeline_Step):
         super().__init__("Preprocessing data.", config)
 
     def step(self, data):
+        """Pipeline step."""
         config = self.config
 
         if data is None:
@@ -29,6 +33,12 @@ class Preprocessing(Pipeline_Step):
         return data
 
     def preprocessing(self, source, bids_path):
+        """
+        Preprocess the data.
+
+        Apply a notch filter to remove power line artifact and resample the data to a
+        lower frequency. Save info about this in a sidecar json file.
+        """
         config = self.config
 
         raw = raw_from_source(source, preload=True)

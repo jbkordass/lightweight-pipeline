@@ -8,7 +8,34 @@ from mne_bids import BIDSPath
 
 
 def raw_from_source(source, **kwargs):
-    """Produce an mne raw object from a number of different sources that could be passed through the pipeline."""
+    """
+    Produce an mne raw object from different sources.
+
+    Possible sources: (lists will be concatenated)
+
+    - BIDSPath
+    - list of BIDSPath
+    - mne.io.BaseRaw
+    - list of mne.io.BaseRaw
+
+    Parameters
+    ----------
+    source : BIDSPath | list of BIDSPath | mne.io.BaseRaw | list of mne.io.BaseRaw
+        The source to read the raw data from.
+    kwargs : dict
+        Additional keyword arguments to pass to mne.io.read_raw.
+
+    Returns
+    -------
+    raw : mne.io.BaseRaw
+        The raw data object.
+
+    Raises
+    ------
+    ValueError
+        If the source is not a BIDSPath, list of BIDSPath, mne.io.BaseRaw, or list of
+        mne.io.BaseRaw.
+    """
     # check if the source_file is an instance of BidsPath
     if isinstance(source, BIDSPath):
         try:

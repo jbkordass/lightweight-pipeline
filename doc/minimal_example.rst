@@ -2,14 +2,15 @@
 Minimal Example
 ===============
 
-This section provides an overview of a minimal example pipeline setup processing EEG data using the MNE-BIDS package.
+This section provides an overview of a minimal example pipeline setup processing EEG data using the `MNE-BIDS <https://mne.tools/mne-bids/>` package.
 
 It demonstrates
 
 #. More complex pipeline steps.
 #. Using the :class:`Pipeline_MNE_BIDS_Data <lw_pipeline.Pipeline_MNE_BIDS_Data>` class to handle MNE-BIDS data.
 #. Running the pipeline (interactively) from a jupyter notebook.
-#. Using sphinx doc to document the pipeline steps.
+#. Using `Sphinx doc<https://www.sphinx-doc.org/en/master/index.html>` to document the pipeline steps.
+
 
 Folder Structure
 ----------------

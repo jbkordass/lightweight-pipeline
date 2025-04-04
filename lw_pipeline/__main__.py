@@ -24,7 +24,8 @@ def main():
         metavar="TT",
         type=str,
         nargs="*",
-        help="List of steps to run, separated by commas (only necessary to specify 00-99)",
+        help="List of steps to run, separated by commas (only necessary to "
+        "specify 00-99)",
     )
 
     parser.add_argument("-c", "--config", help="Path to the configuration file")
@@ -54,13 +55,15 @@ def main():
     parser.add_argument(
         "--store-report",
         action="store_true",
-        help="Store the report tables in .tsv files in the derivatives dir (pipeline_report_bids_dir.tsv, pipeline_report_deriv_dir.tsv).",
+        help="Store the report tables in .tsv files in the derivatives dir "
+        "(pipeline_report_bids_dir.tsv, pipeline_report_deriv_dir.tsv).",
     )
 
     parser.add_argument(
         "--full-report",
         action="store_true",
-        help="Generate a full report (do not limit to subj, ses, task specification in the config) of the pipeline's derivatives.",
+        help="Generate a full report (do not limit to subj, ses, task specification in"
+        " the config) of the pipeline's derivatives.",
     )
 
     options = parser.parse_args()
@@ -75,7 +78,7 @@ def main():
         if not options.steps:
             print("Running entire pipeline")
         else:
-            # filter step files based on the steps specified in the command line argument
+            # filter step files based on steps specified in the command line argument
             step_files = [
                 step_file
                 for step_file in step_files
@@ -93,13 +96,16 @@ def main():
         print(f"Generating {'limited ' if not options.full_report else 'full '}report")
         generate_report(config, options.store_report, options.full_report)
     else:
-        print(
-            "No action specified. Add --run or --list (or check --help for more options)"
-        )
+        # if no arguments implying actions are given, print help
+        parser.print_help()
 
 
 def run_pipeline(step_files, config):
-    """Run the pipeline through all steps given by PipelineStep classes contained in the step_files list."""
+    """
+    Run the pipeline.
+
+    Include all Pipeline_Step classes contained in the step_files list.
+    """
     # counter for executed steps/position in the pipeline
     pos = 1
 
@@ -107,7 +113,8 @@ def run_pipeline(step_files, config):
 
     steps_dir = config.steps_dir
 
-    # check if steps dir is relative in that case make it relative to the config file or the current working directory
+    # check if steps dir is relative in that case make it relative to the config file
+    # or the current working directory
     if not os.path.isabs(steps_dir):
         # check if there is an externatl config file or if default config is used
         if config.config_file_path is not None:

@@ -9,7 +9,7 @@ import os
 import sys
 
 import pandas as pd
-from mne_bids import BIDSPath, find_matching_paths, get_entity_vals, print_dir_tree
+from mne_bids import find_matching_paths, get_entity_vals, print_dir_tree
 
 from lw_pipeline.pipeline_step import Pipeline_Step
 
@@ -101,8 +101,6 @@ def _highlight_derivatives(val):
 
 
 def _df_report_for_directory(config, root_dir, full_report=False):
-    root_path = BIDSPath(root=root_dir)
-
     # find all subjects, sessions, tasks, runs in the derivatives directory
     subjects = get_entity_vals(root_dir, "subject")
     sessions = get_entity_vals(root_dir, "session")
@@ -128,8 +126,8 @@ def _df_report_for_directory(config, root_dir, full_report=False):
     # print line
     print("-".center(80, "-"))
 
-    # create a pandas dataframe with row for each subject, session, task and columns for each description
-    # fill the dataframe with the file paths of the derivatives
+    # create a pandas dataframe with row for each subject, session, task and columns for
+    # each description fill the dataframe with the file paths of the derivatives
     df = pd.DataFrame(
         index=pd.MultiIndex.from_product(
             [subjects, sessions, tasks], names=["subject", "session", "task"]
@@ -142,7 +140,6 @@ def _df_report_for_directory(config, root_dir, full_report=False):
             for task in tasks:
                 # find all files for the subject, session, task matching the description
                 for description in descriptions:
-                    # files = root_path.copy().update(subject=subject, session=session, task=task, description=description).match(check=True)
                     files = find_matching_paths(
                         subjects=subject,
                         sessions=session,
@@ -153,7 +150,6 @@ def _df_report_for_directory(config, root_dir, full_report=False):
                     )
                     df.loc[(subject, session, task), description] = not len(files) == 0
                 # find runs (removing duplicates)
-                # run_files = root_path.copy().update(subject=subject, session=session, task=task).match(check=True)
                 run_files = find_matching_paths(
                     subjects=subject,
                     sessions=session,
@@ -180,7 +176,8 @@ def find_steps_derivatives(step_files, config):
     """
     Find possible derivatives from pipeline steps using inspect.
 
-    Import the pipeline steps and find methods with signature "(source, bids_path)", this takes a while..
+    Import the pipeline steps and find methods with signature "(source, bids_path)",
+    this takes a while..
     """
     # Set module name to the name of the steps directory
     module_name = os.path.basename(config.steps_dir)
@@ -221,10 +218,12 @@ def find_steps_derivatives(step_files, config):
             step = pipeline_step_class(config)
 
             print(
-                f"{pipeline_step_class.__module__} {pipeline_step_class.__name__}: {step.description}"
+                f"{pipeline_step_class.__module__} {pipeline_step_class.__name__}: "
+                f"{step.description}"
             )
 
-            # use inspect to find methods in step of signature (self, source_file, subject, session, task, run)
+            # use inspect to find methods in step of signature (self, source_file,
+            # subject, session, task, run)
             methods = inspect.getmembers(step, predicate=inspect.ismethod)
             for method in methods:
                 # print signature of method
