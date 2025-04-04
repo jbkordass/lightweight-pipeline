@@ -46,6 +46,7 @@ class Config:
                         if not k.startswith("_")
                     }
                 )
+                self.check_steps_dir()
 
                 print(f"Using configuration file: {config_file_path}.")
             else:
@@ -55,6 +56,27 @@ class Config:
                 )
         else:
             print("Using default configuration file.")
+
+
+    def check_steps_dir(self):
+        """Make sure steps dir is absolute."""
+        value = self.steps_dir
+        # check if steps dir is relative in that case make it relative to the config file
+        # or the current working directory
+        if not os.path.isabs(value):
+            # check if there is an externatl config file or if default config is used
+            if self.config_file_path is not None:
+                value = os.path.join(
+                    os.path.dirname(self.config_file_path), value
+                )
+            else:
+                value = os.path.join(os.getcwd(), value)
+
+        # make steps dir absolute
+        value = os.path.abspath(value)
+
+        self.steps_dir = value
+
 
     def ask(self, message, default="n"):
         """

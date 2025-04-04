@@ -14,4 +14,6 @@ try:
 except ImportError:
     pass
 
+from lw_pipeline.__main__ import Pipeline
+
 import lw_pipeline.__main__

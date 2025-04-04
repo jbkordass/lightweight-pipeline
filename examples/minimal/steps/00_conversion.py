@@ -138,7 +138,7 @@ class Conversion(Pipeline_Step):
             )
         else:
             try:
-                raw = mne.io.read_raw(config.data_dir + os.path.sep + source)
+                raw = mne.io.read_raw(join(config.data_dir, source))
 
                 write_raw_bids(
                     raw,

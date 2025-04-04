@@ -11,7 +11,7 @@ import numpy as np
 # Pipeline Settings
 # -----------------
 
-steps_dir = os.path.join(os.path.dirname(__file__), "steps")
+steps_dir = "steps/"
 """Directory containing the pipeline steps"""
 
 data_dir = os.path.join(os.path.dirname(__file__), "data")
@@ -52,10 +52,3 @@ notch_filter = np.arange(50, 150, 50)
 
 # Further Settings
 # ----------------
-
-eeg_path = {
-    "1001": {
-        "session1": {"task1": {"1": "raw\\1001_session1_task1.edf"}},
-        "session2": {"task1": {"1": "raw\\1001_session2_task1.edf"}},
-    }
-}

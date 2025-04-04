@@ -74,7 +74,7 @@ def main():
 
     if options.run:
         # retrieve all steps script file names
-        step_files = find_all_steps(config.steps_dir)
+        step_files = find_all_step_files(config.steps_dir)
         if not options.steps:
             print("Running entire pipeline")
         else:
@@ -85,13 +85,15 @@ def main():
                 if any(step_file.startswith(step) for step in options.steps)
             ]
             print("Running the steps:", ", ".join(step_files))
-        run_pipeline(step_files, config)
+        pipeline = Pipeline(step_files, config)
+        # run the pipeline
+        pipeline.run()
     elif options.list:
         print("Steps:".center(80, "-"))
-        print("\n".join(find_all_steps(config.steps_dir)))
+        print("\n".join(find_all_step_files(config.steps_dir)))
     elif options.list_derivatives:
         print("Derivatives:".center(80, "-"))
-        find_steps_derivatives(find_all_steps(config.steps_dir), config)
+        find_steps_derivatives(find_all_step_files(config.steps_dir), config)
     elif options.report or options.store_report or options.full_report:
         print(f"Generating {'limited ' if not options.full_report else 'full '}report")
         generate_report(config, options.store_report, options.full_report)
@@ -100,32 +102,24 @@ def main():
         parser.print_help()
 
 
-def run_pipeline(step_files, config):
-    """
-    Run the pipeline.
+def find_all_step_files(steps_dir):
+    """Find all the .py files in the steps directory."""
+    # Get a list of all python files in the steps directory
+    step_files = [
+        f for f in os.listdir(steps_dir) if f.endswith(".py") and not f.startswith("__")
+    ]
 
-    Include all Pipeline_Step classes contained in the step_files list.
-    """
-    # counter for executed steps/position in the pipeline
-    pos = 1
+    # Sort the step files alphabetically
+    step_files.sort()
 
-    data = None
+    return step_files
 
+
+def find_all_step_classes(step_files, config):
+    """Find all the Pipeline_Step classes in the given step files."""
     steps_dir = config.steps_dir
 
-    # check if steps dir is relative in that case make it relative to the config file
-    # or the current working directory
-    if not os.path.isabs(steps_dir):
-        # check if there is an externatl config file or if default config is used
-        if config.config_file_path is not None:
-            steps_dir = os.path.join(
-                os.path.dirname(config.config_file_path), steps_dir
-            )
-        else:
-            steps_dir = os.path.join(os.getcwd(), steps_dir)
-
-    # make steps dir absolute
-    steps_dir = os.path.abspath(steps_dir)
+    step_classes = []
 
     # Set module name to the name of the steps directory
     module_name = os.path.basename(steps_dir)
@@ -149,10 +143,6 @@ def run_pipeline(step_files, config):
         # Remove the file extension to get the module name
         step_name = os.path.splitext(step_file)[0]
 
-        # print the number/name of the step
-        print(f"Step {pos}: {step_name}".center(80, "-"))
-        pos = pos + 1
-
         # import the submodule
         module = importlib.import_module(f"{module_name}.{step_name}")
 
@@ -167,29 +157,64 @@ def run_pipeline(step_files, config):
 
         # Loop through the pipeline elements and invoke them
         for pipeline_step_class in pipeline_step_classes:
-            step = pipeline_step_class(config)
-            print(step.description)
+            step_classes.append(pipeline_step_class(config))
+
+    return step_classes
+
+
+class Pipeline:
+    """Pipeline class to run the pipeline steps."""
+
+    def __init__(self, steps, config = None):
+        """
+        Initialize the Pipeline.
+
+        Parameters
+        ----------
+        - steps: A list of step file names or a list of Pipeline_Step instances.
+        - config: An instance of Config class, required only if steps are file names
+        """
+        if all(isinstance(step, str) for step in steps):
+            if config is None:
+                raise ValueError(
+                    "Config must be provided if steps are file names."
+                )
+            self.pipeline_steps = find_all_step_classes(steps, config)
+        elif all(isinstance(step, Pipeline_Step) for step in steps):
+            self.pipeline_steps = steps
+        else:
+            raise ValueError(
+                "Steps must be either a list of file names or Pipeline_Step instances."
+            )
+
+    def run(self, data=None):
+        """
+        Run the pipeline.
+
+        Include all Pipeline_Step classes contained in the step_files list.
+        """
+        # counter for executed steps/position in the pipeline
+        pos = 1
+
+        for step in self.pipeline_steps:
+            # print the number/name of the step
+            print(
+                f"Step {pos}: {step.__class__.__module__} / "
+                f"{step.__class__.__name__}".center(80, "-")
+            )
+            pos = pos + 1
+
+            print("ℹ " + step.description)
             try:
                 data = step.step(data)
             except Pipeline_Exception as e:
                 print(f"Error in {step.description}: {e}")
                 sys.exit(1)
 
-    print("Pipeline finished with following output:".center(80, "-"))
-    print(data)
+        print("Pipeline finished with following output:".center(80, "-"))
+        print(data)
 
-
-def find_all_steps(steps_dir):
-    """Find all the .py files in the steps directory."""
-    # Get a list of all python files in the steps directory
-    step_files = [
-        f for f in os.listdir(steps_dir) if f.endswith(".py") and not f.startswith("__")
-    ]
-
-    # Sort the step files alphabetically
-    step_files.sort()
-
-    return step_files
+        return data
 
 
 if __name__ == "__main__":

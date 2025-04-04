@@ -340,8 +340,8 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                             answer = function(source_data, output_bids_path)
                         except Exception:
                             print(
-                                f"\u26a0 Something went wrong with {description} for"
-                                f"{subject}, {session}, {task}, {run}. Removing from"
+                                f"\u26a0 Something went wrong with {description} for "
+                                f"{subject}, {session}, {task}, {run}. Removing from "
                                 "processed files list to continue."
                             )
                             print(traceback.format_exc())
