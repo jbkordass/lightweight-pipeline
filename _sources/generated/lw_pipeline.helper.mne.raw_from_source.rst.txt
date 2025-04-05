@@ -1,0 +1,6 @@
+lw\_pipeline.helper.mne.raw\_from\_source
+=========================================
+
+.. currentmodule:: lw_pipeline.helper.mne
+
+.. autofunction:: raw_from_source
