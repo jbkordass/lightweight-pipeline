@@ -20,11 +20,12 @@ lw_pipeline
    :template: custom-class-template.rst
    :toctree: generated/
 
-    Config
-    Pipeline_Exception
-    Pipeline_Step
-    Pipeline_Data
-    Pipeline_MNE_BIDS_Data
+   Pipeline
+   Config
+   Pipeline_Exception
+   Pipeline_Step
+   Pipeline_Data
+   Pipeline_MNE_BIDS_Data
 
 lw_pipeline.helper
 ------------------

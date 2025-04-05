@@ -68,7 +68,7 @@ def main():
 
     options = parser.parse_args()
 
-    config = Config(options.config)
+    config = Config(options.config, verbose=True)
     if options.ignore_questions:
         config.auto_response = "default"
 
@@ -79,11 +79,21 @@ def main():
             print("Running entire pipeline")
         else:
             # filter step files based on steps specified in the command line argument
-            step_files = [
-                step_file
-                for step_file in step_files
-                if any(step_file.startswith(step) for step in options.steps)
-            ]
+            step_files_specified = []
+            for step_identifier in options.steps:
+                step = [
+                    step_file
+                    for step_file in step_files
+                    if step_file.startswith(step_identifier)
+                ]
+                if not step:
+                    print(f"Error: Step file '{step_identifier}' not found.")
+                    sys.exit(1)
+                if len(step) > 1:
+                    print(f"Error: Step file '{step_identifier}' is ambiguous.")
+                    sys.exit(1)
+                step_files_specified.append(step[0])
+            step_files = step_files_specified
             print("Running the steps:", ", ".join(step_files))
         pipeline = Pipeline(step_files, config)
         # run the pipeline
@@ -165,20 +175,20 @@ def find_all_step_classes(step_files, config):
 class Pipeline:
     """Pipeline class to run the pipeline steps."""
 
-    def __init__(self, steps, config = None):
+    def __init__(self, steps, config=None):
         """
         Initialize the Pipeline.
 
         Parameters
         ----------
-        - steps: A list of step file names or a list of Pipeline_Step instances.
-        - config: An instance of Config class, required only if steps are file names
+        steps : list
+            A list of step file names or a list of Pipeline_Step instances.
+        config : Config, optional
+            An instance of Config class, required only if steps are file names
         """
         if all(isinstance(step, str) for step in steps):
             if config is None:
-                raise ValueError(
-                    "Config must be provided if steps are file names."
-                )
+                raise ValueError("Config must be provided if steps are file names.")
             self.pipeline_steps = find_all_step_classes(steps, config)
         elif all(isinstance(step, Pipeline_Step) for step in steps):
             self.pipeline_steps = steps
@@ -192,9 +202,23 @@ class Pipeline:
         Run the pipeline.
 
         Include all Pipeline_Step classes contained in the step_files list.
+
+        Parameters
+        ----------
+        data : object, optional
+            Optional input data to be passed to the first step.
+
+        Returns
+        -------
+        data : object
+            The output data after processing through all pipeline steps.
         """
         # counter for executed steps/position in the pipeline
         pos = 1
+
+        if data is not None:
+            print("Pipeline starts with following input:".center(80, "-"))
+            print(data)
 
         for step in self.pipeline_steps:
             # print the number/name of the step

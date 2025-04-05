@@ -7,7 +7,7 @@ Using lw_pipeline
 
 .. toctree::
    :hidden:
-   :maxdepth: 2
+   :maxdepth: 3
 
    Quickstart<quickstart>
    Trivial Example<trivial_example>

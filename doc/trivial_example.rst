@@ -47,16 +47,17 @@ Already with this setups we can run the pipeline with the following command:
 
 .. code-block:: text
     :caption: Output
-    
-    Using configuration file: config.py, assuming it's a python file
+
+    Using configuration file: config.py.
     Running entire pipeline
-    --------------------------------Step 1: 00_start--------------------------------
-    This is a description of a first step.
+    --------------Step 1: steps.00_start / A_First_Start_Pipeline_Step--------------
+    ℹ This is a description of a first step.
     Here data is 'None', we set it to variable_a from the config.
-    This is a description of a second step.
+    -------------Step 2: steps.00_start / A_Second_Start_Pipeline_Step--------------
+    ℹ This is a description of a second step.
     Here data is '1'. We will add 1 to it.
-    ------------------------------Step 2: 01_continue-------------------------------
-    This is a description of a continued step.
+    -------------Step 3: steps.01_continue / A_Continued_Pipeline_Step--------------
+    ℹ This is a description of a continued step.
     Here data is '2'. We will subtract 2.
     --------------------Pipeline finished with following output:--------------------
     0

@@ -55,7 +55,12 @@ def test_main_run_with_steps(mock_config, mock_find_all_step_files, mock_pipelin
     """Test the main function with the --run option and specific steps."""
     mock_find_all_step_files.return_value = ["step1.py", "step2.py", "step3.py"]
     sys.argv = [
-        "__main__.py", "--run", "--config", "mock_config_path", "step1", "step3"
+        "__main__.py",
+        "--run",
+        "--config",
+        "mock_config_path",
+        "step1",
+        "step3",
     ]
 
     main()
@@ -93,9 +98,10 @@ def test_main_report(mock_config):
     """Test the main function with the --report option."""
     sys.argv = ["__main__.py", "--report", "--config", "mock_config_path"]
 
-    with patch("builtins.print") as mock_print, patch(
-        "lw_pipeline.__main__.generate_report"
-    ) as mock_generate_report:
+    with (
+        patch("builtins.print") as mock_print,
+        patch("lw_pipeline.__main__.generate_report") as mock_generate_report,
+    ):
         main()
         mock_print.assert_any_call("Generating limited report")
         mock_generate_report.assert_called_once_with(mock_config, False, False)
@@ -105,9 +111,10 @@ def test_main_store_report(mock_config):
     """Test the main function with the --store-report option."""
     sys.argv = ["__main__.py", "--store-report", "--config", "mock_config_path"]
 
-    with patch("builtins.print") as mock_print, patch(
-        "lw_pipeline.__main__.generate_report"
-    ) as mock_generate_report:
+    with (
+        patch("builtins.print") as mock_print,
+        patch("lw_pipeline.__main__.generate_report") as mock_generate_report,
+    ):
         main()
         mock_print.assert_any_call("Generating limited report")
         mock_generate_report.assert_called_once_with(mock_config, True, False)
@@ -117,9 +124,10 @@ def test_main_full_report(mock_config):
     """Test the main function with the --full-report option."""
     sys.argv = ["__main__.py", "--full-report", "--config", "mock_config_path"]
 
-    with patch("builtins.print") as mock_print, patch(
-        "lw_pipeline.__main__.generate_report"
-    ) as mock_generate_report:
+    with (
+        patch("builtins.print") as mock_print,
+        patch("lw_pipeline.__main__.generate_report") as mock_generate_report,
+    ):
         main()
         mock_print.assert_any_call("Generating full report")
         mock_generate_report.assert_called_once_with(mock_config, False, True)

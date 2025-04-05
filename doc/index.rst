@@ -3,7 +3,7 @@
 Lightweight Pipeline documentation
 ==================================
 
-As the name suggests - a lightweight, easy to modify pipeline. Initially built for EEG analysis using `MNE-Python <https://mne.tools>` and `MNE-BIDS <https://mne.tools/mne-bids/>`.
+As the name suggests - a lightweight, easy to modify pipeline. Initially built for EEG analysis using `MNE-Python <https://mne.tools>`_ and `MNE-BIDS <https://mne.tools/mne-bids/>`_.
 
 Main design criterion is to keep the controller part minimal.
 
@@ -18,6 +18,7 @@ Goals
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
    API<api>
    Use & Examples<use>

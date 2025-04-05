@@ -3,6 +3,7 @@
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import inspect
 import os
 import sys
 import time
@@ -270,7 +271,8 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
             step_class = vars(sys.modules[function.__module__])[
                 function.__qualname__.split(".")[0]
             ]
-            if issubclass(step_class, Pipeline_Step):
+
+            if inspect.isclass(step_class) and issubclass(step_class, Pipeline_Step):
                 description = (
                     guess_short_id(function.__module__) + function.__name__.capitalize()
                 )
