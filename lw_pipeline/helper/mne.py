@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import mne
-from mne_bids import BIDSPath
+from mne_bids import BIDSPath, read_raw_bids
 
 
 def raw_from_source(source, **kwargs):
@@ -39,7 +39,7 @@ def raw_from_source(source, **kwargs):
     # check if the source_file is an instance of BidsPath
     if isinstance(source, BIDSPath):
         try:
-            raw = mne.io.read_raw(source, **kwargs)
+            raw = read_raw_bids(source, **kwargs)
         except Exception:
             raw = mne.io.read_raw(source, encoding="latin1", **kwargs)
     # check if it is a list of bids paths
@@ -47,7 +47,7 @@ def raw_from_source(source, **kwargs):
         [isinstance(fpath, BIDSPath) for fpath in source]
     ):
         try:
-            raws = [mne.io.read_raw(fpath, **kwargs) for fpath in source]
+            raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
         except Exception:
             raws = [
                 mne.io.read_raw(fpath, encoding="latin1", **kwargs) for fpath in source
