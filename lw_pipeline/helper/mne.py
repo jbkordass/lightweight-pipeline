@@ -5,9 +5,10 @@
 
 import mne
 from mne_bids import BIDSPath, read_raw_bids
+import warnings
 
 
-def raw_from_source(source, **kwargs):
+def raw_from_source(source, suppress_runtime_warning=True, **kwargs):
     """
     Produce an mne raw object from different sources.
 
@@ -22,6 +23,10 @@ def raw_from_source(source, **kwargs):
     ----------
     source : BIDSPath | list of BIDSPath | mne.io.BaseRaw | list of mne.io.BaseRaw
         The source to read the raw data from.
+    suppress_runtime_warning : bool
+        If True, suppresses RuntimeWarning when reading raw data.
+        This is useful when reading raw data from BIDSPath, as it may raise a
+        RuntimeWarning if coordsystem/electrode data, etc. is not found.
     kwargs : dict
         Additional keyword arguments to pass to mne.io.read_raw.
 
@@ -36,10 +41,15 @@ def raw_from_source(source, **kwargs):
         If the source is not a BIDSPath, list of BIDSPath, mne.io.BaseRaw, or list of
         mne.io.BaseRaw.
     """
-    # check if the source_file is an instance of BidsPath
+    # check if the source_file is an instance of BIDSPath
     if isinstance(source, BIDSPath):
         try:
-            raw = read_raw_bids(source, **kwargs)
+            if suppress_runtime_warning:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", RuntimeWarning)
+                    raw = read_raw_bids(source, **kwargs)
+            else:
+                raw = read_raw_bids(source, **kwargs)
         except Exception:
             raw = mne.io.read_raw(source, encoding="latin1", **kwargs)
     # check if it is a list of bids paths
@@ -47,7 +57,12 @@ def raw_from_source(source, **kwargs):
         [isinstance(fpath, BIDSPath) for fpath in source]
     ):
         try:
-            raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
+            if suppress_runtime_warning:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", RuntimeWarning)
+                    raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
+            else:
+                raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
         except Exception:
             raws = [
                 mne.io.read_raw(fpath, encoding="latin1", **kwargs) for fpath in source
