@@ -51,7 +51,7 @@ def raw_from_source(source, suppress_runtime_warning=True, **kwargs):
             else:
                 raw = read_raw_bids(source, **kwargs)
         except Exception:
-            raw = mne.io.read_raw(source, encoding="latin1", **kwargs)
+            raw = read_raw_bids(source, {"encoding": "latin1"})
     # check if it is a list of bids paths
     elif isinstance(source, list) and all(
         [isinstance(fpath, BIDSPath) for fpath in source]
@@ -65,7 +65,7 @@ def raw_from_source(source, suppress_runtime_warning=True, **kwargs):
                 raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
         except Exception:
             raws = [
-                mne.io.read_raw(fpath, encoding="latin1", **kwargs) for fpath in source
+                read_raw_bids(fpath, {"encoding": "latin1"}) for fpath in source
             ]
         raw = mne.io.concatenate_raws(raws)
     elif isinstance(source, mne.io.BaseRaw):
