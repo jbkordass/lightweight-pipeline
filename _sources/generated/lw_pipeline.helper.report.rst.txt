@@ -1,0 +1,31 @@
+﻿lw\_pipeline.helper.report
+==========================
+
+.. automodule:: lw_pipeline.helper.report
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      find_steps_derivatives
+      generate_report
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
