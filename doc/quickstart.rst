@@ -19,7 +19,13 @@ If passed a path to a file all defined variables in the file will be available a
 
     from lw_pipeline import Config
 
-    config = Config("some/example/path")
+    config = Config("some/example/path/config.py")
+
+
+.. note::
+
+    If there is a "local" configuration file :code:`some/example/path/config_local.py` it will be loaded after the main configuration 
+    file automatically.
 
 
 Pipeline_Step

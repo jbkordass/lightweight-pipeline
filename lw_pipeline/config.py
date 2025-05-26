@@ -38,22 +38,20 @@ class Config:
                     0, config_dir
                 )  # add the config directory to the module search path
 
-                module_name = os.path.splitext(os.path.basename(config_file))[0]
-                config_module = importlib.import_module(module_name)
-
-                # Update the current variables in the this class with the ones from
-                # the specified configuration file
-                vars(self).update(
-                    {
-                        k: v
-                        for k, v in vars(config_module).items()
-                        if not k.startswith("_")
-                    }
+                self._load_file_to_variables(
+                    config_file, verbose=verbose
                 )
-                self.check_steps_dir()
 
-                if verbose:
-                    print(f"Using configuration file: {config_file_path}.")
+                # check for a local version of the config file
+                config_basename, config_ext = os.path.splitext(
+                    os.path.basename(config_file)
+                )
+                local_config_file = os.path.join(
+                    config_dir, f"{config_basename}_local{config_ext}"
+                )
+                if os.path.isfile(local_config_file):
+                    self._load_file_to_variables(local_config_file, verbose=verbose)
+
             else:
                 raise FileNotFoundError(
                     f"Specified configuration file not found: {config_file_path}."
@@ -61,6 +59,25 @@ class Config:
         else:
             if verbose:
                 print("Using default configuration file.")
+
+    def _load_file_to_variables(self, file_path, verbose=False):
+        """Load variables from a specified configuration file into the current class."""
+        module_name = os.path.splitext(os.path.basename(file_path))[0]
+        config_module = importlib.import_module(module_name)
+
+        # Update the current variables in the this class with the ones from
+        # the specified configuration file
+        vars(self).update(
+            {
+                k: v
+                for k, v in vars(config_module).items()
+                if not k.startswith("_")
+            }
+        )
+        self.check_steps_dir()
+
+        if verbose:
+            print(f"Using configuration file: {file_path}.")
 
     def check_steps_dir(self):
         """
