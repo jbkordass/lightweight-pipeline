@@ -1,0 +1,49 @@
+﻿lw\_pipeline.Config
+===================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: Config
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Config.__init__
+      ~Config.ask
+      ~Config.check_steps_dir
+      ~Config.get_version
+      ~Config.set_variable_and_write_to_config_file
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Config.auto_response
+      ~Config.bids_acquisition
+      ~Config.bids_datatype
+      ~Config.bids_extension
+      ~Config.bids_root
+      ~Config.config_file_path
+      ~Config.data_dir
+      ~Config.deriv_root
+      ~Config.eeg_path
+      ~Config.n_jobs
+      ~Config.overwrite
+      ~Config.sessions
+      ~Config.steps_dir
+      ~Config.subjects
+      ~Config.tasks
+   
+   
