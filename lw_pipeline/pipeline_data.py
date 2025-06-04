@@ -18,3 +18,8 @@ class Pipeline_Data(ABC):
     def config(self):
         """Configuration of the pipeline."""
         return self._config
+
+    @config.setter
+    def config(self, value):
+        """Set the configuration of the pipeline."""
+        self._config = value

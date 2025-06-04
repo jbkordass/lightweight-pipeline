@@ -516,3 +516,24 @@ class Pipeline_MNE_BIDS_Data(Pipeline_Data):
                         )
 
         return pd.DataFrame(data)
+
+    def copy(self):
+        """
+        Create a deep copy of the Pipeline_MNE_BIDS_Data object.
+
+        Returns
+        -------
+        Pipeline_MNE_BIDS_Data
+            A deep copy of the current object.
+        """
+        import copy as copy_module
+
+        # Create a new instance with the same config
+        new_obj = Pipeline_MNE_BIDS_Data.__new__(Pipeline_MNE_BIDS_Data)
+
+        # Copy all attributes
+        new_obj.config = self.config
+        new_obj.from_deriv = self.from_deriv
+        new_obj.file_paths = copy_module.deepcopy(self.file_paths)
+
+        return new_obj
