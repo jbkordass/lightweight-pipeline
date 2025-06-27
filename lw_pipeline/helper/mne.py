@@ -8,7 +8,7 @@ from mne_bids import BIDSPath, read_raw_bids
 import warnings
 
 
-def raw_from_source(source, suppress_runtime_warning=True, **kwargs):
+def raw_from_source(source, n_jobs = 1, suppress_runtime_warning=True, **kwargs):
     """
     Produce an mne raw object from different sources.
 
@@ -65,16 +65,19 @@ def raw_from_source(source, suppress_runtime_warning=True, **kwargs):
                 raws = [read_raw_bids(fpath, **kwargs) for fpath in source]
         except Exception:
             raws = [read_raw_bids(fpath, {"encoding": "latin1"}) for fpath in source]
+
         # Check if all raws have the same sampling frequency
         sfreqs = [raw.info["sfreq"] for raw in raws]
         if len(set(sfreqs)) > 1:
             # If sampling frequencies differ, resample to the lowest frequency
             min_sfreq = min(sfreqs)
-            raws = [
-                raw.resample(min_sfreq) if raw.info["sfreq"] != min_sfreq else raw
-                for raw in raws
-            ]
+            print("Resampling to: ", min_sfreq)
+            for raw in raws:
+                if raw.info["sfreq"] != min_sfreq:
+                    print("Resampling:", raw.info["file_id"])
+                    raw.resample(min_sfreq, n_jobs=n_jobs) 
         raw = mne.io.concatenate_raws(raws)
+
     elif isinstance(source, mne.io.BaseRaw):
         raw = source
     elif isinstance(source, list) and all(
