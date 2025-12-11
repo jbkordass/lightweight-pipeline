@@ -12,6 +12,58 @@ from lw_pipeline import Config, Pipeline_Exception, Pipeline_Step
 from lw_pipeline.helper.report import find_steps_derivatives, generate_report
 
 
+def _parse_outputs_argument(outputs_str):
+    """
+    Parse the --outputs command line argument.
+
+    Parameters
+    ----------
+    outputs_str : str
+        Comma-separated output specifications, optionally with step scoping.
+
+    Returns
+    -------
+    dict or list
+        If step-scoped (e.g., "01:plot,02:stats"), returns dict mapping
+        step IDs to lists of patterns. Otherwise, returns list of patterns.
+
+    Examples
+    --------
+    >>> _parse_outputs_argument("plot,stats")
+    ['plot', 'stats']
+    >>> _parse_outputs_argument("01:plot,01:stats,02:*")
+    {'01': ['plot', 'stats'], '02': ['*']}
+    >>> _parse_outputs_argument("*:plot")
+    {'*': ['plot']}
+    """
+    outputs = [o.strip() for o in outputs_str.split(",")]
+
+    # Check if any output uses step-scoped syntax
+    has_step_scope = any(":" in o for o in outputs)
+
+    if has_step_scope:
+        # Parse into dict mapping step_id -> [patterns]
+        result = {}
+        for output in outputs:
+            if ":" in output:
+                step_id, pattern = output.split(":", 1)
+                step_id = step_id.strip()
+                pattern = pattern.strip()
+
+                if step_id not in result:
+                    result[step_id] = []
+                result[step_id].append(pattern)
+            else:
+                # No step scope specified, treat as global wildcard
+                if "*" not in result:
+                    result["*"] = []
+                result["*"].append(output)
+        return result
+    else:
+        # Return simple list of patterns
+        return outputs
+
+
 def main():
     """Run pipeline from command line."""
     parser = argparse.ArgumentParser()
@@ -66,11 +118,23 @@ def main():
         " the config) of the pipeline's derivatives.",
     )
 
+    parser.add_argument(
+        "--outputs",
+        type=str,
+        help="Comma-separated list of outputs to generate. "
+        "Supports wildcards (e.g., 'plot*') and step-scoped syntax "
+        "(e.g., '01:plot,02:*'). If not specified, all enabled outputs are generated.",
+    )
+
     options = parser.parse_args()
 
     config = Config(options.config, verbose=True)
     if options.ignore_questions:
         config.auto_response = "default"
+
+    # Parse --outputs argument
+    if options.outputs:
+        config.outputs_to_generate = _parse_outputs_argument(options.outputs)
 
     if options.run:
         # retrieve all steps script file names

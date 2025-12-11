@@ -220,6 +220,36 @@ class Config:
     overwrite = False
     """Overwrite existing derivative files, if False they are skipped"""
 
+    overwrite_mode = "never"
+    """
+    Overwrite mode for output files. Options:
+    - "always": Always overwrite existing files
+    - "never": Never overwrite, skip existing files
+    - "ask": Prompt user for each file
+    - "ifnewer": Overwrite if source file is newer than output
+    """
+
+    outputs_to_generate = None
+    """
+    List or dict specifying which outputs to generate.
+    - None: Generate all outputs enabled by default
+    - List of patterns: Generate outputs matching patterns (e.g., ["plot*", "stats"])
+    - Dict: Step-specific patterns (e.g., {"01": ["plot"], "02": ["*"]})
+    Supports wildcards via fnmatch (e.g., "*" for all, "plot*" for all starting with plot)
+    """
+
+    output_root = None
+    """
+    Root directory for non-BIDS outputs.
+    If None, defaults to deriv_root.
+    """
+
+    sidecar_auto_generate = True
+    """Automatically generate sidecar JSON files for all outputs"""
+
+    output_profiling = False
+    """Include timing and file size information in sidecar metadata"""
+
     eeg_path = {}
     """Path to the eeg data which should be converted to BIDS
 
