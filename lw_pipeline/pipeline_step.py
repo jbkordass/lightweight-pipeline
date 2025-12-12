@@ -3,6 +3,7 @@
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import logging
 from abc import ABC, abstractmethod
 
 from lw_pipeline.helper.naming import guess_short_id
@@ -26,6 +27,23 @@ class Pipeline_Step(ABC):
         # Initialize output management
         self._output_manager = None
         self._output_registry = None
+        
+        # Initialize logger for this step
+        self._logger = None
+
+    @property
+    def logger(self):
+        """
+        Get a logger for this pipeline step.
+
+        Returns
+        -------
+        logging.Logger
+            Logger instance named after this step.
+        """
+        if self._logger is None:
+            self._logger = logging.getLogger(f"lw_pipeline.step.{self.short_id}")
+        return self._logger
 
     @property
     def config(self):
