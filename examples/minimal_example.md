@@ -221,6 +221,206 @@ config.bids_root
 
 ---
 
+# Output Management
+
+- **Output Registration**: Mark methods as optional outputs
+- **Selective Generation**: Choose which outputs to generate via CLI or config
+- **Automatic Metadata**: with sidecar JSON files
+- **Overwrite Control**: Multiple modes (never, always, ask, ifnewer)
+
+`Pipeline_Step` class now has a `output_manager` attribute used for saving.
+
+---
+
+# Registering Outputs
+
+Use `@register_output` decorator to mark methods as optional outputs:
+
+```python
+from lw_pipeline import Pipeline_Step, register_output
+
+class MyStep(Pipeline_Step):
+    
+    @register_output("summary_plot", "Summary visualization", 
+                     enabled_by_default=True)
+    def generate_summary(self):
+        if not self.should_generate_output("summary_plot"):
+            return
+        
+        fig, ax = plt.subplots()
+        # ... create plot ...
+        self.output_manager.save_figure(fig, "summary")
+```
+
+---
+
+# Output Manager API
+
+Common save methods:
+
+```python
+# Save figures
+self.output_manager.save_figure(fig, "plot_name", formats=['png', 'pdf'])
+
+# Save dataframes
+self.output_manager.save_dataframe(df, "table_name", format='csv')
+
+# Save JSON
+self.output_manager.save_json(data_dict, "data_name")
+
+# Save numpy arrays
+self.output_manager.save_numpy(array, "array_name")
+```
+
+All methods automatically create sidecar JSON with metadata.
+
+---
+
+# CLI: List Outputs
+
+```bash
+python -m lw_pipeline -c config.py --list-outputs
+```
+
+Example output:
+```
+00 - Conversion:
+  Convert to BIDS format
+  Outputs:
+    ✓ data_summary - Summary statistics
+    ○ debug_info - Debugging information (disabled by default)
+
+01 - Preprocessing:
+  Preprocess data
+  Outputs:
+    ✓ quality_plot - Data quality visualization
+```
+
+✓ enabled by default, ○ disabled by default
+
+---
+
+# CLI: Selective Generation
+
+### Generate specific outputs globally
+```bash
+# Generate only plots
+python -m lw_pipeline -c config.py --run --outputs "*plot*"
+```
+- specific outputs ` --outputs "summary_plot,results_table"`
+- all outputs (including disabled ones) ` --outputs "*"`
+- outputs from specific step ` --outputs "01:*plot*"`
+- etc.
+
+---
+
+# CLI: Skip Outputs
+
+Skip expensive or debug outputs:
+
+```bash
+# Skip specific outputs
+python -m lw_pipeline -c config.py --run --skip-outputs "detailed_analysis"
+
+# Combine with --outputs
+python -m lw_pipeline -c config.py --run --outputs "*plot*" --skip-outputs "expensive_*"
+```
+
+Note: `--skip-outputs` takes precedence over `--outputs`
+
+---
+
+# Config: Output Selection
+
+Control outputs via configuration file: `config.py`
+
+```python
+# Generate specific outputs
+outputs_to_generate = ["results_table", "*plot*"]
+
+# Step-scoped configuration
+outputs_to_generate = {
+    "00": ["data_summary"],           # Specific outputs from step 00
+    "01": ["*"],                      # All outputs from step 01
+    "*": ["*plot*"]                   # All plots from other steps
+}
+
+# skip expensive outputs
+outputs_to_skip = ["detailed_analysis", "expensive_*"]
+```
+
+---
+
+# Overwrite Modes
+
+Control file overwriting behavior:
+
+```python
+# config.py
+
+overwrite_mode = "never"    # Skip existing files (default)
+overwrite_mode = "always"   # Always overwrite
+overwrite_mode = "ask"      # Prompt for each file
+overwrite_mode = "ifnewer"  # Overwrite if source is newer
+```
+
+Example output when `overwrite_mode="never"`:
+```
+⏩ File output/desc-01_summary_plot.png already exists. 
+   Skipping (overwrite_mode='never').
+```
+
+---
+
+# Output Metadata
+
+Each output file gets a sidecar JSON with provenance:
+
+<small>
+
+```json
+{
+    "Pipeline": {
+        "Version": "git-abc123",
+        "Step": "01",
+        "StepDescription": "Preprocessing",
+        "OutputFile": "desc-01_summary_plot.png",
+        "GeneratedAt": "2025-12-12T10:30:45.123456"
+    },
+    "Performance": {
+        "Duration": "0.234s",
+        "FileSizeBytes": 12345
+    },
+    "PlotType": "Summary",
+    "Description": "Data quality overview"
+}
+```
+</small>
+
+Add custom metadata via `metadata` parameter.
+
+---
+
+# Best Practices
+
+### Mark expensive operations as disabled by default
+```python
+@register_output("expensive_plot", 
+                 "Expensive plot doing some analysis",  
+                 enabled_by_default=False)
+def create_detailed_analysis(self):
+    if not self.should_generate_output("detailed_analysis"):
+        return
+```
+
+### Check before expensive operations
+```python
+if not self.should_generate_output("expensive_plot"):
+    return  # Skip early, before loading data
+```
+
+---
+
 # Docs (with sphinx)
 
 Use docstrings: `"""..."""` for documentation within the code.
