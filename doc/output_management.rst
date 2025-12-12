@@ -204,6 +204,45 @@ Selecting Outputs from Command Line
     python -m lw_pipeline -c config.py --run --outputs "*plot*"  # All outputs containing "plot"
     python -m lw_pipeline -c config.py --run --outputs "plot*"   # All outputs starting with "plot"
 
+**Skip specific outputs**::
+
+    # Skip expensive outputs
+    python -m lw_pipeline -c config.py --run --skip-outputs detailed_analysis
+    
+    # Skip multiple outputs
+    python -m lw_pipeline -c config.py --run --skip-outputs "expensive_*,debug_*"
+    
+    # Skip outputs from specific step
+    python -m lw_pipeline -c config.py --run --skip-outputs "03:detailed_analysis"
+    
+    # Note: --skip-outputs takes precedence over --outputs
+
+**List all registered outputs**::
+
+    python -m lw_pipeline -c config.py --list-outputs
+
+This will show all registered outputs from all steps with their descriptions and default enabled status.
+
+Example output::
+
+    Registered Outputs:
+    --------------------------------
+    
+    00 - MyFirstStep:
+      Data loading and preprocessing
+      Outputs:
+        ✓ summary_plot - Quick overview plot
+        ✓ statistics - Basic statistics
+        ○ detailed_plot - Detailed analysis plot (disabled by default)
+    
+    01 - MySecondStep:
+      Advanced analysis
+      Outputs:
+        ✓ results_table - Analysis results
+        ✓ comparison_plot - Comparison visualization
+
+Legend: ✓ = enabled by default, ○ = disabled by default
+
 **Step-scoped selection**::
 
     # Generate only plots from step 00
@@ -257,6 +296,23 @@ Outputs to Generate
         "01": ["*"],              # All outputs from step 01
         "*": ["summary*"]         # Pattern applying to all other steps
     }
+
+Outputs to Skip
+---------------
+
+.. code-block:: python
+
+    # Skip specific outputs (takes precedence over outputs_to_generate)
+    outputs_to_skip = ["expensive_analysis", "debug_*"]
+    
+    # Step-specific skip configuration
+    outputs_to_skip = {
+        "03": ["detailed_analysis"],  # Skip only in step 03
+        "*": ["debug_*"]              # Skip debug outputs in all steps
+    }
+    
+    # Note: If both outputs_to_generate and outputs_to_skip are set,
+    # outputs_to_skip takes precedence for matching outputs
 
 Other Settings
 --------------

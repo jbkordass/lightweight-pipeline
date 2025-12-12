@@ -82,7 +82,8 @@ class OutputRegistry:
     def _scan_step_for_outputs(self):
         """Scan the step instance for methods decorated with @register_output."""
         for attr_name in dir(self.step):
-            if attr_name.startswith("_"):
+            # Skip private attributes and output_registry to avoid recursion
+            if attr_name.startswith("_") or attr_name == "output_registry":
                 continue
 
             attr = getattr(self.step, attr_name)
@@ -130,7 +131,7 @@ class OutputRegistry:
         output_name : str
             Name of the output to check.
         config : Config
-            Configuration object with outputs_to_generate setting.
+            Configuration object with outputs_to_generate and outputs_to_skip settings.
 
         Returns
         -------
@@ -141,38 +142,63 @@ class OutputRegistry:
         if output_name not in self._registered:
             return False
 
-        # Get configuration
+        # Check if output is explicitly skipped (takes precedence)
+        outputs_skip = getattr(config, "outputs_to_skip", None)
+        if outputs_skip is not None:
+            if self._matches_patterns(output_name, outputs_skip):
+                return False
+
+        # Get configuration for outputs to generate
         outputs_config = getattr(config, "outputs_to_generate", None)
 
         # If no config specified, use default behavior
         if outputs_config is None:
             return self._registered[output_name]["enabled_by_default"]
 
-        # Check if outputs_config is dict (step-scoped) or list (global)
-        if isinstance(outputs_config, dict):
+        # Check if output matches the patterns
+        return self._matches_patterns(output_name, outputs_config)
+
+    def _matches_patterns(self, output_name, patterns_config):
+        """
+        Check if an output name matches any pattern in the config.
+
+        Parameters
+        ----------
+        output_name : str
+            Name of the output to check.
+        patterns_config : dict or list
+            Configuration with patterns (dict for step-scoped, list for global).
+
+        Returns
+        -------
+        bool
+            True if output matches any pattern.
+        """
+        # Check if patterns_config is dict (step-scoped) or list (global)
+        if isinstance(patterns_config, dict):
             step_id = self.step.short_id
             
             # Check for exact step match
-            patterns = outputs_config.get(step_id, None)
+            patterns = patterns_config.get(step_id, None)
             
             # If no exact match, check for wildcard "*" (applies to all steps)
-            if patterns is None and "*" in outputs_config:
-                patterns = outputs_config["*"]
+            if patterns is None and "*" in patterns_config:
+                patterns = patterns_config["*"]
 
-            # If this step not in config, use default behavior
+            # If this step not in config, return False (doesn't match)
             if patterns is None:
-                return self._registered[output_name]["enabled_by_default"]
+                return False
 
             # Check if output name matches any pattern
             return any(fnmatch(output_name, pattern) for pattern in patterns)
 
-        elif isinstance(outputs_config, list):
+        elif isinstance(patterns_config, list):
             # Global patterns apply to all steps
-            return any(fnmatch(output_name, pattern) for pattern in outputs_config)
+            return any(fnmatch(output_name, pattern) for pattern in patterns_config)
 
         else:
-            # Unknown config format, use default
-            return self._registered[output_name]["enabled_by_default"]
+            # Unknown config format, return False
+            return False
 
     def list_outputs(self, include_disabled=True):
         """
