@@ -22,3 +22,4 @@ Goals
 
    API<api>
    Use & Examples<use>
+   Output Management<output_management>

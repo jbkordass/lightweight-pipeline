@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import importlib
+import logging
 import os
 import sys
 
@@ -59,6 +60,47 @@ class Config:
         else:
             if verbose:
                 print("Using default configuration file.")
+
+        # Set up logging after configuration is loaded
+        self.setup_logging()
+
+    def setup_logging(self):
+        """
+        Set up logging based on configuration settings.
+
+        This method configures the root logger with console and optionally
+        file handlers based on the log_level, log_to_file, and log_file settings.
+        """
+        # Get the root logger
+        logger = logging.getLogger()
+        logger.setLevel(getattr(logging, self.log_level.upper()))
+
+        # Remove existing handlers to avoid duplicates
+        logger.handlers.clear()
+
+        # Create console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(getattr(logging, self.log_level.upper()))
+        console_formatter = logging.Formatter(self.log_format)
+        console_handler.setFormatter(console_formatter)
+        logger.addHandler(console_handler)
+
+        # Create file handler if requested
+        if self.log_to_file:
+            log_file_path = self.log_file
+            if log_file_path is None:
+                log_file_path = os.path.join(self.deriv_root, "pipeline.log")
+
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
+
+            file_handler = logging.FileHandler(log_file_path)
+            file_handler.setLevel(getattr(logging, self.log_level.upper()))
+            file_formatter = logging.Formatter(self.log_format)
+            file_handler.setFormatter(file_formatter)
+            logger.addHandler(file_handler)
+
+            logger.info(f"Logging to file: {log_file_path}")
 
     def _load_file_to_variables(self, file_path, verbose=False):
         """Load variables from a specified configuration file into the current class."""
@@ -220,6 +262,36 @@ class Config:
     overwrite = False
     """Overwrite existing derivative files, if False they are skipped"""
 
+    overwrite_mode = "never"
+    """
+    Overwrite mode for output files. Options:
+    - "always": Always overwrite existing files
+    - "never": Never overwrite, skip existing files
+    - "ask": Prompt user for each file
+    - "ifnewer": Overwrite if source file is newer than output
+    """
+
+    outputs_to_generate = None
+    """
+    List or dict specifying which outputs to generate.
+    - None: Generate all outputs enabled by default
+    - List of patterns: Generate outputs matching patterns (e.g., ["plot*", "stats"])
+    - Dict: Step-specific patterns (e.g., {"01": ["plot"], "02": ["*"]})
+    Supports wildcards via fnmatch (e.g., "*" for all, "plot*" for all starting with plot)
+    """
+
+    output_root = None
+    """
+    Root directory for non-BIDS outputs.
+    If None, defaults to deriv_root.
+    """
+
+    sidecar_auto_generate = True
+    """Automatically generate sidecar JSON files for all outputs"""
+
+    output_profiling = False
+    """Include timing and file size information in sidecar metadata"""
+
     eeg_path = {}
     """Path to the eeg data which should be converted to BIDS
 
@@ -237,6 +309,27 @@ class Config:
 
     n_jobs = 1
     """Number of parallel jobs to run"""
+
+    # Logging configuration
+    # ---------------------
+
+    log_level = "INFO"
+    """
+    Logging level for the pipeline.
+    Options: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
+    """
+
+    log_to_file = True
+    """Whether to write logs to a file in addition to console output"""
+
+    log_file = None
+    """
+    Path to the log file. If None and log_to_file is True,
+    defaults to 'pipeline.log' in the deriv_root directory.
+    """
+
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    """Format string for log messages"""
 
     # default variables for conversion ...
 

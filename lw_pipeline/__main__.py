@@ -12,6 +12,58 @@ from lw_pipeline import Config, Pipeline_Exception, Pipeline_Step
 from lw_pipeline.helper.report import find_steps_derivatives, generate_report
 
 
+def _parse_outputs_argument(outputs_str):
+    """
+    Parse the --outputs command line argument.
+
+    Parameters
+    ----------
+    outputs_str : str
+        Comma-separated output specifications, optionally with step scoping.
+
+    Returns
+    -------
+    dict or list
+        If step-scoped (e.g., "01:plot,02:stats"), returns dict mapping
+        step IDs to lists of patterns. Otherwise, returns list of patterns.
+
+    Examples
+    --------
+    >>> _parse_outputs_argument("plot,stats")
+    ['plot', 'stats']
+    >>> _parse_outputs_argument("01:plot,01:stats,02:*")
+    {'01': ['plot', 'stats'], '02': ['*']}
+    >>> _parse_outputs_argument("*:plot")
+    {'*': ['plot']}
+    """
+    outputs = [o.strip() for o in outputs_str.split(",")]
+
+    # Check if any output uses step-scoped syntax
+    has_step_scope = any(":" in o for o in outputs)
+
+    if has_step_scope:
+        # Parse into dict mapping step_id -> [patterns]
+        result = {}
+        for output in outputs:
+            if ":" in output:
+                step_id, pattern = output.split(":", 1)
+                step_id = step_id.strip()
+                pattern = pattern.strip()
+
+                if step_id not in result:
+                    result[step_id] = []
+                result[step_id].append(pattern)
+            else:
+                # No step scope specified, treat as global wildcard
+                if "*" not in result:
+                    result["*"] = []
+                result["*"].append(output)
+        return result
+    else:
+        # Return simple list of patterns
+        return outputs
+
+
 def main():
     """Run pipeline from command line."""
     parser = argparse.ArgumentParser()
@@ -66,13 +118,46 @@ def main():
         " the config) of the pipeline's derivatives.",
     )
 
+    parser.add_argument(
+        "--outputs",
+        type=str,
+        help="Comma-separated list of outputs to generate. "
+        "Supports wildcards (e.g., 'plot*') and step-scoped syntax "
+        "(e.g., '01:plot,02:*'). If not specified, all enabled outputs are generated.",
+    )
+
+    parser.add_argument(
+        "--skip-outputs",
+        type=str,
+        help="Comma-separated list of outputs to skip. "
+        "Supports wildcards (e.g., 'plot*') and step-scoped syntax "
+        "(e.g., '01:plot,02:*'). Takes precedence over --outputs.",
+    )
+
+    parser.add_argument(
+        "--list-outputs",
+        action="store_true",
+        help="List all registered outputs in the pipeline steps.",
+    )
+
     options = parser.parse_args()
 
     config = Config(options.config, verbose=True)
     if options.ignore_questions:
         config.auto_response = "default"
 
-    if options.run:
+    # Parse --outputs argument
+    if options.outputs:
+        config.outputs_to_generate = _parse_outputs_argument(options.outputs)
+
+    # Parse --skip-outputs argument
+    if options.skip_outputs:
+        config.outputs_to_skip = _parse_outputs_argument(options.skip_outputs)
+
+    if options.list_outputs:
+        print("Registered Outputs:".center(80, "-"))
+        list_all_outputs(config)
+    elif options.run:
         # retrieve all steps script file names
         step_files = find_all_step_files(config.steps_dir)
         if not options.steps:
@@ -123,6 +208,35 @@ def find_all_step_files(steps_dir):
     step_files.sort()
 
     return step_files
+
+
+def list_all_outputs(config):
+    """List all registered outputs in pipeline steps."""
+    step_files = find_all_step_files(config.steps_dir)
+    step_classes = find_all_step_classes(step_files, config)
+    
+    if not step_classes:
+        print("No steps found.")
+        return
+    
+    for step in step_classes:
+        # Get the step ID from the module name (e.g., "00" from "00_start")
+        module_name = step.__class__.__module__.split(".")[-1]
+        step_id = module_name.split("_")[0] if "_" in module_name else module_name
+        
+        # Get registered outputs
+        outputs = step.output_registry.list_outputs(include_disabled=True)
+        
+        if outputs:
+            print(f"\n{step_id} - {step.__class__.__name__}:")
+            print(f"  {step.description}")
+            print("  Outputs:")
+            for name, description, enabled in outputs:
+                status = "✓" if enabled else "○"
+                desc_text = f" - {description}" if description else ""
+                print(f"    {status} {name}{desc_text}")
+        else:
+            print(f"\n{step_id} - {step.__class__.__name__}: No registered outputs")
 
 
 def find_all_step_classes(step_files, config):
