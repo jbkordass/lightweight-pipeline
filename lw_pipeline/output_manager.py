@@ -551,6 +551,8 @@ class OutputManager:
                 suffix = "epo"
             elif "Evoked" in obj_type:
                 suffix = "ave"
+            elif "Annotations" in obj_type:
+                suffix = "markers"
             else:
                 suffix = "data"
 
