@@ -9,7 +9,7 @@ import os
 import sys
 
 from lw_pipeline import Config, Pipeline_Exception, Pipeline_Step
-from lw_pipeline.helper.report import find_steps_derivatives, generate_report
+from lw_pipeline.helper.report import generate_report
 
 
 def _parse_outputs_argument(outputs_str):
@@ -84,12 +84,6 @@ def main():
 
     parser.add_argument(
         "-l", "--list", action="store_true", help="List all steps in the step directory"
-    )
-
-    parser.add_argument(
-        "--list-derivatives",
-        action="store_true",
-        help="List methods in steps that could be used to produce derivatives.",
     )
 
     parser.add_argument(
@@ -186,9 +180,6 @@ def main():
     elif options.list:
         print("Steps:".center(80, "-"))
         print("\n".join(find_all_step_files(config.steps_dir)))
-    elif options.list_derivatives:
-        print("Derivatives:".center(80, "-"))
-        find_steps_derivatives(find_all_step_files(config.steps_dir), config)
     elif options.report or options.store_report or options.full_report:
         print(f"Generating {'limited ' if not options.full_report else 'full '}report")
         generate_report(config, options.store_report, options.full_report)

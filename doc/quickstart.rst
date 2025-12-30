@@ -95,8 +95,11 @@ The package defines a :code:`lw_pipeline` CLI accepting the following arguments:
 
 .. glossary::
 
+    :code:`-h, --help`
+        Show the help message and exit.
+
     :code:`-v, --version`
-        Show the version of the pipeline.
+        Show the version of the pipeline and exit.
 
     :code:`-r, --run`
         Run the pipeline.
@@ -113,9 +116,6 @@ The package defines a :code:`lw_pipeline` CLI accepting the following arguments:
     :code:`--ignore-questions`
         Ignore questions, i.e., always respond with the default answer to a question.
 
-    :code:`--list-derivatives` (with MNE-BIDS data)
-        List methods in steps that could be used to produce derivatives.
-
     :code:`--report` (with MNE-BIDS data)
         Generate a report of the pipeline's derivatives.
 
@@ -124,3 +124,13 @@ The package defines a :code:`lw_pipeline` CLI accepting the following arguments:
 
     :code:`--full-report` (with MNE-BIDS data)
         Generate a full report (do not limit to subject, session, task specification in the config) of the pipeline's derivatives.
+
+    :code:`--outputs`
+        Comma-separated list of outputs to generate. Supports wildcards (e.g., 'plot*') and step-scoped syntax (e.g., '01:plot,02:*'). If not specified, all enabled outputs are generated.
+        (cf. :ref:`output management <output_management>`).
+    
+    :code:`--skip-outputs`
+        Comma-separated list of outputs to skip. Supports wildcards (e.g., 'plot*') and step-scoped syntax (e.g., '01:plot,02:*'). Takes precedence over `--outputs`.
+    
+    :code:`--list-outputs`
+        List all registered outputs in the pipeline steps.

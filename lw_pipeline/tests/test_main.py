@@ -79,21 +79,6 @@ def test_main_list(mock_config, mock_find_all_step_files):
         mock_print.assert_any_call("Steps:".center(80, "-"))
         mock_print.assert_any_call("step1.py\nstep2.py")
 
-
-def test_main_list_derivatives(mock_config, mock_find_all_step_files):
-    """Test the main function with the --list-derivatives option."""
-    mock_find_all_step_files.return_value = ["step1.py", "step2.py"]
-    sys.argv = ["__main__.py", "--list-derivatives", "--config", "mock_config_path"]
-
-    with patch(
-        "lw_pipeline.__main__.find_steps_derivatives"
-    ) as mock_find_steps_derivatives:
-        main()
-        mock_find_steps_derivatives.assert_called_once_with(
-            ["step1.py", "step2.py"], mock_config
-        )
-
-
 def test_main_report(mock_config):
     """Test the main function with the --report option."""
     sys.argv = ["__main__.py", "--report", "--config", "mock_config_path"]

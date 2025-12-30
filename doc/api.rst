@@ -26,6 +26,9 @@ lw_pipeline
    Pipeline_Step
    Pipeline_Data
    Pipeline_MNE_BIDS_Data
+   Output_Manager
+   Output_Registry
+   register_output
 
 lw_pipeline.helper
 ------------------

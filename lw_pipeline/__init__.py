@@ -8,9 +8,9 @@ from lw_pipeline.config import Config
 
 from lw_pipeline.pipeline_data import Pipeline_Data
 
-from lw_pipeline.output_manager import OutputManager
+from lw_pipeline.output_manager import Output_Manager
 
-from lw_pipeline.output_registration import register_output, OutputRegistry
+from lw_pipeline.output_registration import Output_Registry, register_output
 
 # import mne bids data class, if MNE and MNE-BIDS are installed
 try:

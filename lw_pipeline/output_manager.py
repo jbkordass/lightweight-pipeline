@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-class OutputManager:
+class Output_Manager:
     """
     Manage output saving with consistent paths, metadata, and overwrite handling.
 
@@ -41,7 +41,7 @@ class OutputManager:
     """
 
     def __init__(self, config, step_id, step_description=""):
-        """Initialize the OutputManager."""
+        """Initialize the Output_Manager."""
         self.config = config
         self.step_id = step_id
         self.step_description = step_description
@@ -131,9 +131,8 @@ class OutputManager:
             print(f"⏩ File {filepath} is up to date. Skipping.")
             return False
 
-    def _create_output_path(self, name, suffix=None, extension=None,
-                           use_bids_structure=True, custom_dir=None,
-                           **bids_params):
+    def _create_output_path(self, name, suffix=None, extension=None, custom_dir=None,
+                           bids_path=None, **bids_params):
         """
         Create an output file path with step ID prefixing.
 
@@ -145,12 +144,12 @@ class OutputManager:
             BIDS suffix (e.g., "eeg", "plot", "table").
         extension : str, optional
             File extension (e.g., ".pdf", ".csv", ".png").
-        use_bids_structure : bool, optional
-            If True, use BIDS directory structure. Default is True.
         custom_dir : str or Path, optional
             Custom directory for output. If None, uses config.output_root or deriv_root.
+        bids_path : BIDSPath, optional
+            Base BIDSPath object to modify (requires use_bids_structure=True).
         **bids_params : dict
-            Additional BIDS parameters (subject, session, task, run, etc.).
+            Additional BIDS parameters for modifying bids_path (description, suffix, extension, etc.).
 
         Returns
         -------
@@ -171,49 +170,47 @@ class OutputManager:
                 getattr(self.config, "output_root", self.config.deriv_root)
             )
 
-        if use_bids_structure:
-            # Build BIDS-compliant path
-            subject = bids_params.get("subject", None)
-            session = bids_params.get("session", None)
-            task = bids_params.get("task", None)
-            run = bids_params.get("run", None)
-            datatype = bids_params.get(
-                "datatype", getattr(self.config, "bids_datatype", "eeg")
+        if bids_path is not None:
+            # Use MNE-BIDS to build BIDS-compliant path
+
+            try:
+                from mne_bids import BIDSPath
+            except ImportError:
+                print(
+                    "⚠ MNE-BIDS not available. Cannot use BIDS structure. "
+                    "Install with: pip install mne-bids"
+                )
+                raise
+
+            if not isinstance(bids_path, BIDSPath):
+                raise TypeError(
+                    f"bids_path must be a BIDSPath object, got {type(bids_path)}"
+                )
+            # Build update parameters
+            update_params = {"root": str(base_dir)}
+
+            # In BIDS context we have to be more careful with naming
+            prefixed_name = prefixed_name.replace("-", "_").replace(" ", "_")
+            # replace _ with camel case for description
+            prefixed_name_camel = "".join(
+                word.capitalize() for word in prefixed_name.split("_")
             )
 
-            # Build path components
-            path_parts = [base_dir]
+            # Add description (prefixed name) to update parameters
+            update_params["description"] = prefixed_name_camel
 
-            if subject:
-                path_parts.append(f"sub-{subject}")
-            if session:
-                path_parts.append(f"ses-{session}")
-            if datatype:
-                path_parts.append(datatype)
-
-            # Build filename
-            filename_parts = []
-            if subject:
-                filename_parts.append(f"sub-{subject}")
-            if session:
-                filename_parts.append(f"ses-{session}")
-            if task:
-                filename_parts.append(f"task-{task}")
-            if run:
-                filename_parts.append(f"run-{run}")
-
-            # Add description (prefixed name)
-            filename_parts.append(f"desc-{prefixed_name}")
-
+            # Add suffix and extension if provided
             if suffix:
-                filename_parts.append(suffix)
-
-            filename = "_".join(filename_parts)
+                update_params["suffix"] = suffix
             if extension:
-                filename += extension
-            
-            path_parts.append(filename)
-            output_path = Path(*path_parts)
+                update_params["extension"] = extension
+
+            # Merge additional bids_params for update
+            update_params.update(bids_params)
+
+            # Update the bids_path and get the file path
+            output_bids_path = bids_path.copy().update(**update_params, check=False)
+            output_path = Path(output_bids_path.fpath)
         else:
             # Simple custom path
             filename = prefixed_name
@@ -285,7 +282,8 @@ class OutputManager:
             return
 
         output_path = Path(output_path)
-        sidecar_path = output_path.with_suffix(output_path.suffix + ".json")
+        # replace extension with .json for sidecar
+        sidecar_path = output_path.with_suffix(".json")
 
         # Ensure directory exists
         sidecar_path.parent.mkdir(parents=True, exist_ok=True)
@@ -296,8 +294,8 @@ class OutputManager:
         print(f"📝 Saved sidecar: {sidecar_path}")
 
     def save_generic(self, obj, name, save_func, suffix=None, extension=None,
-                    use_bids_structure=True, custom_dir=None, metadata=None,
-                    source_file=None, **kwargs):
+                    custom_dir=None, metadata=None,
+                    source_file=None, bids_path=None, **kwargs):
         """
         Save any output type with consistent metadata and overwrite handling.
 
@@ -313,14 +311,14 @@ class OutputManager:
             BIDS suffix.
         extension : str, optional
             File extension.
-        use_bids_structure : bool, optional
-            Use BIDS directory structure. Default is True.
         custom_dir : str or Path, optional
             Custom output directory.
         metadata : dict, optional
             Custom metadata for sidecar.
         source_file : str or Path, optional
             Source file for ifnewer comparison.
+        bids_path : BIDSPath, optional
+            Base BIDSPath object (required when use_bids_structure=True).
         **kwargs : dict
             Additional arguments passed to save_func and BIDS parameters.
 
@@ -342,8 +340,7 @@ class OutputManager:
         # Create output path
         output_path = self._create_output_path(
             name, suffix=suffix, extension=extension,
-            use_bids_structure=use_bids_structure,
-            custom_dir=custom_dir, **bids_params
+            custom_dir=custom_dir, bids_path=bids_path, **bids_params
         )
 
         # Check overwrite
@@ -388,7 +385,7 @@ class OutputManager:
         return output_path
 
     def get_output_path(self, name, suffix=None, extension=None,
-                       use_bids_structure=True, custom_dir=None, **bids_params):
+                       custom_dir=None, bids_path=None, **bids_params):
         """
         Get output path without saving (useful for checking or manual saves).
 
@@ -401,11 +398,13 @@ class OutputManager:
         extension : str, optional
             File extension.
         use_bids_structure : bool, optional
-            Use BIDS directory structure. Default is True.
+            Use BIDS directory structure. Default is False.
         custom_dir : str or Path, optional
             Custom output directory.
+        bids_path : BIDSPath, optional
+            Base BIDSPath object (required when use_bids_structure=True).
         **bids_params : dict
-            BIDS parameters (subject, session, task, run, datatype).
+            BIDS parameters for modifying bids_path.
 
         Returns
         -------
@@ -414,8 +413,7 @@ class OutputManager:
         """
         return self._create_output_path(
             name, suffix=suffix, extension=extension,
-            use_bids_structure=use_bids_structure,
-            custom_dir=custom_dir, **bids_params
+            custom_dir=custom_dir, bids_path=bids_path, **bids_params
         )
 
     def save_figure(self, fig, name, format=None, suffix="plot", metadata=None,
@@ -461,7 +459,7 @@ class OutputManager:
             metadata=metadata, source_file=source_file, **kwargs
         )
 
-    def save_dataframe(self, df, name, format="csv", suffix="table",
+    def save_dataframe(self, df, name, format="tsv", suffix="table",
                       metadata=None, source_file=None, **kwargs):
         """
         Save a pandas DataFrame as CSV, TSV, or Excel.

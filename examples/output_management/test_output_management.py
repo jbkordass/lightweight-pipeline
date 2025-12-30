@@ -6,6 +6,8 @@
 import sys
 from pathlib import Path
 
+from mne_bids import BIDSPath
+
 # Add parent directory to path to import lw_pipeline
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -46,7 +48,14 @@ class TestStep(Pipeline_Step):
             name="test_file",
             suffix="log",
             metadata={"test": True},
-            use_bids_structure=False
+            bids_path =BIDSPath(
+                subject="01",
+                session="01",
+                task="test",
+                run=1,
+                datatype="beh",
+                root=self.config.output_root
+            )
         )
     
     @register_output("disabled_output", "Disabled output", enabled_by_default=False)
@@ -60,8 +69,7 @@ class TestStep(Pipeline_Step):
         
         self.output_manager.save_text(
             "This output is disabled by default",
-            name="disabled_file",
-            use_bids_structure=False
+            name="disabled_file"
         )
     
     def step(self, data):

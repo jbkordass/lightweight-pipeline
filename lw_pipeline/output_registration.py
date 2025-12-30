@@ -58,7 +58,7 @@ def register_output(name, description="", enabled_by_default=True, group=None):
     return decorator
 
 
-class OutputRegistry:
+class Output_Registry:
     """
     Registry for managing registered outputs in a pipeline step.
 

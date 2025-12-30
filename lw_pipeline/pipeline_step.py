@@ -7,8 +7,8 @@ import logging
 from abc import ABC, abstractmethod
 
 from lw_pipeline.helper.naming import guess_short_id
-from lw_pipeline.output_manager import OutputManager
-from lw_pipeline.output_registration import OutputRegistry
+from lw_pipeline.output_manager import Output_Manager
+from lw_pipeline.output_registration import Output_Registry
 
 
 class Pipeline_Step(ABC):
@@ -58,15 +58,15 @@ class Pipeline_Step(ABC):
     @property
     def output_manager(self):
         """
-        Get the OutputManager for this step.
+        Get the Output_Manager for this step.
 
         Returns
         -------
-        OutputManager
+        Output_Manager
             Manager for saving outputs with consistent paths and metadata.
         """
         if self._output_manager is None:
-            self._output_manager = OutputManager(
+            self._output_manager = Output_Manager(
                 self.config, self.short_id, self.description
             )
         return self._output_manager
@@ -74,19 +74,19 @@ class Pipeline_Step(ABC):
     @property
     def output_registry(self):
         """
-        Get the OutputRegistry for this step.
+        Get the Output_Registry for this step.
 
         Returns
         -------
-        OutputRegistry
+        Output_Registry
             Registry of registered outputs for this step.
         """
         if self._output_registry is None:
-            self._output_registry = OutputRegistry(self)
+            self._output_registry = Output_Registry(self)
         return self._output_registry
 
     def get_output_path(self, name, suffix=None, extension=None,
-                       use_bids_structure=True, custom_dir=None, **bids_params):
+                       use_bids_structure=False, custom_dir=None, **bids_params):
         """
         Get an output file path for this step.
 
@@ -101,7 +101,7 @@ class Pipeline_Step(ABC):
         extension : str, optional
             File extension.
         use_bids_structure : bool, optional
-            Use BIDS directory structure. Default is True.
+            Use BIDS directory structure. Default is False.
         custom_dir : str or Path, optional
             Custom output directory.
         **bids_params : dict

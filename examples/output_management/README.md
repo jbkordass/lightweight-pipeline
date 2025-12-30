@@ -1,160 +1,226 @@
 # Output Management Example
 
-This example demonstrates the comprehensive output management system in `lw_pipeline`.
+This example demonstrates the output management system in `lw_pipeline`.
 
-## Features Demonstrated
+## Overview
 
-1. **Output Registration**: Using `@register_output` decorator to mark methods as optional outputs
-2. **Conditional Generation**: Using `should_generate_output()` to skip expensive operations
-3. **Multiple Output Types**: Saving figures, tables, JSON, and numpy arrays
-4. **Custom Metadata**: Adding custom metadata to sidecar JSON files
-5. **Overwrite Modes**: Respecting different overwrite behaviors
-6. **Performance Profiling**: Tracking timing and file size in metadata
-7. **CLI Control**: Selective output generation via command line
+The output management system provides:
+- Automatic path generation and file naming
+- Metadata tracking in sidecar JSON files
+- Flexible overwrite control
+- Selective output generation via CLI or config
+- Support for multiple output types (figures, tables, arrays, etc.)
 
 ## Running the Example
 
-### Generate All Enabled Outputs (Default)
+### List Available Outputs
 
 ```bash
-cd examples/output_management
+python -m lw_pipeline -c config.py --list-outputs
+```
+
+Shows all registered outputs with their descriptions and default status.
+
+### Run with Default Outputs
+
+```bash
 python -m lw_pipeline -c config.py --run
 ```
 
-This generates:
-- `data_table` ✓ (enabled by default)
-- `summary_plot` ✓ (enabled by default)
-- `detailed_plot` ✗ (disabled by default)
-- `statistics` ✓ (enabled by default)
-- `numpy_array` ✗ (disabled by default)
+Generates all outputs marked as enabled by default.
 
 ### Generate Specific Outputs
 
 ```bash
-# Generate only plots
-python -m lw_pipeline -c config.py --run --outputs summary_plot,detailed_plot
+# Generate only summary and plot
+python -m lw_pipeline -c config.py --run --outputs "summary,plot"
 
-# Generate all outputs (including disabled ones)
-python -m lw_pipeline -c config.py --run --outputs "*"
-
-# Generate outputs matching a pattern
+# Generate all outputs containing "plot"
 python -m lw_pipeline -c config.py --run --outputs "*plot*"
 
-# Generate specific outputs for specific steps (step-scoped)
-python -m lw_pipeline -c config.py --run --outputs "00:summary_plot,00:statistics"
+# Generate all outputs from step 00
+python -m lw_pipeline -c config.py --run --outputs "00:*"
 ```
 
-### With Different Overwrite Modes
+### Skip Outputs
 
-Edit `config.py` and change `overwrite_mode`:
+```bash
+# Skip expensive outputs
+python -m lw_pipeline -c config.py --run --skip-outputs "expensive_*"
+
+# Skip specific output from specific step
+python -m lw_pipeline -c config.py --run --skip-outputs "00:detailed_analysis"
+```
+
+## Configuration Options
+
+In `config.py`, you can set:
 
 ```python
-overwrite_mode = "always"   # Always overwrite
-overwrite_mode = "never"    # Skip existing files (default)
-overwrite_mode = "ask"      # Prompt for each file
-overwrite_mode = "ifnewer"  # Overwrite if source is newer
+# Output directory (defaults to deriv_root)
+output_root = "/path/to/outputs"
+
+# Overwrite behavior: "never", "always", "ask", or "ifnewer"
+overwrite_mode = "never"
+
+# Select outputs to generate
+outputs_to_generate = ["summary", "plot"]  # or ["*plot*"] for wildcards
+
+# Skip specific outputs (takes precedence)
+outputs_to_skip = ["expensive_*", "debug_*"]
+
+# Enable performance profiling
+output_profiling = True
+
+# Disable automatic sidecar JSON
+sidecar_auto_generate = False
 ```
 
-## Output Structure
+### Step-Scoped Configuration
 
-Outputs are saved to the `output_root` directory (defaults to `deriv_root`):
+```python
+# Generate different outputs per step
+outputs_to_generate = {
+    "00": ["summary", "plot"],  # Only these from step 00
+    "01": ["*"],                # All outputs from step 01
+    "*": ["*plot*"]             # Pattern for all other steps
+}
 
-```
-~/data/output_example/derivatives/
-├── desc-00_raw_data_table.csv
-├── desc-00_raw_data_table.csv.json         # Sidecar metadata
-├── desc-00_raw_data_table.tsv
-├── desc-00_raw_data_table.tsv.json
-├── desc-00_summary_plot.pdf
-├── desc-00_summary_plot.pdf.json
-├── desc-00_summary_plot.png
-├── desc-00_summary_plot.png.json
-├── desc-00_summary_stats_stats.json
-├── desc-00_summary_stats_stats.json.json
-├── desc-00_detailed_analysis_plot.pdf      # Only if requested
-├── desc-00_detailed_analysis_plot.pdf.json
-├── desc-00_processed_data_array.npy        # Only if requested
-└── desc-00_processed_data_array.npy.json
-```
-
-## Sidecar JSON Example
-
-Each output file gets a sidecar JSON with provenance and profiling info:
-
-```json
-{
-    "Pipeline": {
-        "Version": "git-abc123",
-        "Step": "00",
-        "StepDescription": "Demonstrate output management...",
-        "OutputFile": "desc-00_summary_plot.pdf",
-        "GeneratedAt": "2025-12-11T10:30:45.123456"
-    },
-    "Performance": {
-        "Duration": "0.234s",
-        "Timestamp": "2025-12-11T10:30:45.123456",
-        "FileSizeBytes": 12345
-    },
-    "PlotType": "Summary",
-    "Description": "Overview of synthetic signal"
+# Skip outputs per step
+outputs_to_skip = {
+    "00": ["detailed"],         # Skip only in step 00
+    "*": ["debug_*"]            # Skip in all steps
 }
 ```
 
-## Advanced Usage
+## Code Examples
 
-### In Your Step Class
+### Basic Output Saving
+
+```python
+from lw_pipeline import Pipeline_Step
+
+class MyStep(Pipeline_Step):
+    def step(self, data):
+        # Save a figure
+        fig, ax = plt.subplots()
+        ax.plot(data)
+        self.output_manager.save_figure(fig, "my_plot", format="pdf")
+        
+        # Save a dataframe
+        df = pd.DataFrame(data)
+        self.output_manager.save_dataframe(df, "results", format="csv")
+        
+        return data
+```
+
+### Registered Outputs
 
 ```python
 from lw_pipeline import Pipeline_Step, register_output
 
 class MyStep(Pipeline_Step):
     
-    @register_output("expensive_plot", "Time-consuming plot", enabled_by_default=False)
-    def create_plot(self):
-        # Check if this output should be generated
-        if not self.should_generate_output("expensive_plot"):
+    @register_output("quick_plot", "Fast overview plot")
+    def create_quick_plot(self):
+        if not self.should_generate_output("quick_plot"):
             return
         
-        # ... expensive computation ...
-        fig = create_expensive_plot()
+        fig = self._make_plot()
+        self.output_manager.save_figure(fig, "quick")
+    
+    @register_output("detailed", "Expensive analysis", enabled_by_default=False)
+    def detailed_analysis(self):
+        if not self.should_generate_output("detailed"):
+            return
         
-        # Save with custom metadata
-        self.output_manager.save_figure(
-            fig, 
-            name="analysis", 
-            format="pdf",
-            metadata={"AnalysisType": "Comprehensive"},
-            subject="01",  # BIDS parameters
-            session="01",
-            dpi=300
-        )
+        # Only runs when requested
+        result = expensive_computation()
+        self.output_manager.save_dataframe(result, "detailed")
+    
+    def step(self, data):
+        # Call the registered output methods
+        self.create_quick_plot()
+        self.detailed_analysis()
+        return data
 ```
 
-### Programmatic Configuration
+### BIDS Paths
 
 ```python
-from lw_pipeline import Config
+from mne_bids import BIDSPath
 
-config = Config("config.py")
-
-# Generate specific outputs
-config.outputs_to_generate = ["summary_plot", "statistics"]
-
-# Or use step-scoped patterns
-config.outputs_to_generate = {
-    "00": ["*plot*"],  # All plots from step 00
-    "01": ["*"],       # All outputs from step 01
-}
-
-# Change overwrite mode
-config.overwrite_mode = "ifnewer"
-
-# Enable profiling
-config.output_profiling = True
+def step(self, data):
+    # For MNE-BIDS workflows
+    bids_path = BIDSPath(
+        subject="01",
+        session="01",
+        task="rest",
+        run="01",
+        root="/data/bids"
+    )
+    
+    self.output_manager.save_figure(
+        fig,
+        name="channel_analysis",
+        bids_path=bids_path,
+        suffix="plot",
+        extension=".pdf"
+    )
 ```
 
-## Next Steps
+### Custom Metadata
 
-- See `doc/output_management.rst` for complete API documentation
-- Explore other examples in `examples/`
-- Check the main `lw_pipeline` documentation for integration with MNE-BIDS data
+```python
+def step(self, data):
+    metadata = {
+        "AnalysisParameters": {
+            "threshold": 0.05,
+            "method": "bootstrapping"
+        },
+        "Software": "custom_v1.0"
+    }
+    
+    self.output_manager.save_figure(
+        fig, "analysis",
+        metadata=metadata,
+        format="pdf"
+    )
+```
+
+## Output Structure
+
+Default (non-BIDS) outputs are saved as:
+```
+output_root/
+├── 00_summary.csv
+├── 00_summary.csv.json
+├── 00_plot.pdf
+├── 00_plot.pdf.json
+└── ...
+```
+
+With BIDS structure:
+```
+output_root/
+└── sub-01/
+    └── ses-01/
+        └── eeg/
+            ├── sub-01_ses-01_task-rest_desc-00Analysis_plot.pdf
+            ├── sub-01_ses-01_task-rest_desc-00Analysis_plot.pdf.json
+            └── ...
+```
+
+## Files in This Example
+
+- `config.py` - Configuration file
+- `steps/00_analysis.py` - Example step with registered outputs
+- `test_output_management.py` - Unit tests
+- `README.md` - This file
+- `USAGE_EXAMPLES.md` - Detailed usage examples (deprecated, see above)
+
+## See Also
+
+- Main documentation: `doc/output_management.rst`
+- API reference: `doc/api.rst`
+- Quickstart guide: `doc/quickstart.rst`
