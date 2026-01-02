@@ -554,7 +554,8 @@ class Output_Manager:
             else:
                 suffix = "data"
 
-        extension = ".fif"
+        # check if extension is provided in kwargs, otherwise set to .fif
+        extension = kwargs.pop("extension", ".fif")
 
         # Create save function based on object type
         def save_func(path, **mne_kwargs):
