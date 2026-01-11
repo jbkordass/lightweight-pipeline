@@ -12,4 +12,5 @@ Using lw_pipeline
    Quickstart<quickstart>
    Trivial Example<trivial_example>
    Minimal Example<minimal_example>
+   Output Management<output_management>
 

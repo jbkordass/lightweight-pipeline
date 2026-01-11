@@ -67,7 +67,7 @@ class Pipeline_Step(ABC):
         """
         if self._output_manager is None:
             self._output_manager = Output_Manager(
-                self.config, self.short_id, self.description
+                self.config, self.short_id, self.description, step=self
             )
         return self._output_manager
 

@@ -85,6 +85,44 @@ The abstract :class:`Pipeline_Data <lw_pipeline.Pipeline_Data>` class is used to
 As of now, the pipeline comes with a :class:`Pipeline_MNE_BIDS_Data <lw_pipeline.Pipeline_MNE_BIDS_Data>` class that is used to handle MNE-BIDS data.
 
 
+Output Management
+~~~~~~~~~~~~~~~~~
+
+The pipeline provides flexible output management through the :class:`Output_Manager <lw_pipeline.Output_Manager>` class and the :func:`@register_output <lw_pipeline.register_output>` decorator.
+
+**Registering Outputs**
+
+Use :func:`@register_output <lw_pipeline.register_output>` to declare outputs with automatic existence checking and default parameters:
+
+.. code-block:: python
+
+    from lw_pipeline import Pipeline_Step, register_output
+
+    class Analysis_Step(Pipeline_Step):
+        @register_output(
+            \"expensive_plot\",
+            \"Resource-intensive visualization\",
+            check_exists=True,    # Skip if file exists
+            extension=\".png\",     # Default extension
+            suffix=\"analysis\"     # Default BIDS suffix
+        )
+        def create_plot(self):
+            # Only runs if file doesn't exist and overwrite_mode allows
+            data = expensive_computation()
+            
+            # extension and suffix automatically used from decorator
+            self.output_manager.save_figure(data, \"expensive_plot\")
+
+**Benefits:**
+
+- **Prevents waste**: Skip expensive computations when outputs already exist
+- **DRY principle**: Define path parameters once in decorator, not in every save call
+- **CLI control**: Enable/disable outputs via ``--outputs`` and ``--skip-outputs`` flags
+- **Respects overwrite settings**: Honors ``overwrite_mode`` configuration
+
+See :doc:`Output Management Guide <output_management>` for details.
+
+
 We refer to the :doc:`minimal example<minimal_example>` for a more detailed explanation.
 
 

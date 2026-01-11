@@ -40,11 +40,12 @@ class Output_Manager:
         Step description for metadata.
     """
 
-    def __init__(self, config, step_id, step_description=""):
+    def __init__(self, config, step_id, step_description="", step=None):
         """Initialize the Output_Manager."""
         self.config = config
         self.step_id = step_id
         self.step_description = step_description
+        self._step = step  # Reference to step for accessing registry
 
     def _get_overwrite_mode(self):
         """Get the overwrite mode from config."""
@@ -95,6 +96,30 @@ class Output_Manager:
         else:
             print(f"⚠ Unknown overwrite_mode '{mode}', defaulting to 'never'.")
             return False
+
+    def _get_output_defaults(self, output_name):
+        """
+        Get default path parameters from output registry.
+        
+        Parameters
+        ----------
+        output_name : str
+            Name of the registered output.
+        
+        Returns
+        -------
+        dict
+            Default path parameters for this output.
+        """
+        if self._step is None:
+            return {}
+        
+        registry = getattr(self._step, 'output_registry', None)
+        if registry is None:
+            return {}
+        
+        output_info = registry._registered.get(output_name, {})
+        return output_info.get('default_path_params', {})
 
     def _should_overwrite_ifnewer(self, filepath, source_file):
         """
@@ -327,14 +352,16 @@ class Output_Manager:
         Path
             Path to saved file.
         """
-        # Separate BIDS parameters from save function kwargs
+        # Separate BIDS parameters and path parameters from save function kwargs
+        path_params = ["subject", "session", "task", "run", "datatype", 
+                      "use_bids_structure", "custom_dir", "extension", "suffix"]
         bids_params = {
             k: v for k, v in kwargs.items()
             if k in ["subject", "session", "task", "run", "datatype"]
         }
         save_kwargs = {
             k: v for k, v in kwargs.items()
-            if k not in bids_params
+            if k not in path_params
         }
 
         # Create output path
@@ -416,7 +443,7 @@ class Output_Manager:
             custom_dir=custom_dir, bids_path=bids_path, **bids_params
         )
 
-    def save_figure(self, fig, name, format=None, suffix="plot", metadata=None,
+    def save_figure(self, fig, name, format=None, suffix=None, metadata=None,
                    source_file=None, **kwargs):
         """
         Save a matplotlib figure.
@@ -429,26 +456,35 @@ class Output_Manager:
             Output name (will be prefixed with step_id).
         format : str, optional
             Figure format (e.g., "pdf", "png", "svg"). If None, detected from
-            extension in kwargs or defaults to "pdf".
+            extension in kwargs or registered defaults or defaults to "pdf".
         suffix : str, optional
-            BIDS suffix. Default is "plot".
+            BIDS suffix. If None, uses registered default or "plot".
         metadata : dict, optional
             Custom metadata for sidecar.
         source_file : str or Path, optional
             Source file for ifnewer comparison.
         **kwargs : dict
             Additional arguments (BIDS params + savefig params like dpi, bbox_inches).
+            Merged with registered defaults (explicit params take precedence).
 
         Returns
         -------
         Path
             Path to saved figure.
         """
+        # Merge registered defaults
+        defaults = self._get_output_defaults(name)
+        merged_kwargs = {**defaults, **kwargs}
+        
+        # Handle suffix: explicit > defaults > "plot"
+        if suffix is None:
+            suffix = defaults.get('suffix', 'plot')
+        
         # Determine extension
         if format:
             extension = f".{format}"
         else:
-            extension = kwargs.pop("extension", ".pdf")
+            extension = merged_kwargs.pop("extension", ".pdf")
 
         # Create save function that calls fig.savefig
         def save_func(path, **fig_kwargs):
@@ -456,10 +492,10 @@ class Output_Manager:
 
         return self.save_generic(
             fig, name, save_func, suffix=suffix, extension=extension,
-            metadata=metadata, source_file=source_file, **kwargs
+            metadata=metadata, source_file=source_file, **merged_kwargs
         )
 
-    def save_dataframe(self, df, name, format="tsv", suffix="table",
+    def save_dataframe(self, df, name, format="tsv", suffix=None,
                       metadata=None, source_file=None, **kwargs):
         """
         Save a pandas DataFrame as CSV, TSV, or Excel.
@@ -473,19 +509,28 @@ class Output_Manager:
         format : str, optional
             Format: "csv", "tsv", or "xlsx". Default is "csv".
         suffix : str, optional
-            BIDS suffix. Default is "table".
+            BIDS suffix. If None, uses registered default or "table".
         metadata : dict, optional
             Custom metadata for sidecar.
         source_file : str or Path, optional
             Source file for ifnewer comparison.
         **kwargs : dict
             Additional arguments (BIDS params + pandas to_csv/to_excel params).
+            Merged with registered defaults (explicit params take precedence).
 
         Returns
         -------
         Path
             Path to saved file.
         """
+        # Merge registered defaults
+        defaults = self._get_output_defaults(name)
+        merged_kwargs = {**defaults, **kwargs}
+        
+        # Handle suffix: explicit > defaults > "table"
+        if suffix is None:
+            suffix = defaults.get('suffix', 'table')
+        
         def save_csv(p, **kw):
             df.to_csv(p, **kw)
 
@@ -511,7 +556,7 @@ class Output_Manager:
 
         return self.save_generic(
             df, name, save_func, suffix=suffix, extension=extension,
-            metadata=metadata, source_file=source_file, **kwargs
+            metadata=metadata, source_file=source_file, **merged_kwargs
         )
 
     def save_mne_object(self, obj, name, suffix=None, metadata=None,

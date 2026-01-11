@@ -56,13 +56,16 @@ class Analysis(Pipeline_Step):
 
         return {"status": "completed", "step": "00_analysis"}
 
-    @register_output("data_table", "Raw data table", enabled_by_default=True)
+    @register_output(
+        "data_table",
+        "Raw data table",
+        enabled_by_default=True,
+        check_exists=True,
+        extension=".csv",
+        suffix="table"
+    )
     def generate_data_table(self):
         """Generate and save a data table."""
-        if not self.should_generate_output("data_table"):
-            print("  ⊗ Skipping data_table (not requested)")
-            return
-
         print("  ✓ Generating data_table...")
 
         # Create synthetic data
@@ -74,17 +77,16 @@ class Analysis(Pipeline_Step):
         }
         df = pd.DataFrame(data)
 
-        # Save as CSV with custom metadata
+        # Save as CSV - extension and suffix from decorator defaults
         self.output_manager.save_dataframe(
             df,
             name="raw_data",
             format="csv",
-            suffix="table",
             metadata={
                 "Description": "Synthetic data for demonstration",
                 "Units": {"Value": "arbitrary", "Accuracy": "proportion"},
             },
-            use_bids_structure=False,  # Use simple structure
+            use_bids_structure=False,
         )
 
         # Also save as TSV for demonstration
@@ -96,13 +98,16 @@ class Analysis(Pipeline_Step):
             use_bids_structure=False,
         )
 
-    @register_output("summary_plot", "Summary plot", enabled_by_default=True)
+    @register_output(
+        "summary_plot",
+        "Summary plot",
+        enabled_by_default=True,
+        check_exists=True,
+        extension=".png",
+        suffix="summary"
+    )
     def generate_summary_plot(self):
         """Generate and save a summary plot."""
-        if not self.should_generate_output("summary_plot"):
-            print("  ⊗ Skipping summary_plot (not requested)")
-            return
-
         print("  ✓ Generating summary_plot...")
 
         try:
@@ -121,18 +126,11 @@ class Analysis(Pipeline_Step):
         ax.set_title("Summary Plot")
         ax.grid(True)
 
-        # Save as PDF with custom metadata
+        # Save - extension and suffix from decorator defaults
         self.output_manager.save_figure(
             fig,
             name="summary",
-            format="pdf",
-            suffix="plot",
-            metadata={
-                "PlotType": "Summary",
-                "Description": "Overview of synthetic signal",
-            },
-            use_bids_structure=False,
-            dpi=300,
+            dpi=150,
             bbox_inches="tight",
         )
 
@@ -152,13 +150,12 @@ class Analysis(Pipeline_Step):
         "detailed_plot",
         "Detailed analysis plot (expensive)",
         enabled_by_default=False,
+        check_exists=True,
+        extension=".png",
+        suffix="detailed"
     )
     def generate_detailed_plot(self):
         """Generate a detailed plot (disabled by default due to cost)."""
-        if not self.should_generate_output("detailed_plot"):
-            print("  ⊗ Skipping detailed_plot (not requested)")
-            return
-
         print("  ✓ Generating detailed_plot (expensive operation)...")
 
         try:
@@ -166,6 +163,10 @@ class Analysis(Pipeline_Step):
         except ImportError:
             print("    ⚠ matplotlib not installed, skipping plot")
             return
+
+        # Simulate expensive computation
+        import time
+        time.sleep(0.1)  # Simulate computation time
 
         # Create a more complex plot
         fig, axes = plt.subplots(2, 2, figsize=(12, 10))
