@@ -7,6 +7,10 @@ import functools
 from fnmatch import fnmatch
 
 
+# Class-level storage for registered outputs (populated at decoration time)
+_CLASS_OUTPUTS = {}
+
+
 def register_output(
     name, 
     description="", 
@@ -73,14 +77,14 @@ def register_output(
     ...         self.output_manager.save_figure(fig, "expensive_plot")
     """
     def decorator(func):
-        # Store registration info as function attributes
+        # Store registration info as function attributes (backward compatibility)
         func._is_registered_output = True
         func._output_name = name
         func._output_description = description
         func._output_enabled_by_default = enabled_by_default
         func._output_group = group
         func._check_exists = check_exists
-        
+
         # Store default path parameters (remove None values)
         func._default_path_params = {
             k: v for k, v in {
@@ -90,6 +94,18 @@ def register_output(
                 'custom_dir': custom_dir,
                 **extra_path_params
             }.items() if v is not None
+        }
+
+        # Store in class-level registry for efficient lookup
+        # We'll update this when the method is bound to a class
+        func._output_info = {
+            "name": name,
+            "description": description,
+            "enabled_by_default": enabled_by_default,
+            "group": group,
+            "check_exists": check_exists,
+            "default_path_params": func._default_path_params,
+            "method_name": func.__name__,
         }
 
         @functools.wraps(func)
@@ -144,24 +160,49 @@ class Output_Registry:
         self._scan_step_for_outputs()
 
     def _scan_step_for_outputs(self):
-        """Scan the step instance for methods decorated with @register_output."""
-        for attr_name in dir(self.step):
-            # Skip private attributes and output_registry to avoid recursion
-            if attr_name.startswith("_") or attr_name == "output_registry":
+        """
+        Scan the step class for methods decorated with @register_output.
+
+        Uses class-level introspection (much faster than dir()) to find
+        registered outputs. Only scans the MRO (Method Resolution Order)
+        which is more efficient than full dir() introspection.
+        """
+        # Get the class (not instance) for more efficient introspection
+        step_class = self.step.__class__
+
+        # Scan the Method Resolution Order (MRO) - more efficient than dir()
+        # This finds all methods in the class hierarchy
+        for cls in step_class.__mro__:
+            # Skip object base class
+            if cls is object:
                 continue
 
-            attr = getattr(self.step, attr_name)
-            if callable(attr) and getattr(attr, "_is_registered_output", False):
-                output_info = {
-                    "name": attr._output_name,
-                    "description": attr._output_description,
-                    "enabled_by_default": attr._output_enabled_by_default,
-                    "group": attr._output_group,
-                    "method": attr,
-                    "check_exists": getattr(attr, "_check_exists", False),
-                    "default_path_params": getattr(attr, "_default_path_params", {}),
-                }
-                self._registered[attr._output_name] = output_info
+            # Only scan class __dict__ (direct attributes), not inherited
+            # This is much faster than dir() which walks the entire hierarchy
+            for attr_name, attr_value in cls.__dict__.items():
+                # Skip private attributes and output_registry to avoid recursion
+                if attr_name.startswith("_") or attr_name == "output_registry":
+                    continue
+
+                # Check if it's a registered output by looking at stored metadata
+                if hasattr(attr_value, "_is_registered_output"):
+                    # Get the bound method from the instance
+                    bound_method = getattr(self.step, attr_name)
+
+                    # Get stored metadata
+                    output_info = {
+                        "name": attr_value._output_name,
+                        "description": attr_value._output_description,
+                        "enabled_by_default": attr_value._output_enabled_by_default,
+                        "group": attr_value._output_group,
+                        "method": bound_method,
+                        "check_exists": attr_value._check_exists,
+                        "default_path_params": attr_value._default_path_params,
+                    }
+
+                    # Only add if not already registered (subclass overrides take precedence)
+                    if attr_value._output_name not in self._registered:
+                        self._registered[attr_value._output_name] = output_info
 
     def get_all(self):
         """
