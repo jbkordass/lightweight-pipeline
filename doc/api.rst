@@ -30,6 +30,15 @@ lw_pipeline
    Output_Registry
    register_output
 
+lw_pipeline.discovery
+---------------------
+
+:py:mod:`lw_pipeline.discovery`:
+
+.. automodule:: lw_pipeline.discovery
+   :members:
+   :no-inherited-members:
+
 lw_pipeline.helper
 ------------------
 

@@ -12,12 +12,12 @@ from lw_pipeline.output_manager import Output_Manager
 
 from lw_pipeline.output_registration import Output_Registry, register_output
 
+from lw_pipeline.pipeline import Pipeline
+
 # import mne bids data class, if MNE and MNE-BIDS are installed
 try:
     from lw_pipeline.pipeline_mne_bids_data import Pipeline_MNE_BIDS_Data
 except ImportError:
     pass
-
-from lw_pipeline.__main__ import Pipeline
 
 import lw_pipeline.__main__

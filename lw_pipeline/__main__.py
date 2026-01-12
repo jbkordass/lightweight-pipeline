@@ -1,15 +1,19 @@
-"""Run the pipeline from the command line."""
+"""Command-line interface for the pipeline."""
 
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
 import argparse
-import importlib.util
-import os
 import sys
 
-from lw_pipeline import Config, Pipeline_Exception, Pipeline_Step
+from lw_pipeline.config import Config
+from lw_pipeline.discovery import (
+    find_all_step_classes,
+    find_all_step_files,
+    list_all_outputs,
+)
 from lw_pipeline.helper.report import generate_report
+from lw_pipeline.pipeline import Pipeline
 
 
 def _parse_outputs_argument(outputs_str):
@@ -174,8 +178,12 @@ def main():
                 step_files_specified.append(step[0])
             step_files = step_files_specified
             print("Running the steps:", ", ".join(step_files))
-        pipeline = Pipeline(step_files, config)
-        # run the pipeline
+
+        # Load step classes from files
+        step_classes = find_all_step_classes(step_files, config)
+        pipeline = Pipeline(step_classes)
+
+        # Run the pipeline
         pipeline.run()
     elif options.list:
         print("Steps:".center(80, "-"))
@@ -186,164 +194,6 @@ def main():
     else:
         # if no arguments implying actions are given, print help
         parser.print_help()
-
-
-def find_all_step_files(steps_dir):
-    """Find all the .py files in the steps directory."""
-    # Get a list of all python files in the steps directory
-    step_files = [
-        f for f in os.listdir(steps_dir) if f.endswith(".py") and not f.startswith("__")
-    ]
-
-    # Sort the step files alphabetically
-    step_files.sort()
-
-    return step_files
-
-
-def list_all_outputs(config):
-    """List all registered outputs in pipeline steps."""
-    step_files = find_all_step_files(config.steps_dir)
-    step_classes = find_all_step_classes(step_files, config)
-    
-    if not step_classes:
-        print("No steps found.")
-        return
-    
-    for step in step_classes:
-        # Get the step ID from the module name (e.g., "00" from "00_start")
-        module_name = step.__class__.__module__.split(".")[-1]
-        step_id = module_name.split("_")[0] if "_" in module_name else module_name
-        
-        # Get registered outputs
-        outputs = step.output_registry.list_outputs(include_disabled=True)
-        
-        if outputs:
-            print(f"\n{step_id} - {step.__class__.__name__}:")
-            print(f"  {step.description}")
-            print("  Outputs:")
-            for name, description, enabled in outputs:
-                status = "✓" if enabled else "○"
-                desc_text = f" - {description}" if description else ""
-                print(f"    {status} {name}{desc_text}")
-        else:
-            print(f"\n{step_id} - {step.__class__.__name__}: No registered outputs")
-
-
-def find_all_step_classes(step_files, config):
-    """Find all the Pipeline_Step classes in the given step files."""
-    steps_dir = config.steps_dir
-
-    step_classes = []
-
-    # Set module name to the name of the steps directory
-    module_name = os.path.basename(steps_dir)
-
-    # Import the module
-    spec = importlib.util.spec_from_file_location(
-        module_name,
-        os.path.join(config.steps_dir, "__init__.py"),
-        submodule_search_locations=[config.steps_dir],
-    )
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-
-    # Loop through the step files and import the modules
-    for step_file in step_files:
-        # Skip files like __init__.py, etc.
-        if step_file.startswith("__"):
-            continue
-
-        # Remove the file extension to get the module name
-        step_name = os.path.splitext(step_file)[0]
-
-        # import the submodule
-        module = importlib.import_module(f"{module_name}.{step_name}")
-
-        # Get the subclasses of PipelineStep defined in the module
-        pipeline_step_classes = [
-            cls
-            for cls in module.__dict__.values()
-            if isinstance(cls, type)
-            and issubclass(cls, Pipeline_Step)
-            and cls != Pipeline_Step
-        ]
-
-        # Loop through the pipeline elements and invoke them
-        for pipeline_step_class in pipeline_step_classes:
-            step_classes.append(pipeline_step_class(config))
-
-    return step_classes
-
-
-class Pipeline:
-    """Pipeline class to run the pipeline steps."""
-
-    def __init__(self, steps, config=None):
-        """
-        Initialize the Pipeline.
-
-        Parameters
-        ----------
-        steps : list
-            A list of step file names or a list of Pipeline_Step instances.
-        config : Config, optional
-            An instance of Config class, required only if steps are file names
-        """
-        if all(isinstance(step, str) for step in steps):
-            if config is None:
-                raise ValueError("Config must be provided if steps are file names.")
-            self.pipeline_steps = find_all_step_classes(steps, config)
-        elif all(isinstance(step, Pipeline_Step) for step in steps):
-            self.pipeline_steps = steps
-        else:
-            raise ValueError(
-                "Steps must be either a list of file names or Pipeline_Step instances."
-            )
-
-    def run(self, data=None):
-        """
-        Run the pipeline.
-
-        Include all Pipeline_Step classes contained in the step_files list.
-
-        Parameters
-        ----------
-        data : object, optional
-            Optional input data to be passed to the first step.
-
-        Returns
-        -------
-        data : object
-            The output data after processing through all pipeline steps.
-        """
-        # counter for executed steps/position in the pipeline
-        pos = 1
-
-        if data is not None:
-            print("Pipeline starts with following input:".center(80, "-"))
-            print(data)
-
-        for step in self.pipeline_steps:
-            # print the number/name of the step
-            print(
-                f"Step {pos}: {step.__class__.__module__} / "
-                f"{step.__class__.__name__}".center(80, "-")
-            )
-            pos = pos + 1
-
-            print("ℹ " + step.description)
-            try:
-                data = step.step(data)
-            except Pipeline_Exception as e:
-                print(f"Error in {step.description}: {e}")
-                sys.exit(1)
-
-        print("Pipeline finished with following output:".center(80, "-"))
-        print(data)
-
-        return data
 
 
 if __name__ == "__main__":
