@@ -490,6 +490,9 @@ class Output_Manager:
         if suffix is None:
             suffix = defaults.get('suffix', 'plot')
         
+        # Pop suffix from kwargs, to make sure we can set it again later
+        merged_kwargs.pop("suffix", "")
+        
         # Determine extension
         if format:
             extension = f".{format}"
@@ -606,6 +609,8 @@ class Output_Manager:
                 suffix = "ave"
             elif "Annotations" in obj_type:
                 suffix = "markers"
+            elif "TFR" in obj_type:
+                suffix = "tfr"
             else:
                 suffix = "data"
 
