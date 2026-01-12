@@ -27,7 +27,7 @@ class Pipeline_Step(ABC):
         # Initialize output management
         self._output_manager = None
         self._output_registry = None
-        
+
         # Initialize logger for this step
         self._logger = None
 
@@ -88,8 +88,15 @@ class Pipeline_Step(ABC):
             self._output_registry = Output_Registry(self)
         return self._output_registry
 
-    def get_output_path(self, name, suffix=None, extension=None,
-                       use_bids_structure=False, custom_dir=None, **bids_params):
+    def get_output_path(
+        self,
+        name,
+        suffix=None,
+        extension=None,
+        use_bids_structure=False,
+        custom_dir=None,
+        **bids_params,
+    ):
         """
         Get an output file path for this step.
 
@@ -116,9 +123,12 @@ class Pipeline_Step(ABC):
             Output file path.
         """
         return self.output_manager.get_output_path(
-            name, suffix=suffix, extension=extension,
+            name,
+            suffix=suffix,
+            extension=extension,
             use_bids_structure=use_bids_structure,
-            custom_dir=custom_dir, **bids_params
+            custom_dir=custom_dir,
+            **bids_params,
         )
 
     def should_generate_output(self, name):

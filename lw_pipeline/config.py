@@ -39,9 +39,7 @@ class Config:
                     0, config_dir
                 )  # add the config directory to the module search path
 
-                self._load_file_to_variables(
-                    config_file, verbose=verbose
-                )
+                self._load_file_to_variables(config_file, verbose=verbose)
 
                 # check for a local version of the config file
                 config_basename, config_ext = os.path.splitext(
@@ -110,11 +108,7 @@ class Config:
         # Update the current variables in the this class with the ones from
         # the specified configuration file
         vars(self).update(
-            {
-                k: v
-                for k, v in vars(config_module).items()
-                if not k.startswith("_")
-            }
+            {k: v for k, v in vars(config_module).items() if not k.startswith("_")}
         )
         self.check_steps_dir()
 
@@ -277,7 +271,7 @@ class Config:
     - None: Generate all outputs enabled by default
     - List of patterns: Generate outputs matching patterns (e.g., ["plot*", "stats"])
     - Dict: Step-specific patterns (e.g., {"01": ["plot"], "02": ["*"]})
-    Supports wildcards via fnmatch (e.g., "*" for all, "plot*" for all starting with plot)
+    Supports wildcards via fnmatch (e.g., "*" for all, "plot*": all starting with plot)
     """
 
     output_root = None

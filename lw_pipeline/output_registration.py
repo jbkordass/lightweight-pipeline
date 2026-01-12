@@ -6,22 +6,21 @@
 import functools
 from fnmatch import fnmatch
 
-
 # Class-level storage for registered outputs (populated at decoration time)
 _CLASS_OUTPUTS = {}
 
 
 def register_output(
-    name, 
-    description="", 
-    enabled_by_default=True, 
+    name,
+    description="",
+    enabled_by_default=True,
     group=None,
     check_exists=False,
     extension=None,
     suffix=None,
     use_bids_structure=None,
     custom_dir=None,
-    **extra_path_params
+    **extra_path_params,
 ):
     """
     Register a method as an optional output generator.
@@ -64,7 +63,7 @@ def register_output(
     --------
     >>> class MyStep(Pipeline_Step):
     ...     @register_output(
-    ...         "expensive_plot", 
+    ...         "expensive_plot",
     ...         "Channel visualization",
     ...         check_exists=True,
     ...         extension=".png"
@@ -76,6 +75,7 @@ def register_output(
     ...         # extension=".png" used automatically
     ...         self.output_manager.save_figure(fig, "expensive_plot")
     """
+
     def decorator(func):
         # Store registration info as function attributes (backward compatibility)
         func._is_registered_output = True
@@ -87,13 +87,15 @@ def register_output(
 
         # Store default path parameters (remove None values)
         func._default_path_params = {
-            k: v for k, v in {
-                'extension': extension,
-                'suffix': suffix,
-                'use_bids_structure': use_bids_structure,
-                'custom_dir': custom_dir,
-                **extra_path_params
-            }.items() if v is not None
+            k: v
+            for k, v in {
+                "extension": extension,
+                "suffix": suffix,
+                "use_bids_structure": use_bids_structure,
+                "custom_dir": custom_dir,
+                **extra_path_params,
+            }.items()
+            if v is not None
         }
 
         # Store in class-level registry for efficient lookup
@@ -113,24 +115,26 @@ def register_output(
             # Check if output should be generated (config/CLI)
             if not self.should_generate_output(name):
                 return None
-            
+
             # Check file existence if requested
             if check_exists and func._default_path_params:
                 try:
                     # Get output path using default parameters
-                    output_path = self.get_output_path(name, **func._default_path_params)
-                    
+                    output_path = self.get_output_path(
+                        name, **func._default_path_params
+                    )
+
                     # Check if we should overwrite
                     if not self.output_manager._should_overwrite(output_path):
                         return None
                 except Exception as e:
                     # If path check fails, log warning and proceed
-                    logger = getattr(self.config, 'logger', None)
+                    logger = getattr(self.config, "logger", None)
                     if logger:
                         logger.warning(
                             f"Could not check existence for '{name}': {e}. Proceeding."
                         )
-            
+
             return func(self, *args, **kwargs)
 
         return wrapper
@@ -200,7 +204,7 @@ class Output_Registry:
                         "default_path_params": attr_value._default_path_params,
                     }
 
-                    # Only add if not already registered (subclass overrides take precedence)
+                    # Only add if not yet reg. (subclass overrides take precedence)
                     if attr_value._output_name not in self._registered:
                         self._registered[attr_value._output_name] = output_info
 
@@ -225,7 +229,8 @@ class Output_Registry:
             List of output names enabled by default.
         """
         return [
-            name for name, info in self._registered.items()
+            name
+            for name, info in self._registered.items()
             if info["enabled_by_default"]
         ]
 
@@ -284,10 +289,10 @@ class Output_Registry:
         # Check if patterns_config is dict (step-scoped) or list (global)
         if isinstance(patterns_config, dict):
             step_id = self.step.short_id
-            
+
             # Check for exact step match
             patterns = patterns_config.get(step_id, None)
-            
+
             # If no exact match, check for wildcard "*" (applies to all steps)
             if patterns is None and "*" in patterns_config:
                 patterns = patterns_config["*"]
@@ -324,9 +329,5 @@ class Output_Registry:
         outputs = []
         for name, info in self._registered.items():
             if include_disabled or info["enabled_by_default"]:
-                outputs.append((
-                    name,
-                    info["description"],
-                    info["enabled_by_default"]
-                ))
+                outputs.append((name, info["description"], info["enabled_by_default"]))
         return outputs
