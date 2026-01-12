@@ -66,9 +66,12 @@ class Pipeline_Step(ABC):
             Manager for saving outputs with consistent paths and metadata.
         """
         if self._output_manager is None:
+            # Create output manager without registry first
             self._output_manager = Output_Manager(
-                self.config, self.short_id, self.description, step=self
+                self.config, self.short_id, self.description
             )
+            # Inject registry to avoid circular reference during initialization
+            self._output_manager.set_registry(self.output_registry)
         return self._output_manager
 
     @property

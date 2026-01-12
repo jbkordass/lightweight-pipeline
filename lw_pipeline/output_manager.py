@@ -40,12 +40,26 @@ class Output_Manager:
         Step description for metadata.
     """
 
-    def __init__(self, config, step_id, step_description="", step=None):
+    def __init__(self, config, step_id, step_description="", output_registry=None):
         """Initialize the Output_Manager."""
         self.config = config
         self.step_id = step_id
         self.step_description = step_description
-        self._step = step  # Reference to step for accessing registry
+        self._output_registry = output_registry
+
+    def set_registry(self, output_registry):
+        """
+        Set the output registry for accessing registered output defaults.
+        
+        This is called by Pipeline_Step after both Output_Manager and
+        Output_Registry are created to avoid circular dependencies.
+        
+        Parameters
+        ----------
+        output_registry : Output_Registry
+            The registry containing registered output metadata.
+        """
+        self._output_registry = output_registry
 
     def _get_overwrite_mode(self):
         """Get the overwrite mode from config."""
@@ -111,14 +125,10 @@ class Output_Manager:
         dict
             Default path parameters for this output.
         """
-        if self._step is None:
+        if self._output_registry is None:
             return {}
         
-        registry = getattr(self._step, 'output_registry', None)
-        if registry is None:
-            return {}
-        
-        output_info = registry._registered.get(output_name, {})
+        output_info = self._output_registry._registered.get(output_name, {})
         return output_info.get('default_path_params', {})
 
     def _should_overwrite_ifnewer(self, filepath, source_file):
