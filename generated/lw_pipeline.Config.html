@@ -1,0 +1,881 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>lw_pipeline.Config &#8212; Lightweight Pipeline  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/lw_pipeline.Config';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="lw_pipeline.Pipeline_Exception" href="lw_pipeline.Pipeline_Exception.html" />
+    <link rel="prev" title="lw_pipeline.Pipeline" href="lw_pipeline.Pipeline.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Lightweight Pipeline  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../use.html">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../use.html">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Pipeline.html">lw_pipeline.Pipeline</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">lw_pipeline.Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Pipeline_Exception.html">lw_pipeline.Pipeline_Exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Pipeline_Step.html">lw_pipeline.Pipeline_Step</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Pipeline_Data.html">lw_pipeline.Pipeline_Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Pipeline_MNE_BIDS_Data.html">lw_pipeline.Pipeline_MNE_BIDS_Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Output_Manager.html">lw_pipeline.Output_Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.Output_Registry.html">lw_pipeline.Output_Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lw_pipeline.register_output.html">lw_pipeline.register_output</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="lw_pipeline.helper.mne.html">lw_pipeline.helper.mne</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.mne.add_annotation_prefix.html">lw_pipeline.helper.mne.add_annotation_prefix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.mne.find_assoc_deriv_bidspath.html">lw_pipeline.helper.mne.find_assoc_deriv_bidspath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.mne.find_ch.html">lw_pipeline.helper.mne.find_ch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.mne.find_chs.html">lw_pipeline.helper.mne.find_chs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.mne.raw_from_source.html">lw_pipeline.helper.mne.raw_from_source</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="lw_pipeline.helper.naming.html">lw_pipeline.helper.naming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.naming.guess_short_id.html">lw_pipeline.helper.naming.guess_short_id</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="lw_pipeline.helper.report.html">lw_pipeline.helper.report</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="lw_pipeline.helper.report.generate_report.html">lw_pipeline.helper.report.generate_report</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Documentation</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">lw_pipeline.Config</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="lw-pipeline-config">
+<h1>lw_pipeline.Config<a class="headerlink" href="#lw-pipeline-config" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="lw_pipeline.Config">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">lw_pipeline.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class representing the configuration settings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the Config object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_file_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the configuration file. If provided, the configuration
+settings will be updated based on the variables defined in the file.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, print messages about the configuration file being used.
+Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.__init__" title="lw_pipeline.Config.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([config_file_path, verbose])</p></td>
+<td><p>Initialize the Config object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.ask" title="lw_pipeline.Config.ask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ask</span></code></a>(message[, default])</p></td>
+<td><p>Ask to do something, e.g. before potentially deleting data, etc.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.check_steps_dir" title="lw_pipeline.Config.check_steps_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_steps_dir</span></code></a>()</p></td>
+<td><p>Make sure steps dir is absolute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.get_version" title="lw_pipeline.Config.get_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_version</span></code></a>()</p></td>
+<td><p>Get a version of the pipeline by getting last commit hash from the git.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.set_variable_and_write_to_config_file" title="lw_pipeline.Config.set_variable_and_write_to_config_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_variable_and_write_to_config_file</span></code></a>(...)</p></td>
+<td><p>Set a variable in this class and write to config file, if not defined there.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.setup_logging" title="lw_pipeline.Config.setup_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_logging</span></code></a>()</p></td>
+<td><p>Set up logging based on configuration settings.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.auto_response" title="lw_pipeline.Config.auto_response"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auto_response</span></code></a></p></td>
+<td><p>Decide how questions are answered (off/y/n/default)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.bids_acquisition" title="lw_pipeline.Config.bids_acquisition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bids_acquisition</span></code></a></p></td>
+<td><p>EEG information that should be included in the BIDS file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.bids_datatype" title="lw_pipeline.Config.bids_datatype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bids_datatype</span></code></a></p></td>
+<td><p>BIDS datatype of the data created as derivatives in the pipeline</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.bids_extension" title="lw_pipeline.Config.bids_extension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bids_extension</span></code></a></p></td>
+<td><p>Extension of the BIDS files in the bids root directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.bids_root" title="lw_pipeline.Config.bids_root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bids_root</span></code></a></p></td>
+<td><p>Root directory for BIDS formatted data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.config_file_path" title="lw_pipeline.Config.config_file_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_file_path</span></code></a></p></td>
+<td><p>The path to an external configuration file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.data_dir" title="lw_pipeline.Config.data_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_dir</span></code></a></p></td>
+<td><p>Default data directory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.deriv_root" title="lw_pipeline.Config.deriv_root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deriv_root</span></code></a></p></td>
+<td><p>Root directory for derivatives</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.eeg_path" title="lw_pipeline.Config.eeg_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eeg_path</span></code></a></p></td>
+<td><p>Path to the eeg data which should be converted to BIDS</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.log_file" title="lw_pipeline.Config.log_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_file</span></code></a></p></td>
+<td><p>Path to the log file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.log_format" title="lw_pipeline.Config.log_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_format</span></code></a></p></td>
+<td><p>Format string for log messages</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.log_level" title="lw_pipeline.Config.log_level"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_level</span></code></a></p></td>
+<td><p>Logging level for the pipeline.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.log_to_file" title="lw_pipeline.Config.log_to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_to_file</span></code></a></p></td>
+<td><p>Whether to write logs to a file in addition to console output</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.n_jobs" title="lw_pipeline.Config.n_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">n_jobs</span></code></a></p></td>
+<td><p>Number of parallel jobs to run</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.output_profiling" title="lw_pipeline.Config.output_profiling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_profiling</span></code></a></p></td>
+<td><p>Include timing and file size information in sidecar metadata</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.output_root" title="lw_pipeline.Config.output_root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_root</span></code></a></p></td>
+<td><p>Root directory for non-BIDS outputs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.outputs_to_generate" title="lw_pipeline.Config.outputs_to_generate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outputs_to_generate</span></code></a></p></td>
+<td><p>List or dict specifying which outputs to generate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.overwrite" title="lw_pipeline.Config.overwrite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overwrite</span></code></a></p></td>
+<td><p>Overwrite existing derivative files, if False they are skipped</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.overwrite_mode" title="lw_pipeline.Config.overwrite_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overwrite_mode</span></code></a></p></td>
+<td><p>Overwrite mode for output files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.sessions" title="lw_pipeline.Config.sessions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sessions</span></code></a></p></td>
+<td><p>List of sessions to include in the pipeline processing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.sidecar_auto_generate" title="lw_pipeline.Config.sidecar_auto_generate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sidecar_auto_generate</span></code></a></p></td>
+<td><p>Automatically generate sidecar JSON files for all outputs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.steps_dir" title="lw_pipeline.Config.steps_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">steps_dir</span></code></a></p></td>
+<td><p>Steps directory relative to config file or current working directory if no</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lw_pipeline.Config.subjects" title="lw_pipeline.Config.subjects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subjects</span></code></a></p></td>
+<td><p>List of subjects to include in the pipeline processing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lw_pipeline.Config.tasks" title="lw_pipeline.Config.tasks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tasks</span></code></a></p></td>
+<td><p>List of tasks to include in the pipeline processing.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.ask">
+<span class="sig-name descname"><span class="pre">ask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.ask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.ask" title="Link to this definition">#</a></dt>
+<dd><p>Ask to do something, e.g. before potentially deleting data, etc.</p>
+<p>Make sure to specify options, e.g. (y/n), in the message.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.auto_response">
+<span class="sig-name descname"><span class="pre">auto_response</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'off'</span></span><a class="headerlink" href="#lw_pipeline.Config.auto_response" title="Link to this definition">#</a></dt>
+<dd><p>Decide how questions are answered (off/y/n/default)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.bids_acquisition">
+<span class="sig-name descname"><span class="pre">bids_acquisition</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#lw_pipeline.Config.bids_acquisition" title="Link to this definition">#</a></dt>
+<dd><p>EEG information that should be included in the BIDS file</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.bids_datatype">
+<span class="sig-name descname"><span class="pre">bids_datatype</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'eeg'</span></span><a class="headerlink" href="#lw_pipeline.Config.bids_datatype" title="Link to this definition">#</a></dt>
+<dd><p>BIDS datatype of the data created as derivatives in the pipeline</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.bids_extension">
+<span class="sig-name descname"><span class="pre">bids_extension</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.edf'</span></span><a class="headerlink" href="#lw_pipeline.Config.bids_extension" title="Link to this definition">#</a></dt>
+<dd><p>Extension of the BIDS files in the bids root directory</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.bids_root">
+<span class="sig-name descname"><span class="pre">bids_root</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/data/bids'</span></span><a class="headerlink" href="#lw_pipeline.Config.bids_root" title="Link to this definition">#</a></dt>
+<dd><p>Root directory for BIDS formatted data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.check_steps_dir">
+<span class="sig-name descname"><span class="pre">check_steps_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.check_steps_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.check_steps_dir" title="Link to this definition">#</a></dt>
+<dd><p>Make sure steps dir is absolute.</p>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If <cite>config_file_path</cite> is not <cite>None</cite>, the relative <cite>steps_dir</cite> is
+resolved relative to the directory containing the configuration file.</p></li>
+<li><p>If <cite>config_file_path</cite> is <cite>None</cite>, the relative <cite>steps_dir</cite> is resolved
+relative to the current working directory.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps_dir</strong> (<em>str</em>) – The directory path for steps, which will be converted to an absolute path.</p></li>
+<li><p><strong>config_file_path</strong> (<em>str</em><em> or </em><em>None</em>) – The path to the configuration file, used to resolve relative paths.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.config_file_path">
+<span class="sig-name descname"><span class="pre">config_file_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#lw_pipeline.Config.config_file_path" title="Link to this definition">#</a></dt>
+<dd><p>The path to an external configuration file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.data_dir">
+<span class="sig-name descname"><span class="pre">data_dir</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/data'</span></span><a class="headerlink" href="#lw_pipeline.Config.data_dir" title="Link to this definition">#</a></dt>
+<dd><p>Default data directory</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.deriv_root">
+<span class="sig-name descname"><span class="pre">deriv_root</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/data/derivatives'</span></span><a class="headerlink" href="#lw_pipeline.Config.deriv_root" title="Link to this definition">#</a></dt>
+<dd><p>Root directory for derivatives</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.eeg_path">
+<span class="sig-name descname"><span class="pre">eeg_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></span><a class="headerlink" href="#lw_pipeline.Config.eeg_path" title="Link to this definition">#</a></dt>
+<dd><p>Path to the eeg data which should be converted to BIDS</p>
+<p>Structure: subject -&gt; condition -&gt; task -&gt; list of eeg files (runs)
+File names expected relative to data_dir</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.get_version" title="Link to this definition">#</a></dt>
+<dd><p>Get a version of the pipeline by getting last commit hash from the git.</p>
+<p>Cave: This only works if the pipeline is in a git repository.
+If not, it will return “unknown”.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.log_file">
+<span class="sig-name descname"><span class="pre">log_file</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#lw_pipeline.Config.log_file" title="Link to this definition">#</a></dt>
+<dd><p>Path to the log file. If None and log_to_file is True,
+defaults to ‘pipeline.log’ in the deriv_root directory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.log_format">
+<span class="sig-name descname"><span class="pre">log_format</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'%(asctime)s</span> <span class="pre">-</span> <span class="pre">%(name)s</span> <span class="pre">-</span> <span class="pre">%(levelname)s</span> <span class="pre">-</span> <span class="pre">%(message)s'</span></span><a class="headerlink" href="#lw_pipeline.Config.log_format" title="Link to this definition">#</a></dt>
+<dd><p>Format string for log messages</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.log_level">
+<span class="sig-name descname"><span class="pre">log_level</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INFO'</span></span><a class="headerlink" href="#lw_pipeline.Config.log_level" title="Link to this definition">#</a></dt>
+<dd><p>Logging level for the pipeline.
+Options: “DEBUG”, “INFO”, “WARNING”, “ERROR”, “CRITICAL”</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.log_to_file">
+<span class="sig-name descname"><span class="pre">log_to_file</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#lw_pipeline.Config.log_to_file" title="Link to this definition">#</a></dt>
+<dd><p>Whether to write logs to a file in addition to console output</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.n_jobs">
+<span class="sig-name descname"><span class="pre">n_jobs</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#lw_pipeline.Config.n_jobs" title="Link to this definition">#</a></dt>
+<dd><p>Number of parallel jobs to run</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.output_profiling">
+<span class="sig-name descname"><span class="pre">output_profiling</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#lw_pipeline.Config.output_profiling" title="Link to this definition">#</a></dt>
+<dd><p>Include timing and file size information in sidecar metadata</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.output_root">
+<span class="sig-name descname"><span class="pre">output_root</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#lw_pipeline.Config.output_root" title="Link to this definition">#</a></dt>
+<dd><p>Root directory for non-BIDS outputs.
+If None, defaults to deriv_root.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.outputs_to_generate">
+<span class="sig-name descname"><span class="pre">outputs_to_generate</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#lw_pipeline.Config.outputs_to_generate" title="Link to this definition">#</a></dt>
+<dd><p>List or dict specifying which outputs to generate.
+- None: Generate all outputs enabled by default
+- List of patterns: Generate outputs matching patterns (e.g., [“plot*”, “stats”])
+- Dict: Step-specific patterns (e.g., {“01”: [“plot”], “02”: [“*”]})
+Supports wildcards via fnmatch (e.g., “*” for all, “plot*”: all starting with plot)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.overwrite">
+<span class="sig-name descname"><span class="pre">overwrite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#lw_pipeline.Config.overwrite" title="Link to this definition">#</a></dt>
+<dd><p>Overwrite existing derivative files, if False they are skipped</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.overwrite_mode">
+<span class="sig-name descname"><span class="pre">overwrite_mode</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'never'</span></span><a class="headerlink" href="#lw_pipeline.Config.overwrite_mode" title="Link to this definition">#</a></dt>
+<dd><p>Overwrite mode for output files. Options:
+- “always”: Always overwrite existing files
+- “never”: Never overwrite, skip existing files
+- “ask”: Prompt user for each file
+- “ifnewer”: Overwrite if source file is newer than output</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.sessions">
+<span class="sig-name descname"><span class="pre">sessions</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#lw_pipeline.Config.sessions" title="Link to this definition">#</a></dt>
+<dd><p>List of sessions to include in the pipeline processing. If empty list,         include all sessions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.set_variable_and_write_to_config_file">
+<span class="sig-name descname"><span class="pre">set_variable_and_write_to_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.set_variable_and_write_to_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.set_variable_and_write_to_config_file" title="Link to this definition">#</a></dt>
+<dd><p>Set a variable in this class and write to config file, if not defined there.</p>
+<p>For safety, only allow to write variables that are not already set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<em>str</em>) – The name of the variable to update.</p></li>
+<li><p><strong>value</strong> (<em>mixed</em>) – The value to set the variable to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lw_pipeline.Config.setup_logging">
+<span class="sig-name descname"><span class="pre">setup_logging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/lw_pipeline/config.html#Config.setup_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.Config.setup_logging" title="Link to this definition">#</a></dt>
+<dd><p>Set up logging based on configuration settings.</p>
+<p>This method configures the root logger with console and optionally
+file handlers based on the log_level, log_to_file, and log_file settings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.sidecar_auto_generate">
+<span class="sig-name descname"><span class="pre">sidecar_auto_generate</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#lw_pipeline.Config.sidecar_auto_generate" title="Link to this definition">#</a></dt>
+<dd><p>Automatically generate sidecar JSON files for all outputs</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.steps_dir">
+<span class="sig-name descname"><span class="pre">steps_dir</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'steps/'</span></span><a class="headerlink" href="#lw_pipeline.Config.steps_dir" title="Link to this definition">#</a></dt>
+<dd><p>Steps directory relative to config file or current working directory if no</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.subjects">
+<span class="sig-name descname"><span class="pre">subjects</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#lw_pipeline.Config.subjects" title="Link to this definition">#</a></dt>
+<dd><p>List of subjects to include in the pipeline processing. If empty list,         include all subjects</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lw_pipeline.Config.tasks">
+<span class="sig-name descname"><span class="pre">tasks</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#lw_pipeline.Config.tasks" title="Link to this definition">#</a></dt>
+<dd><p>List of tasks to include in the pipeline processing. If empty list,         include all tasks</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="lw_pipeline.Pipeline.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">lw_pipeline.Pipeline</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="lw_pipeline.Pipeline_Exception.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">lw_pipeline.Pipeline_Exception</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.__init__"><code class="docutils literal notranslate"><span class="pre">Config.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.ask"><code class="docutils literal notranslate"><span class="pre">Config.ask()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.auto_response"><code class="docutils literal notranslate"><span class="pre">Config.auto_response</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.bids_acquisition"><code class="docutils literal notranslate"><span class="pre">Config.bids_acquisition</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.bids_datatype"><code class="docutils literal notranslate"><span class="pre">Config.bids_datatype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.bids_extension"><code class="docutils literal notranslate"><span class="pre">Config.bids_extension</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.bids_root"><code class="docutils literal notranslate"><span class="pre">Config.bids_root</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.check_steps_dir"><code class="docutils literal notranslate"><span class="pre">Config.check_steps_dir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.config_file_path"><code class="docutils literal notranslate"><span class="pre">Config.config_file_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.data_dir"><code class="docutils literal notranslate"><span class="pre">Config.data_dir</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.deriv_root"><code class="docutils literal notranslate"><span class="pre">Config.deriv_root</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.eeg_path"><code class="docutils literal notranslate"><span class="pre">Config.eeg_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.get_version"><code class="docutils literal notranslate"><span class="pre">Config.get_version()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.log_file"><code class="docutils literal notranslate"><span class="pre">Config.log_file</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.log_format"><code class="docutils literal notranslate"><span class="pre">Config.log_format</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.log_level"><code class="docutils literal notranslate"><span class="pre">Config.log_level</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.log_to_file"><code class="docutils literal notranslate"><span class="pre">Config.log_to_file</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.n_jobs"><code class="docutils literal notranslate"><span class="pre">Config.n_jobs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.output_profiling"><code class="docutils literal notranslate"><span class="pre">Config.output_profiling</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.output_root"><code class="docutils literal notranslate"><span class="pre">Config.output_root</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.outputs_to_generate"><code class="docutils literal notranslate"><span class="pre">Config.outputs_to_generate</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.overwrite"><code class="docutils literal notranslate"><span class="pre">Config.overwrite</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.overwrite_mode"><code class="docutils literal notranslate"><span class="pre">Config.overwrite_mode</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.sessions"><code class="docutils literal notranslate"><span class="pre">Config.sessions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.set_variable_and_write_to_config_file"><code class="docutils literal notranslate"><span class="pre">Config.set_variable_and_write_to_config_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.setup_logging"><code class="docutils literal notranslate"><span class="pre">Config.setup_logging()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.sidecar_auto_generate"><code class="docutils literal notranslate"><span class="pre">Config.sidecar_auto_generate</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.steps_dir"><code class="docutils literal notranslate"><span class="pre">Config.steps_dir</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.subjects"><code class="docutils literal notranslate"><span class="pre">Config.subjects</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.Config.tasks"><code class="docutils literal notranslate"><span class="pre">Config.tasks</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/lw_pipeline.Config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, The Lightweight Pipeline developers.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

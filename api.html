@@ -1,0 +1,670 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Documentation &#8212; Lightweight Pipeline  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lw_pipeline.Pipeline" href="generated/lw_pipeline.Pipeline.html" />
+    <link rel="prev" title="Lightweight Pipeline documentation" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Lightweight Pipeline  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="use.html">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="use.html">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Pipeline.html">lw_pipeline.Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Config.html">lw_pipeline.Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Pipeline_Exception.html">lw_pipeline.Pipeline_Exception</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Pipeline_Step.html">lw_pipeline.Pipeline_Step</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Pipeline_Data.html">lw_pipeline.Pipeline_Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Pipeline_MNE_BIDS_Data.html">lw_pipeline.Pipeline_MNE_BIDS_Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Output_Manager.html">lw_pipeline.Output_Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.Output_Registry.html">lw_pipeline.Output_Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/lw_pipeline.register_output.html">lw_pipeline.register_output</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="generated/lw_pipeline.helper.mne.html">lw_pipeline.helper.mne</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.mne.add_annotation_prefix.html">lw_pipeline.helper.mne.add_annotation_prefix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.mne.find_assoc_deriv_bidspath.html">lw_pipeline.helper.mne.find_assoc_deriv_bidspath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.mne.find_ch.html">lw_pipeline.helper.mne.find_ch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.mne.find_chs.html">lw_pipeline.helper.mne.find_chs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.mne.raw_from_source.html">lw_pipeline.helper.mne.raw_from_source</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="generated/lw_pipeline.helper.naming.html">lw_pipeline.helper.naming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.naming.guess_short_id.html">lw_pipeline.helper.naming.guess_short_id</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="generated/lw_pipeline.helper.report.html">lw_pipeline.helper.report</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/lw_pipeline.helper.report.generate_report.html">lw_pipeline.helper.report.generate_report</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API Documentation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-documentation">
+<span id="id1"></span><h1>API Documentation<a class="headerlink" href="#api-documentation" title="Link to this heading">#</a></h1>
+<section id="lw-pipeline">
+<h2>lw_pipeline<a class="headerlink" href="#lw-pipeline" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-lw_pipeline" title="lw_pipeline"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lw_pipeline</span></code></a>:</p>
+<p id="module-lw_pipeline">Lightweight MNE Pipeline using MNE-Python and MNE-BIDS.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.Pipeline.html#lw_pipeline.Pipeline" title="lw_pipeline.Pipeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline</span></code></a>(steps)</p></td>
+<td><p>Pipeline class to run pipeline steps in sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/lw_pipeline.Config.html#lw_pipeline.Config" title="lw_pipeline.Config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Config</span></code></a>([config_file_path, verbose])</p></td>
+<td><p>A class representing the configuration settings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.Pipeline_Exception.html#lw_pipeline.Pipeline_Exception" title="lw_pipeline.Pipeline_Exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline_Exception</span></code></a></p></td>
+<td><p>Exception class for the pipeline.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/lw_pipeline.Pipeline_Step.html#lw_pipeline.Pipeline_Step" title="lw_pipeline.Pipeline_Step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline_Step</span></code></a>(description, config[, short_id])</p></td>
+<td><p>Abstract class for a pipeline step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.Pipeline_Data.html#lw_pipeline.Pipeline_Data" title="lw_pipeline.Pipeline_Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline_Data</span></code></a>(config)</p></td>
+<td><p>Data representation for the pipeline.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/lw_pipeline.Pipeline_MNE_BIDS_Data.html#lw_pipeline.Pipeline_MNE_BIDS_Data" title="lw_pipeline.Pipeline_MNE_BIDS_Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pipeline_MNE_BIDS_Data</span></code></a>(config[, from_bids, ...])</p></td>
+<td><p>Data representation of eeg/ieeg/meg files for the pipeline.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.Output_Manager.html#lw_pipeline.Output_Manager" title="lw_pipeline.Output_Manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Output_Manager</span></code></a>(config, step_id[, ...])</p></td>
+<td><p>Manage output saving with consistent paths, metadata, and overwrite handling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/lw_pipeline.Output_Registry.html#lw_pipeline.Output_Registry" title="lw_pipeline.Output_Registry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Output_Registry</span></code></a>(step_instance)</p></td>
+<td><p>Registry for managing registered outputs in a pipeline step.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.register_output.html#lw_pipeline.register_output" title="lw_pipeline.register_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_output</span></code></a>(name[, description, ...])</p></td>
+<td><p>Register a method as an optional output generator.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="lw-pipeline-discovery">
+<h2>lw_pipeline.discovery<a class="headerlink" href="#lw-pipeline-discovery" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-lw_pipeline.discovery" title="lw_pipeline.discovery"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lw_pipeline.discovery</span></code></a>:</p>
+<p id="module-lw_pipeline.discovery">Step discovery and dynamic loading utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="lw_pipeline.discovery.find_all_step_classes">
+<span class="sig-prename descclassname"><span class="pre">lw_pipeline.discovery.</span></span><span class="sig-name descname"><span class="pre">find_all_step_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lw_pipeline/discovery.html#find_all_step_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.discovery.find_all_step_classes" title="Link to this definition">#</a></dt>
+<dd><p>Find and instantiate all Pipeline_Step classes from step files.</p>
+<p>Dynamically imports Python modules from the specified step files,
+searches for Pipeline_Step subclasses, and instantiates them with
+the provided configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_files</strong> (<em>list</em><em> of </em><em>str</em>) – List of Python filenames containing step definitions.
+Files should be in the directory specified by config.steps_dir.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="generated/lw_pipeline.Config.html#lw_pipeline.Config" title="lw_pipeline.Config"><em>Config</em></a>) – Configuration object to pass to step constructors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of instantiated Pipeline_Step objects ready for execution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <a class="reference internal" href="generated/lw_pipeline.Pipeline_Step.html#lw_pipeline.Pipeline_Step" title="lw_pipeline.Pipeline_Step">Pipeline_Step</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function automatically discovers all Pipeline_Step subclasses
+in each module (excluding the base Pipeline_Step class itself).</p></li>
+<li><p>Each class is instantiated with the provided config object.</p></li>
+<li><p>Module names are derived from the steps_dir basename.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;config.py&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">step_files</span> <span class="o">=</span> <span class="n">find_all_step_files</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">steps_dir</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">steps</span> <span class="o">=</span> <span class="n">find_all_step_classes</span><span class="p">(</span><span class="n">step_files</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lw_pipeline.discovery.find_all_step_files">
+<span class="sig-prename descclassname"><span class="pre">lw_pipeline.discovery.</span></span><span class="sig-name descname"><span class="pre">find_all_step_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lw_pipeline/discovery.html#find_all_step_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.discovery.find_all_step_files" title="Link to this definition">#</a></dt>
+<dd><p>Find all .py files in the steps directory.</p>
+<p>Scans the specified directory for Python files that can contain
+pipeline step definitions. Excludes special files like __init__.py.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>steps_dir</strong> (<em>str</em>) – Path to the directory containing step files.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted list of Python filenames (without path) found in the directory.
+Files starting with ‘__’ are excluded.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">find_all_step_files</span><span class="p">(</span><span class="s2">&quot;steps/&quot;</span><span class="p">)</span>
+<span class="go">[&#39;00_preprocessing.py&#39;, &#39;01_analysis.py&#39;, &#39;02_visualization.py&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lw_pipeline.discovery.list_all_outputs">
+<span class="sig-prename descclassname"><span class="pre">lw_pipeline.discovery.</span></span><span class="sig-name descname"><span class="pre">list_all_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lw_pipeline/discovery.html#list_all_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lw_pipeline.discovery.list_all_outputs" title="Link to this definition">#</a></dt>
+<dd><p>List all registered outputs in pipeline steps.</p>
+<p>Discovers all pipeline steps and displays their registered outputs
+in a formatted table, showing which outputs are enabled by default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="generated/lw_pipeline.Config.html#lw_pipeline.Config" title="lw_pipeline.Config"><em>Config</em></a>) – Configuration object containing steps_dir.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Outputs are marked with:
+- ✓ : Enabled by default
+- ○ : Disabled by default</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;config.py&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_all_outputs</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>00 - Preprocessing:</dt><dd><p>Preprocess raw data
+Outputs:</p>
+<blockquote>
+<div><p>✓ cleaned_data - Cleaned EEG data
+○ debug_plot - Debug visualization (disabled by default)</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="lw-pipeline-helper">
+<h2>lw_pipeline.helper<a class="headerlink" href="#lw-pipeline-helper" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="#module-lw_pipeline.helper" title="lw_pipeline.helper"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lw_pipeline.helper</span></code></a>:</p>
+<p id="module-lw_pipeline.helper">Helpers</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.helper.mne.html#module-lw_pipeline.helper.mne" title="lw_pipeline.helper.mne"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mne</span></code></a></p></td>
+<td><p>MNE helpers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/lw_pipeline.helper.naming.html#module-lw_pipeline.helper.naming" title="lw_pipeline.helper.naming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">naming</span></code></a></p></td>
+<td><p>Naming helpers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/lw_pipeline.helper.report.html#module-lw_pipeline.helper.report" title="lw_pipeline.helper.report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">report</span></code></a></p></td>
+<td><p>Create a report of the pipeline's derivatives.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Lightweight Pipeline documentation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="generated/lw_pipeline.Pipeline.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">lw_pipeline.Pipeline</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lw-pipeline">lw_pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lw-pipeline-discovery">lw_pipeline.discovery</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.discovery.find_all_step_classes"><code class="docutils literal notranslate"><span class="pre">find_all_step_classes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.discovery.find_all_step_files"><code class="docutils literal notranslate"><span class="pre">find_all_step_files()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lw_pipeline.discovery.list_all_outputs"><code class="docutils literal notranslate"><span class="pre">list_all_outputs()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lw-pipeline-helper">lw_pipeline.helper</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, The Lightweight Pipeline developers.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

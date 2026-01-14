@@ -1,0 +1,6 @@
+lw\_pipeline.helper.naming.guess\_short\_id
+===========================================
+
+.. currentmodule:: lw_pipeline.helper.naming
+
+.. autofunction:: guess_short_id

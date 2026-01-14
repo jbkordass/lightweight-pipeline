@@ -1,0 +1,19 @@
+﻿lw\_pipeline.register\_output
+=============================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: register_output
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

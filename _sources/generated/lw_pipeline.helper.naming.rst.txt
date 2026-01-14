@@ -1,0 +1,30 @@
+﻿lw\_pipeline.helper.naming
+==========================
+
+.. automodule:: lw_pipeline.helper.naming
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      guess_short_id
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

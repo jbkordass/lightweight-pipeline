@@ -1,0 +1,629 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Using lw_pipeline &#8212; Lightweight Pipeline  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'use';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
+    <link rel="prev" title="lw_pipeline.helper.report.generate_report" href="generated/lw_pipeline.helper.report.generate_report.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Lightweight Pipeline  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Use & Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="output_management.html">
+    Output Management
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Quick Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/rectified-evasion/lightweight-pipeline" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fab fa-github-square fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trivial_example.html">Trivial Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minimal_example.html">Minimal Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output_management.html">Output Management</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Using lw_pipeline</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="using-lw-pipeline">
+<h1>Using lw_pipeline<a class="headerlink" href="#using-lw-pipeline" title="Link to this heading">#</a></h1>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h2>
+<p>Rough idea:</p>
+<ol class="arabic simple">
+<li><p>Write a <code class="file docutils literal notranslate"><span class="pre">config.py</span></code> specifying the locations of steps, data, and other configurations.</p></li>
+<li><p>Define the steps of a pipeline in separate <code class="file docutils literal notranslate"><span class="pre">.py</span></code> files and store them in a folder.</p></li>
+<li><p>Pass the <code class="file docutils literal notranslate"><span class="pre">config.py</span></code> to the pipeline CLI, which will handle the execution order based on a naming convention.</p></li>
+</ol>
+<section id="config">
+<h3>Config<a class="headerlink" href="#config" title="Link to this heading">#</a></h3>
+<p>The configuration class <a class="reference internal" href="generated/lw_pipeline.Config.html#lw_pipeline.Config" title="lw_pipeline.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> is used to manage the configuration settings for your pipeline.
+If passed a path to a file all defined variables in the file will be available as attributes of the <a class="reference internal" href="generated/lw_pipeline.Config.html#lw_pipeline.Config" title="lw_pipeline.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a> instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;some/example/path/config.py&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If there is a “local” configuration file <code class="code docutils literal notranslate"><span class="pre">some/example/path/config_local.py</span></code> it will be loaded after the main configuration
+file automatically.</p>
+</div>
+</section>
+<section id="pipeline-step">
+<h3>Pipeline_Step<a class="headerlink" href="#pipeline-step" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="generated/lw_pipeline.Pipeline_Step.html#lw_pipeline.Pipeline_Step" title="lw_pipeline.Pipeline_Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline_Step</span></code></a> is an abstract base class that you can subclass to define individual steps in your pipeline.
+Each step should implement the <a class="reference internal" href="generated/lw_pipeline.Pipeline_Step.html#lw_pipeline.Pipeline_Step.step" title="lw_pipeline.Pipeline_Step.step"><code class="xref py py-func docutils literal notranslate"><span class="pre">step()</span></code></a> method, which contains the processing logic for that step.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">Pipeline_Step</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Example_Step</span><span class="p">(</span><span class="n">Pipeline_Step</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;This is an example step.&quot;</span><span class="p">,</span> <span class="n">Config</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="n">example_step</span> <span class="o">=</span> <span class="n">Example_Step</span><span class="p">()</span>
+
+<span class="n">input_data</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">output_data</span> <span class="o">=</span> <span class="n">example_step</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input: </span><span class="si">{</span><span class="n">input_data</span><span class="si">}</span><span class="s2">, Output: </span><span class="si">{</span><span class="n">output_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In practice, it is not necessarily meant to be instantiated except for demonstration or testing.
+The CLI part of the pipeline aggregates all steps and handles running them.</p>
+<p>If you choose to run the pipeline manually, the <a class="reference internal" href="generated/lw_pipeline.Pipeline.html#lw_pipeline.Pipeline" title="lw_pipeline.Pipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a> class can
+be used to run the pipeline with a list of steps.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">Pipeline_Step</span><span class="p">,</span> <span class="n">Config</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Multiply_By</span><span class="p">(</span><span class="n">Pipeline_Step</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This step multiplies by </span><span class="si">{</span><span class="n">multiplier</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">Config</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span>
+
+<span class="n">step1</span> <span class="o">=</span> <span class="n">Multiply_By</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">step2</span> <span class="o">=</span> <span class="n">Multiply_By</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">Pipeline</span><span class="p">([</span><span class="n">step1</span><span class="p">,</span> <span class="n">step2</span><span class="p">])</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="generated/lw_pipeline.Pipeline.html#lw_pipeline.Pipeline.run" title="lw_pipeline.Pipeline.run"><code class="xref py py-func docutils literal notranslate"><span class="pre">run()</span></code></a> method will run accepts an initial input of data and
+returns the final output after running through all steps.</p>
+</section>
+<section id="pipeline-data">
+<h3>Pipeline_Data<a class="headerlink" href="#pipeline-data" title="Link to this heading">#</a></h3>
+<p>The abstract <a class="reference internal" href="generated/lw_pipeline.Pipeline_Data.html#lw_pipeline.Pipeline_Data" title="lw_pipeline.Pipeline_Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline_Data</span></code></a> class is used to manage the data that flows through the pipeline.
+As of now, the pipeline comes with a <a class="reference internal" href="generated/lw_pipeline.Pipeline_MNE_BIDS_Data.html#lw_pipeline.Pipeline_MNE_BIDS_Data" title="lw_pipeline.Pipeline_MNE_BIDS_Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline_MNE_BIDS_Data</span></code></a> class that is used to handle MNE-BIDS data.</p>
+</section>
+<section id="output-management">
+<h3>Output Management<a class="headerlink" href="#output-management" title="Link to this heading">#</a></h3>
+<p>The pipeline provides flexible output management through the <a class="reference internal" href="generated/lw_pipeline.Output_Manager.html#lw_pipeline.Output_Manager" title="lw_pipeline.Output_Manager"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output_Manager</span></code></a> class and the <a class="reference internal" href="generated/lw_pipeline.register_output.html#lw_pipeline.register_output" title="lw_pipeline.register_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;register_output</span></code></a> decorator.</p>
+<p><strong>Registering Outputs</strong></p>
+<p>Use <a class="reference internal" href="generated/lw_pipeline.register_output.html#lw_pipeline.register_output" title="lw_pipeline.register_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">&#64;register_output</span></code></a> to declare outputs with automatic existence checking and default parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">lw_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline_Step</span><span class="p">,</span> <span class="n">register_output</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Analysis_Step</span><span class="p">(</span><span class="n">Pipeline_Step</span><span class="p">):</span>
+    <span class="nd">@register_output</span><span class="p">(</span>
+        \<span class="s2">&quot;expensive_plot</span><span class="se">\&quot;</span><span class="s2">,</span>
+        \<span class="s2">&quot;Resource-intensive visualization</span><span class="se">\&quot;</span><span class="s2">,</span>
+        <span class="n">check_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># Skip if file exists</span>
+        <span class="n">extension</span><span class="o">=</span>\<span class="s2">&quot;.png</span><span class="se">\&quot;</span><span class="s2">,     # Default extension</span>
+        <span class="n">suffix</span><span class="o">=</span>\<span class="s2">&quot;analysis</span><span class="se">\&quot;</span><span class="s2">     # Default BIDS suffix</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Only runs if file doesn&#39;t exist and overwrite_mode allows</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">expensive_computation</span><span class="p">()</span>
+
+        <span class="c1"># extension and suffix automatically used from decorator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_manager</span><span class="o">.</span><span class="n">save_figure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> \<span class="s2">&quot;expensive_plot</span><span class="se">\&quot;</span><span class="s2">)</span>
+</pre></div>
+</div>
+<p><strong>Benefits:</strong></p>
+<ul class="simple">
+<li><p><strong>Prevents waste</strong>: Skip expensive computations when outputs already exist</p></li>
+<li><p><strong>DRY principle</strong>: Define path parameters once in decorator, not in every save call</p></li>
+<li><p><strong>CLI control</strong>: Enable/disable outputs via <code class="docutils literal notranslate"><span class="pre">--outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">--skip-outputs</span></code> flags</p></li>
+<li><p><strong>Respects overwrite settings</strong>: Honors <code class="docutils literal notranslate"><span class="pre">overwrite_mode</span></code> configuration</p></li>
+</ul>
+<p>See <a class="reference internal" href="output_management.html"><span class="doc">Output Management Guide</span></a> for details.</p>
+<p>We refer to the <a class="reference internal" href="minimal_example.html"><span class="doc">minimal example</span></a> for a more detailed explanation.</p>
+</section>
+<section id="command-line-interface">
+<h3>Command line interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">#</a></h3>
+<p>The package defines a <code class="code docutils literal notranslate"><span class="pre">lw_pipeline</span></code> CLI accepting the following arguments:</p>
+<dl class="simple glossary">
+<dt id="term-h-help"><code class="code docutils literal notranslate"><span class="pre">-h,</span> <span class="pre">--help</span></code><a class="headerlink" href="#term-h-help" title="Link to this term">#</a></dt><dd><p>Show the help message and exit.</p>
+</dd>
+<dt id="term-v-version"><code class="code docutils literal notranslate"><span class="pre">-v,</span> <span class="pre">--version</span></code><a class="headerlink" href="#term-v-version" title="Link to this term">#</a></dt><dd><p>Show the version of the pipeline and exit.</p>
+</dd>
+<dt id="term-r-run"><code class="code docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--run</span></code><a class="headerlink" href="#term-r-run" title="Link to this term">#</a></dt><dd><p>Run the pipeline.</p>
+</dd>
+<dt id="term-steps"><code class="code docutils literal notranslate"><span class="pre">steps</span></code><a class="headerlink" href="#term-steps" title="Link to this term">#</a></dt><dd><p>Positional argument. List of steps to run, separated by commas (only necessary to specify 00-99).</p>
+</dd>
+<dt id="term-c-config"><code class="code docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--config</span></code><a class="headerlink" href="#term-c-config" title="Link to this term">#</a></dt><dd><p>Path to the configuration file.</p>
+</dd>
+<dt id="term-l-list"><code class="code docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--list</span></code><a class="headerlink" href="#term-l-list" title="Link to this term">#</a></dt><dd><p>List all steps in the step directory.</p>
+</dd>
+<dt id="term-ignore-questions"><code class="code docutils literal notranslate"><span class="pre">--ignore-questions</span></code><a class="headerlink" href="#term-ignore-questions" title="Link to this term">#</a></dt><dd><p>Ignore questions, i.e., always respond with the default answer to a question.</p>
+</dd>
+<dt id="term-report-with-MNE-BIDS-data"><code class="code docutils literal notranslate"><span class="pre">--report</span></code> (with MNE-BIDS data)<a class="headerlink" href="#term-report-with-MNE-BIDS-data" title="Link to this term">#</a></dt><dd><p>Generate a report of the pipeline’s derivatives.</p>
+</dd>
+<dt id="term-store-report-with-MNE-BIDS-data"><code class="code docutils literal notranslate"><span class="pre">--store-report</span></code> (with MNE-BIDS data)<a class="headerlink" href="#term-store-report-with-MNE-BIDS-data" title="Link to this term">#</a></dt><dd><p>Store the report tables in <cite>.tsv</cite> files in the derivatives directory (e.g., <cite>pipeline_report_bids_dir.tsv</cite>, <cite>pipeline_report_deriv_dir.tsv</cite>).</p>
+</dd>
+<dt id="term-full-report-with-MNE-BIDS-data"><code class="code docutils literal notranslate"><span class="pre">--full-report</span></code> (with MNE-BIDS data)<a class="headerlink" href="#term-full-report-with-MNE-BIDS-data" title="Link to this term">#</a></dt><dd><p>Generate a full report (do not limit to subject, session, task specification in the config) of the pipeline’s derivatives.</p>
+</dd>
+<dt id="term-outputs"><code class="code docutils literal notranslate"><span class="pre">--outputs</span></code><a class="headerlink" href="#term-outputs" title="Link to this term">#</a></dt><dd><p>Comma-separated list of outputs to generate. Supports wildcards (e.g., ‘plot*’) and step-scoped syntax (e.g., ‘01:plot,02:<a href="#id1"><span class="problematic" id="id2">*</span></a>’). If not specified, all enabled outputs are generated.
+(cf. <a class="reference internal" href="output_management.html#output-management"><span class="std std-ref">output management</span></a>).</p>
+</dd>
+<dt id="term-skip-outputs"><code class="code docutils literal notranslate"><span class="pre">--skip-outputs</span></code><a class="headerlink" href="#term-skip-outputs" title="Link to this term">#</a></dt><dd><p>Comma-separated list of outputs to skip. Supports wildcards (e.g., ‘plot*’) and step-scoped syntax (e.g., ‘01:plot,02:<a href="#id3"><span class="problematic" id="id4">*</span></a>’). Takes precedence over <cite>–outputs</cite>.</p>
+</dd>
+<dt id="term-list-outputs"><code class="code docutils literal notranslate"><span class="pre">--list-outputs</span></code><a class="headerlink" href="#term-list-outputs" title="Link to this term">#</a></dt><dd><p>List all registered outputs in the pipeline steps.</p>
+</dd>
+</dl>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="generated/lw_pipeline.helper.report.generate_report.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">lw_pipeline.helper.report.generate_report</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="quickstart.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Quickstart</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickstart">Quickstart</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config">Config</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-step">Pipeline_Step</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-data">Pipeline_Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-management">Output Management</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-interface">Command line interface</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/use.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, The Lightweight Pipeline developers.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

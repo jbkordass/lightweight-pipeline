@@ -1,0 +1,6 @@
+lw\_pipeline.helper.mne.find\_assoc\_deriv\_bidspath
+====================================================
+
+.. currentmodule:: lw_pipeline.helper.mne
+
+.. autofunction:: find_assoc_deriv_bidspath
