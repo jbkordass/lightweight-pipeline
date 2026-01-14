@@ -565,7 +565,14 @@ class Output_Manager:
                 f"Supported: {list(format_map.keys())}"
             )
 
-        extension, save_func = format_map[format]
+        # check if extension was manually set somewhere
+        extension = merged_kwargs.pop("extension", None)
+
+        assoc_extension, save_func = format_map[format]
+
+        # if no manually set extension, use the one associated to the format
+        if not extension:
+            extension = assoc_extension
 
         return self.save_generic(
             df, name, save_func, suffix=suffix, extension=extension,
