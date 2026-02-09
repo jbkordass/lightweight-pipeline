@@ -610,14 +610,14 @@ class Output_Manager:
         if suffix is None:
             if "Raw" in obj_type:
                 suffix = "eeg"
+            elif "TFR" in obj_type:
+                suffix = "tfr"
             elif "Epochs" in obj_type:
                 suffix = "epo"
             elif "Evoked" in obj_type:
                 suffix = "ave"
             elif "Annotations" in obj_type:
                 suffix = "markers"
-            elif "TFR" in obj_type:
-                suffix = "tfr"
             else:
                 suffix = "data"
 
