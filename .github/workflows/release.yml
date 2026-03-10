@@ -34,11 +34,11 @@ jobs:
           path: dist
           include-hidden-files: true
 
-  pypi-publish:
+  testpypi-publish:
     needs: package
-    name: upload release to TestPyPI
+    name: upload release to TestPyPI (Check if workflow passes there)
     runs-on: ubuntu-latest
-    # if: github.event_name == 'release'
+    if: github.event_name == 'release'
     environment: testpypi
     permissions:
       id-token: write
@@ -52,12 +52,24 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
           verbose: true
-        # if: github.event_name == 'release'
+        if: github.event_name == 'release'
 
-  # pypi-publish:
-  #   ...
-  #   steps:
-  #     ...
-  #     - name: Publish package distributions to PyPI
-  #       uses: pypa/gh-action-pypi-publish@release/v1
-  #       # if: github.event_name == 'release'
+  pypi-publish:
+    needs: testpypi-publish
+    name: upload release to PyPI
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    environment: testpypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: dist
+      - name: Publish package distributions to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+        if: github.event_name == 'release'
