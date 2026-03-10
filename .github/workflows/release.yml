@@ -1,14 +1,11 @@
-
 name: build
 on:
   release:
     types: [published]
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
-    branches:
-      - master
+    branches: [master]
 
 permissions:
   contents: read
@@ -31,7 +28,7 @@ jobs:
           python -m pip install build twine
       - run: python -m build --sdist --wheel
       - run: twine check --strict dist/*
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v8
         with:
           name: dist
           path: dist
@@ -58,17 +55,9 @@ jobs:
         # if: github.event_name == 'release'
 
   # pypi-publish:
-  #   name: upload release to PyPI
-  #   runs-on: ubuntu-latest
-  #   environment: pypi
-  #   permissions:
-  #     # IMPORTANT: this permission is mandatory for Trusted Publishing
-  #     id-token: write
+  #   ...
   #   steps:
-  #     - uses: actions/download-artifact@v8
-  #       with:
-  #         name: dist
-  #         path: dist
+  #     ...
   #     - name: Publish package distributions to PyPI
   #       uses: pypa/gh-action-pypi-publish@release/v1
-          if: github.event_name == 'release'
+  #       # if: github.event_name == 'release'
