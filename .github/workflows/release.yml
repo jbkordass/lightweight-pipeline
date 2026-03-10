@@ -41,9 +41,9 @@ jobs:
     needs: package
     name: upload release to TestPyPI
     runs-on: ubuntu-latest
+    # if: github.event_name == 'release'
     environment: testpypi
     permissions:
-      # IMPORTANT: this permission is mandatory for Trusted Publishing
       id-token: write
     steps:
       - uses: actions/download-artifact@v8
@@ -54,6 +54,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+        # if: github.event_name == 'release'
 
   # pypi-publish:
   #   name: upload release to PyPI
@@ -69,3 +70,4 @@ jobs:
   #         path: dist
   #     - name: Publish package distributions to PyPI
   #       uses: pypa/gh-action-pypi-publish@release/v1
+          if: github.event_name == 'release'

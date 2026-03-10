@@ -29,7 +29,7 @@ license = {text = "BSD-3-Clause"}
 maintainers = [
   {email = "jb.kordass@gmail.com", name = "J.-B. Kordaß"},
 ]
-name = "lw-pipeline"
+name = "lightweight-pipeline"
 readme = {content-type = "text/markdown", file = "README.md"}
 requires-python = ">=3.11"
 scripts = {lw_pipeline = "lw_pipeline.__main__:main"}
