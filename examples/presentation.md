@@ -1,8 +1,47 @@
 ---
 marp: true
 theme: default
-class: invert
+# class: invert
 paginate: true
+---
+
+# A note on Python Pipelines using BIDS (and MNE)
+
+Github: [`jbkordass/lightweight-pipeline/examples/presentation.md`](https://github.com/jbkordass/lightweight-pipeline/blob/master/examples/presentation.md)
+
+---
+
+# Pipelines...
+
+
+![](https://imgs.xkcd.com/comics/data_pipeline.png)
+
+(Data Pipeline, https://xkcd.com/2054/)
+
+---
+
+# Options, if you
+
+- would like to write reproducible (published) code
+- would like to reuse code in other projects for similar purposes
+- do not like bookkeeping
+
+<hr>
+
+1. Decide on a large scale framework (e.g. https://mne.tools/mne-bids-pipeline/, Fieldtrip)
+2. ...?
+3. **Try to seperate tedious part (file management, config variables) from the content part**
+
+
+---
+
+# One Ansatz: `lw-pipeline` [![](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/jbkordass/lightweight-pipeline) [![PyPI - Version](https://img.shields.io/pypi/v/lw-pipeline)](https://pypi.org/project/lw-pipeline)
+
+
+
+- should provide structure, config variable handling, saving files etc.
+- CAVEAT: in early development...
+
 ---
 
 # Minimal MNE processing example using `lw_pipeline`

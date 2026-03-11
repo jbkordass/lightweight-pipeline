@@ -72,7 +72,7 @@ In a more interesting case, one would pass a data object, e.g. a subclass of `Pi
 
 ## Minimal example (to use with MNE-BIDS)
 
-For a more interesting example demonstrating eeg/meg processing, we refer to a [minimal example](examples/minimal_example.md).
+For a more interesting example demonstrating eeg/meg processing, we refer to a [presentation of a minimal example](examples/presentation.md).
 
 
 ## Installation
