@@ -1,5 +1,9 @@
 .. Lightweight MNE Pipeline documentation master file
 
+.. image:: figures/logo.svg
+   :alt: Logo
+   :width: 300px
+
 Lightweight Pipeline documentation
 ==================================
 
@@ -13,7 +17,6 @@ Goals
 - Provide a scheme to model concrete pipeline steps after.
 - Take care of a configuration file handling and saving/loading to some extend.
 - Decouple the content of a pipeline, i.e. its processing logic, from the organisatorial part.
-
 
 .. toctree::
    :maxdepth: 2

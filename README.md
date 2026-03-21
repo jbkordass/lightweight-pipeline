@@ -1,5 +1,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/lw-pipeline)](https://pypi.org/project/lw-pipeline/)
 
+<img src="doc/figures/logo.svg" alt="logo" style="width:300px;padding-bottom:1em"/>
+
 # About the Lightweight Pipeline
 As the name suggests - a lightweight, easy to modify pipeline. Initially built for EEG analysis using [MNE-Python](https://github.com/mne-tools/mne-python) and [MNE-BIDS](https://github.com/mne-tools/mne-bids).
 
