@@ -1,7 +1,5 @@
 """Lightweight MNE Pipeline using MNE-Python and MNE-BIDS."""
 
-__version__ = "0.1.0"
-
 from lw_pipeline.pipeline_step import Pipeline_Step, Pipeline_Exception
 
 from lw_pipeline.config import Config
@@ -13,6 +11,7 @@ from lw_pipeline.output_manager import Output_Manager
 from lw_pipeline.output_registration import Output_Registry, register_output
 
 from lw_pipeline.pipeline import Pipeline
+from lw_pipeline.helper.project_init import scaffold_project
 
 # import mne bids data class, if MNE and MNE-BIDS are installed
 try:
