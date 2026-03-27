@@ -1,0 +1,29 @@
+﻿lw\_pipeline.Output\_Registry
+=============================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: Output_Registry
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Output_Registry.__init__
+      ~Output_Registry.get_all
+      ~Output_Registry.get_enabled_by_default
+      ~Output_Registry.list_outputs
+      ~Output_Registry.should_generate
+   
+   
+
+   
+   
+   

@@ -1,0 +1,6 @@
+lw\_pipeline.helper.mne.find\_chs
+=================================
+
+.. currentmodule:: lw_pipeline.helper.mne
+
+.. autofunction:: find_chs

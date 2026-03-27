@@ -1,0 +1,38 @@
+﻿lw\_pipeline.Pipeline\_Step
+===========================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: Pipeline_Step
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Pipeline_Step.__init__
+      ~Pipeline_Step.get_output_path
+      ~Pipeline_Step.should_generate_output
+      ~Pipeline_Step.step
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Pipeline_Step.config
+      ~Pipeline_Step.logger
+      ~Pipeline_Step.output_manager
+      ~Pipeline_Step.output_registry
+      ~Pipeline_Step.short_id
+   
+   

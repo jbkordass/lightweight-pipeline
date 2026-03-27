@@ -1,0 +1,34 @@
+﻿lw\_pipeline.helper.mne
+=======================
+
+.. automodule:: lw_pipeline.helper.mne
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      add_annotation_prefix
+      find_assoc_deriv_bidspath
+      find_ch
+      find_chs
+      raw_from_source
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

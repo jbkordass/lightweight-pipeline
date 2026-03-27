@@ -1,0 +1,6 @@
+lw\_pipeline.helper.mne.add\_annotation\_prefix
+===============================================
+
+.. currentmodule:: lw_pipeline.helper.mne
+
+.. autofunction:: add_annotation_prefix
