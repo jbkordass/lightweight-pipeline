@@ -30,34 +30,41 @@ class Config:
             If True, print messages about the configuration file being used.
             Default is False.
         """
+        # Determine config file path
         if config_file_path:
-            self.config_file_path = config_file_path
-            config_file = os.path.abspath(config_file_path)
-            if os.path.isfile(config_file):
-                config_dir = os.path.dirname(config_file)
-                sys.path.insert(
-                    0, config_dir
-                )  # add the config directory to the module search path
-
-                self._load_file_to_variables(config_file, verbose=verbose)
-
-                # check for a local version of the config file
-                config_basename, config_ext = os.path.splitext(
-                    os.path.basename(config_file)
-                )
-                local_config_file = os.path.join(
-                    config_dir, f"{config_basename}_local{config_ext}"
-                )
-                if os.path.isfile(local_config_file):
-                    self._load_file_to_variables(local_config_file, verbose=verbose)
-
-            else:
+            self.config_file_path = os.path.abspath(config_file_path)
+            if not os.path.isfile(self.config_file_path):
                 raise FileNotFoundError(
                     f"Specified configuration file not found: {config_file_path}."
                 )
         else:
+            default_config = os.path.join(os.getcwd(), "config.py")
+            self.config_file_path = (
+                default_config if os.path.isfile(default_config) else None
+            )
             if verbose:
-                print("Using default configuration file.")
+                if self.config_file_path:
+                    print(
+                        "Automatically detected config file 'config.py' in current directory."
+                    )
+                else:
+                    print("No valid configuration file found. Using default settings.")
+
+        # Load main config file
+        if self.config_file_path:
+            config_dir = os.path.dirname(self.config_file_path)
+            sys.path.insert(0, config_dir)
+            self._load_file_to_variables(self.config_file_path, verbose=verbose)
+
+            # Load local config file if it exists
+            config_basename, config_ext = os.path.splitext(
+            os.path.basename(self.config_file_path)
+            )
+            local_config_file = os.path.join(
+            config_dir, f"{config_basename}_local{config_ext}"
+            )
+            if os.path.isfile(local_config_file):
+                self._load_file_to_variables(local_config_file, verbose=verbose)
 
         # Set up logging after configuration is loaded
         self.setup_logging()
