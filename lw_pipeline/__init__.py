@@ -18,5 +18,3 @@ try:
     from lw_pipeline.pipeline_mne_bids_data import Pipeline_MNE_BIDS_Data
 except ImportError:
     pass
-
-import lw_pipeline.__main__

@@ -3,9 +3,17 @@
 # Authors: The Lightweight Pipeline developers
 # SPDX-License-Identifier: BSD-3-Clause
 
+import logging
 import sys
 
 from lw_pipeline.pipeline_step import Pipeline_Exception, Pipeline_Step
+
+lgr = logging.getLogger(__name__)
+
+
+def _banner(message: str, width: int = 80, fill: str = "-") -> str:
+    """Return a centered banner line for console/file logs."""
+    return f" {message} ".center(width, fill)
 
 
 class Pipeline:
@@ -91,26 +99,25 @@ class Pipeline:
         pos = 1
 
         if data is not None:
-            print("Pipeline starts with following input:".center(80, "-"))
-            print(data)
+            lgr.info(_banner("Pipeline starts with following input:"))
+            lgr.info("%s", data)
 
         for step in self.pipeline_steps:
-            # Print step information
-            print(
+            step_label = (
                 f"Step {pos}: {step.__class__.__module__} / "
-                f"{step.__class__.__name__}".center(80, "-")
+                f"{step.__class__.__name__}"
             )
+            lgr.info(_banner(step_label))
+            lgr.info("- %s", step.description)
             pos += 1
-
-            print("ℹ " + step.description)
 
             try:
                 data = step.step(data)
             except Pipeline_Exception as e:
-                print(f"Error in {step.description}: {e}")
+                lgr.error("Error in %s: %s", step.description, e)
                 sys.exit(1)
 
-        print("Pipeline finished with following output:".center(80, "-"))
-        print(data)
+        lgr.info(_banner("Pipeline finished with following output:"))
+        lgr.info("%s", data)
 
         return data

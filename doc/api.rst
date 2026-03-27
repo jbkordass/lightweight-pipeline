@@ -39,6 +39,15 @@ lw_pipeline.discovery
    :members:
    :no-inherited-members:
 
+lw_pipeline.main
+----------------
+
+:py:mod:`lw_pipeline.main`:
+
+.. automodule:: lw_pipeline.main
+   :members:
+   :no-inherited-members:
+
 lw_pipeline.helper
 ------------------
 

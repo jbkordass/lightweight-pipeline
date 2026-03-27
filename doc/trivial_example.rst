@@ -48,16 +48,22 @@ Already with this setups we can run the pipeline with the following command:
 .. code-block:: text
     :caption: Output
 
-    Using configuration file: config.py.
+    Logging to file: .../pipeline.log
+    Using configuration file (specified): .../config.py
     Running entire pipeline
-    --------------Step 1: steps.00_start / A_First_Start_Pipeline_Step--------------
-    ℹ This is a description of a first step.
+    -------------- Step 1: steps.00_start / A_First_Start_Pipeline_Step --------------
+    - This is a description of a first step.
     Here data is 'None', we set it to variable_a from the config.
-    -------------Step 2: steps.00_start / A_Second_Start_Pipeline_Step--------------
-    ℹ This is a description of a second step.
+    ------------- Step 2: steps.00_start / A_Second_Start_Pipeline_Step --------------
+    - This is a description of a second step.
     Here data is '1'. We will add 1 to it.
-    -------------Step 3: steps.01_continue / A_Continued_Pipeline_Step--------------
-    ℹ This is a description of a continued step.
+    ------------- Step 3: steps.01_continue / A_Continued_Pipeline_Step --------------
+    - This is a description of a continued step.
     Here data is '2'. We will subtract 2.
-    --------------------Pipeline finished with following output:--------------------
+    -------------------- Pipeline finished with following output: --------------------
     0
+
+
+.. note::
+
+    In fact, running :code:`lw_pipeline --run` (without specifying a config file) will also work, since the pipeline will look for a :file:`config.py` in the current directory by default.

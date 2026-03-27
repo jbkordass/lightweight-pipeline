@@ -4,10 +4,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import importlib.util
+import logging
 import os
 import sys
 
 from lw_pipeline.pipeline_step import Pipeline_Step
+
+lgr = logging.getLogger(__name__)
 
 
 def find_all_step_files(steps_dir):
@@ -155,15 +158,15 @@ def list_all_outputs(config):
     steps = find_all_step_classes(step_files, config)
 
     for step in steps:
-        print(f"\n{step.short_id} - {step.__class__.__name__}:")
-        print(f"  {step.description}")
+        lgr.info("%s - %s:", step.short_id, step.__class__.__name__)
+        lgr.info("  %s", step.description)
 
         outputs = step.output_registry.list_outputs(include_disabled=True)
         if outputs:
-            print("  Outputs:")
+            lgr.info("  Outputs:")
             for name, description, enabled in outputs:
                 marker = "✓" if enabled else "○"
                 suffix = "" if enabled else " (disabled by default)"
-                print(f"    {marker} {name} - {description}{suffix}")
+                lgr.info("    %s %s - %s%s", marker, name, description, suffix)
         else:
-            print("  No registered outputs")
+            lgr.info("  No registered outputs")

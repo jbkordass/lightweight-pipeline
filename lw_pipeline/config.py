@@ -11,6 +11,15 @@ import sys
 from lw_pipeline import Pipeline_Exception
 
 
+class _ConsoleFormatter(logging.Formatter):
+    """Compact console formatting with full details for warnings/errors."""
+
+    def format(self, record):
+        if record.levelno <= logging.INFO:
+            return record.getMessage()
+        return f"{record.levelname}: {record.getMessage()}"
+
+
 class Config:
     """A class representing the configuration settings."""
 
@@ -30,6 +39,9 @@ class Config:
             If True, print messages about the configuration file being used.
             Default is False.
         """
+        self.loaded_config_files = []
+        self._config_auto_detected = False
+
         # Determine config file path
         if config_file_path:
             self.config_file_path = os.path.abspath(config_file_path)
@@ -42,13 +54,7 @@ class Config:
             self.config_file_path = (
                 default_config if os.path.isfile(default_config) else None
             )
-            if verbose:
-                if self.config_file_path:
-                    print(
-                        "Automatically detected config file 'config.py' in current directory."
-                    )
-                else:
-                    print("No valid configuration file found. Using default settings.")
+            self._config_auto_detected = self.config_file_path is not None
 
         # Load main config file
         if self.config_file_path:
@@ -68,6 +74,7 @@ class Config:
 
         # Set up logging after configuration is loaded
         self.setup_logging()
+        self._log_startup_messages(verbose=verbose)
 
     def setup_logging(self):
         """
@@ -84,17 +91,15 @@ class Config:
         logger.handlers.clear()
 
         # Create console handler
-        console_handler = logging.StreamHandler()
+        console_handler = logging.StreamHandler(stream=sys.stdout)
         console_handler.setLevel(getattr(logging, self.log_level.upper()))
-        console_formatter = logging.Formatter(self.log_format)
+        console_formatter = _ConsoleFormatter()
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
 
         # Create file handler if requested
         if self.log_to_file:
-            log_file_path = self.log_file
-            if log_file_path is None:
-                log_file_path = os.path.join(self.deriv_root, "pipeline.log")
+            log_file_path = self._resolve_log_file_path()
 
             # Ensure the directory exists
             os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
@@ -107,6 +112,39 @@ class Config:
 
             logger.info(f"Logging to file: {log_file_path}")
 
+    def _resolve_log_file_path(self):
+        """Resolve effective log file path from config/cwd and logging options."""
+        base_dir = (
+            os.path.dirname(self.config_file_path)
+            if self.config_file_path is not None
+            else os.getcwd()
+        )
+
+        if self.log_file is None:
+            return os.path.join(base_dir, "pipeline.log")
+
+        log_file_path = os.path.expanduser(self.log_file)
+        if not os.path.isabs(log_file_path):
+            log_file_path = os.path.join(base_dir, log_file_path)
+
+        return log_file_path
+
+    def _log_startup_messages(self, verbose=False):
+        """Emit startup and configuration diagnostics via logger."""
+        logger = logging.getLogger(__name__)
+
+        if self.loaded_config_files:
+            source = "auto-detected" if self._config_auto_detected else "specified"
+            noun = "file" if len(self.loaded_config_files) == 1 else "files"
+            logger.info(
+                "Using configuration %s (%s): %s",
+                noun,
+                source,
+                ", ".join(self.loaded_config_files),
+            )
+        else:
+            logger.info("No configuration file detected; using default settings.")
+
     def _load_file_to_variables(self, file_path, verbose=False):
         """Load variables from a specified configuration file into the current class."""
         module_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -118,9 +156,7 @@ class Config:
             {k: v for k, v in vars(config_module).items() if not k.startswith("_")}
         )
         self.check_steps_dir()
-
-        if verbose:
-            print(f"Using configuration file: {file_path}.")
+        self.loaded_config_files.append(file_path)
 
     def check_steps_dir(self):
         """
@@ -200,7 +236,9 @@ class Config:
         setattr(self, variable, value)
         with open(self.config_file_path, "a") as f:
             f.write(f"\n{variable} = {value}\n")
-        print(f"Configuration file updated: {self.config_file_path}")
+        logging.getLogger(__name__).info(
+            "Configuration file updated: %s", self.config_file_path
+        )
 
     def get_version(self):
         """
@@ -326,7 +364,11 @@ class Config:
     log_file = None
     """
     Path to the log file. If None and log_to_file is True,
-    defaults to 'pipeline.log' in the deriv_root directory.
+    defaults to 'pipeline.log' in the directory of the used config file.
+    If no config file is used, defaults to the current working directory.
+    If a relative path is provided, it is resolved relative to the used
+    config file directory (or current working directory if no config file
+    is used).
     """
 
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
