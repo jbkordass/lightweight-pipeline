@@ -93,7 +93,6 @@ class Pipeline_Step(ABC):
         name,
         suffix=None,
         extension=None,
-        use_bids_structure=False,
         custom_dir=None,
         **bids_params,
     ):
@@ -110,8 +109,6 @@ class Pipeline_Step(ABC):
             BIDS suffix.
         extension : str, optional
             File extension.
-        use_bids_structure : bool, optional
-            Use BIDS directory structure. Default is False.
         custom_dir : str or Path, optional
             Custom output directory.
         **bids_params : dict
@@ -126,7 +123,6 @@ class Pipeline_Step(ABC):
             name,
             suffix=suffix,
             extension=extension,
-            use_bids_structure=use_bids_structure,
             custom_dir=custom_dir,
             **bids_params,
         )

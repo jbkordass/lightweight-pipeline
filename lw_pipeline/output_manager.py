@@ -182,7 +182,7 @@ class Output_Manager:
         custom_dir : str or Path, optional
             Custom directory for output. If None, uses config.output_root or deriv_root.
         bids_path : BIDSPath, optional
-            Base BIDSPath object to modify (requires use_bids_structure=True).
+            Base BIDSPath object to modify.
         **bids_params : dict
             Additional BIDS parameters for modifying bids_path (description, suffix, extension, etc.).
 
@@ -353,7 +353,7 @@ class Output_Manager:
         source_file : str or Path, optional
             Source file for ifnewer comparison.
         bids_path : BIDSPath, optional
-            Base BIDSPath object (required when use_bids_structure=True).
+            Base BIDSPath object for path generation.
         **kwargs : dict
             Additional arguments passed to save_func and BIDS parameters.
 
@@ -363,8 +363,7 @@ class Output_Manager:
             Path to saved file.
         """
         # Separate BIDS parameters and path parameters from save function kwargs
-        path_params = ["subject", "session", "task", "run", "datatype", 
-                      "use_bids_structure", "custom_dir", "extension", "suffix"]
+        path_params = ["subject", "session", "task", "run", "datatype", "custom_dir", "extension", "suffix"]
         bids_params = {
             k: v for k, v in kwargs.items()
             if k in ["subject", "session", "task", "run", "datatype"]
@@ -434,12 +433,10 @@ class Output_Manager:
             BIDS suffix.
         extension : str, optional
             File extension.
-        use_bids_structure : bool, optional
-            Use BIDS directory structure. Default is False.
         custom_dir : str or Path, optional
             Custom output directory.
         bids_path : BIDSPath, optional
-            Base BIDSPath object (required when use_bids_structure=True).
+            Base BIDSPath object for path generation.
         **bids_params : dict
             BIDS parameters for modifying bids_path.
 
