@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 import warnings
+from pathlib import Path
 
 import mne
 from mne_bids import BIDSPath, find_matching_paths, read_raw_bids
@@ -17,12 +18,14 @@ def raw_from_source(source, n_jobs = 1, suppress_runtime_warning=True, **kwargs)
 
     - BIDSPath
     - list of BIDSPath
+    - str or pathlib.Path to a raw file
+    - list of str/pathlib.Path to raw files
     - mne.io.BaseRaw
     - list of mne.io.BaseRaw
 
     Parameters
     ----------
-    source : BIDSPath | list of BIDSPath | mne.io.BaseRaw | list of mne.io.BaseRaw
+    source : BIDSPath | list of BIDSPath | str | pathlib.Path | mne.io.BaseRaw | list
         The source to read the raw data from.
     suppress_runtime_warning : bool
         If True, suppresses RuntimeWarning when reading raw data.
@@ -76,9 +79,26 @@ def raw_from_source(source, n_jobs = 1, suppress_runtime_warning=True, **kwargs)
             for raw in raws:
                 if raw.info["sfreq"] != min_sfreq:
                     print("Resampling:", raw.info["file_id"])
-                    raw.resample(min_sfreq, n_jobs=n_jobs) 
+                    raw.resample(min_sfreq, n_jobs=n_jobs)
         raw = mne.io.concatenate_raws(raws)
 
+    elif isinstance(source, (str, Path)):
+        raw = mne.io.read_raw(str(source), **kwargs)
+    elif isinstance(source, list) and all(
+        [isinstance(fpath, (str, Path)) for fpath in source]
+    ):
+        raws = [mne.io.read_raw(str(fpath), **kwargs) for fpath in source]
+
+        # Check if all raws have the same sampling frequency
+        sfreqs = [raw.info["sfreq"] for raw in raws]
+        if len(set(sfreqs)) > 1:
+            min_sfreq = min(sfreqs)
+            print("Resampling to: ", min_sfreq)
+            for raw in raws:
+                if raw.info["sfreq"] != min_sfreq:
+                    print("Resampling:", raw.info["file_id"])
+                    raw.resample(min_sfreq, n_jobs=n_jobs)
+        raw = mne.io.concatenate_raws(raws)
     elif isinstance(source, mne.io.BaseRaw):
         raw = source
     elif isinstance(source, list) and all(
