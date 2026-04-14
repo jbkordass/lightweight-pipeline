@@ -41,7 +41,9 @@ class Preprocessing(Pipeline_Step):
         """
         config = self.config
 
-        raw = raw_from_source(source, preload=True)
+        raw = raw_from_source(source)
+
+        raw.load_data()
 
         # apply a notch filter to remove power line artifact
         raw.notch_filter(config.notch_filter, n_jobs=config.n_jobs)

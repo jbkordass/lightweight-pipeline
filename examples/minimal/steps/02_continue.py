@@ -44,7 +44,9 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
 
     def annotate(self, source, bids_path):
         """Annotate the data with markers every 1 second."""
-        raw = raw_from_source(source, preload=True)
+        raw = raw_from_source(source)
+
+        raw.load_data()
 
         # create annotations every 1 second in the data
         onset = np.arange(0, raw.times[-1], 1)
@@ -62,7 +64,9 @@ class Continue_With_More_Data_Analysis(Pipeline_Step):
         """
         config = self.config
 
-        raw = raw_from_source(source, preload=True)
+        raw = raw_from_source(source)
+
+        raw.load_data()
 
         bids_path_annotate = find_matching_paths(
             subjects=bids_path.subject,
