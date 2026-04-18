@@ -1,0 +1,41 @@
+﻿lw\_pipeline.Pipeline\_MNE\_BIDS\_Data
+======================================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: Pipeline_MNE_BIDS_Data
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Pipeline_MNE_BIDS_Data.__init__
+      ~Pipeline_MNE_BIDS_Data.apply
+      ~Pipeline_MNE_BIDS_Data.as_df
+      ~Pipeline_MNE_BIDS_Data.concatenate_runs
+      ~Pipeline_MNE_BIDS_Data.copy
+      ~Pipeline_MNE_BIDS_Data.get_bids_path
+      ~Pipeline_MNE_BIDS_Data.get_bids_path_from_bids_root
+      ~Pipeline_MNE_BIDS_Data.get_raw_from_derivatives
+      ~Pipeline_MNE_BIDS_Data.get_raw_from_derivatives_dir
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Pipeline_MNE_BIDS_Data.config
+      ~Pipeline_MNE_BIDS_Data.file_paths
+      ~Pipeline_MNE_BIDS_Data.from_deriv
+   
+   

@@ -1,0 +1,31 @@
+﻿lw\_pipeline.Pipeline\_Data
+===========================
+
+.. currentmodule:: lw_pipeline
+
+.. autoclass:: Pipeline_Data
+   :members:                                   
+   :show-inheritance:                          
+   :inherited-members:                         
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Pipeline_Data.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Pipeline_Data.config
+   
+   

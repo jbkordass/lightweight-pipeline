@@ -1,0 +1,6 @@
+lw\_pipeline.helper.report.generate\_report
+===========================================
+
+.. currentmodule:: lw_pipeline.helper.report
+
+.. autofunction:: generate_report
