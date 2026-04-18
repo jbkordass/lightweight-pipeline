@@ -669,10 +669,13 @@ class Output_Manager:
             np.savetxt(p, arr, **kw)
 
         if format == "npy":
-            extension = ".npy"
+            kwargs.update({"extension": ".npy"})
             save_func = save_npy
-        elif format == "txt":
-            extension = ".txt"
+        elif format in "txt":
+            kwargs.update({"extension": ".txt"})
+            save_func = save_txt
+        elif format in "tsv":
+            kwargs.update({"extension": ".tsv", "delimiter": "\t"})
             save_func = save_txt
         else:
             raise ValueError(
@@ -680,7 +683,7 @@ class Output_Manager:
             )
 
         return self.save_generic(
-            arr, name, save_func, suffix=suffix, extension=extension,
+            arr, name, save_func, suffix=suffix,
             metadata=metadata, source_file=source_file, **kwargs
         )
 
